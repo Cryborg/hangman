@@ -1,0 +1,138 @@
+/* ===== STANDARD-MODE.JS - MODE DE JEU CLASSIQUE ===== */
+
+/**
+ * Mode Standard - Jeu classique sans limite de temps
+ */
+class StandardMode extends BaseGameModeWithSave {
+    constructor(app, gameEngine) {
+        super(app, gameEngine, 'pendu_current_game');
+        this.name = 'standard';
+    }
+    
+    // ===== MÉTHODES ABSTRAITES IMPLÉMENTÉES ===== //
+    
+    formatResumeData(gameState) {
+        const wordProgress = SaveGameManager.formatWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const message = `Une partie est en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.currentCategory}</em><br><br>Reprendre ?`;
+        return { message };
+    }
+    
+    getStartGameParams() {
+        return true; // clearSave par défaut
+    }
+    
+    getGameStateForSave() {
+        if (!this.gameEngine || !this.gameEngine.gameActive) {
+            return null;
+        }
+        
+        return {
+            currentWord: this.gameEngine.currentWord,
+            currentCategory: this.gameEngine.currentCategory,
+            guessedLetters: [...this.gameEngine.guessedLetters],
+            wrongLetters: [...this.gameEngine.wrongLetters],
+            remainingTries: this.gameEngine.remainingTries
+        };
+    }
+    
+    // ===== MÉTHODES SPÉCIFIQUES AU MODE STANDARD ===== //
+    
+    startGame(clearSave = true) {
+        // Supprimer la sauvegarde seulement si demandé explicitement
+        if (clearSave) {
+            this.saveManager.clearSave();
+        }
+        if (this.gameEngine) {
+            this.gameEngine.startNewGame();
+        }
+        // La sauvegarde sera créée lors de la première tentative
+    }
+    
+    onWordWin(word, category, errorsCount) {
+        // Traitement classique des statistiques
+        let newAchievements = [];
+        if (this.app.getStatsModule()) {
+            newAchievements = this.app.getStatsModule().onGameWin(
+                word, category, errorsCount
+            );
+        }
+        
+        // Animation de victoire
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().celebrateWin();
+            
+            let message = `Bravo ! "${word}" trouvé !`;
+            if (errorsCount === 0) {
+                message += ' (Parfait !)';
+            }
+            
+            this.app.getUIModule().showToast(message, 'win', 4000);
+        }
+        
+        // Afficher les nouveaux achievements
+        if (newAchievements.length > 0 && this.app.getUIModule()) {
+            setTimeout(() => {
+                newAchievements.forEach((achievement, index) => {
+                    setTimeout(() => {
+                        this.app.getUIModule().showToast(
+                            `${achievement.title} débloqué !`,
+                            'achievement',
+                            3000
+                        );
+                    }, index * 1000);
+                });
+            }, 2000);
+        }
+        
+        this.updateDisplay();
+    }
+    
+    onWordLoss(word) {
+        // Traitement classique des statistiques
+        if (this.app.getStatsModule()) {
+            this.app.getStatsModule().onGameLoss();
+        }
+        
+        // Message de défaite
+        if (this.app.getUIModule()) {
+            const message = `Perdu ! Le mot était "${word}"`;
+            this.app.getUIModule().showToast(message, 'lose', 5000);
+        }
+        
+        this.updateDisplay();
+    }
+    
+    setupUI() {
+        // Masquer les éléments spécifiques aux autres modes
+        const timeAttackCard = document.getElementById('timeAttackCard');
+        if (timeAttackCard) {
+            timeAttackCard.classList.add('hidden');
+        }
+        
+        // Afficher les éléments du mode standard
+        const progressCard = document.getElementById('progressCard');
+        const streakCard = document.getElementById('streakCard');
+        
+        if (progressCard) progressCard.classList.remove('hidden');
+        if (streakCard) streakCard.classList.remove('hidden');
+        
+        // Configurer la visibilité des boutons
+        this.updateButtonsVisibility();
+    }
+    
+    updateButtonsVisibility() {
+        const gameControls = document.querySelector('.game-controls');
+        
+        // Centrer le bouton Suivant
+        if (gameControls) {
+            gameControls.style.justifyContent = 'center';
+        }
+    }
+    
+    updateDisplay() {
+        // Mettre à jour l'affichage de la série
+        if (this.gameEngine) {
+            this.gameEngine.updateStreakDisplay();
+        }
+    }
+}

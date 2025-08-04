@@ -532,6 +532,7 @@
       "nom": "Instruments de Musique",
       "mots": [
         "GUITARE",
+        "GUITARE BASSE",
         "PIANO",
         "BATTERIE",
         "VIOLON",
@@ -592,10 +593,10 @@
       "mots": [
         "TOUR EIFFEL",
         "COLISEE",
-        "STATUE LIBERTE",
-        "PYRAMIDES",
+        "STATUE DE LA LIBERTE",
+        "PYRAMIDES DE GIZEH",
         "TAJ MAHAL",
-        "NOTRE DAME",
+        "NOTRE DAME DE PARIS",
         "BIG BEN",
         "TOWER BRIDGE",
         "SAGRADA FAMILIA",
@@ -608,14 +609,13 @@
         "STONEHENGE",
         "MONT RUSHMORE",
         "CHRIST REDEMPTEUR",
-        "OPERA SYDNEY",
+        "OPERA DE SYDNEY",
         "BURJ KHALIFA",
-        "EMPIRE STATE",
         "GOLDEN GATE",
         "PONT DU GARD",
         "VERSAILLES",
         "LOUVRE",
-        "ARC TRIOMPHE"
+        "ARC DE TRIOMPHE"
       ],
       "icone": "🗿"
     },

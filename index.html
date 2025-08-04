@@ -211,7 +211,7 @@
                     </div>
                     
                     <div class="hangman-container">
-                        <svg id="hangman" width="250" height="300" viewBox="0 0 250 300">
+                        <svg id="hangman" viewBox="0 0 250 300" preserveAspectRatio="xMidYMid meet">
                             <!-- Base -->
                             <line class="part" x1="10" y1="290" x2="150" y2="290" stroke="#666" stroke-width="4"/>
                             <!-- Poteau vertical -->
@@ -245,8 +245,6 @@
             
             <div class="game-controls">
                 <button id="newGameBtn" class="btn">Suivant</button>
-                <button id="restartGameBtn" class="btn btn-restart">🔄 Rejouer</button>
-                <button id="backToMenuBtn" class="btn btn-secondary">🏠 Menu</button>
             </div>
             
             <div id="gameMessage" class="game-message"></div>
@@ -290,7 +288,13 @@
     <!-- JavaScript modulaire -->
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
+    <!-- Modes de jeu modulaires (ordre de dépendance CRITIQUE) -->
+    <script src="js/base-game-mode.js"></script>
     <script src="js/save-game-manager.js"></script>
+    <script src="js/base-game-mode-with-save.js"></script>
+    <script src="js/standard-mode.js"></script>
+    <script src="js/timeattack-mode.js"></script>
+    <script src="js/category-mode.js"></script>
     <script src="js/game-modes.js"></script>
     <script src="js/game-engine.js"></script>
     <script src="js/game-manager.js"></script>
