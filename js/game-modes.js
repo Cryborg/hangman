@@ -433,11 +433,16 @@ class CategoryMode extends BaseGameMode {
     loadCategoryWords() {
         // Charger tous les mots de la catégorie sélectionnée
         if (this.gameEngine && this.gameEngine.categories) {
+            console.log(`🔍 Recherche de la catégorie: "${this.selectedCategory}"`);
+            console.log('📋 Catégories disponibles:', this.gameEngine.categories.map(cat => cat.nom));
+            
             const category = this.gameEngine.categories.find(cat => cat.nom === this.selectedCategory);
             if (category) {
                 this.categoryWords = [...category.mots];
                 this.totalWords = this.categoryWords.length;
                 console.log(`📚 Catégorie "${this.selectedCategory}" : ${this.totalWords} mots`);
+            } else {
+                console.error(`❌ Catégorie "${this.selectedCategory}" non trouvée`);
             }
         }
     }

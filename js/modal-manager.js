@@ -139,7 +139,8 @@ class ModalManager {
             'Musique': '🎵',
             'Jeux Vidéo': '🎮',
             'Sciences': '🔬',
-            'Histoire': '📚'
+            'Histoire': '📚',
+            'Personnages Harry Potter': '⚡'
         };
         
         // Créer un élément pour chaque catégorie
