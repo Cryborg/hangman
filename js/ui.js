@@ -212,6 +212,21 @@ class PenduUI {
         this.pulseElement(button, 300);
     }
     
+    updateKeyboard(guessedLetters, wrongLetters) {
+        // Méthode pour mettre à jour tout le clavier d'un coup
+        if (!guessedLetters || !wrongLetters) return;
+        
+        // Marquer les lettres correctes
+        guessedLetters.forEach(letter => {
+            this.updateKeyboardButton(letter, 'correct');
+        });
+        
+        // Marquer les lettres incorrectes  
+        wrongLetters.forEach(letter => {
+            this.updateKeyboardButton(letter, 'wrong');
+        });
+    }
+    
     resetKeyboard() {
         const buttons = document.querySelectorAll('.keyboard-btn');
         buttons.forEach(button => {
