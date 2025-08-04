@@ -72,23 +72,44 @@ class BaseGameMode {
 /**
  * Mode Standard - Jeu classique sans limite de temps
  */
-class StandardMode extends BaseGameMode {
+class StandardMode extends BaseGameModeWithSave {
     constructor(app, gameEngine) {
-        super(app, gameEngine);
+        super(app, gameEngine, 'pendu_current_game');
         this.name = 'standard';
-        this.saveKey = 'pendu_current_game';
     }
     
-    initialize() {
-        console.log('🎲 Initialisation du mode Standard');
-        this.setupUI();
-        this.checkForSavedGame();
+    // ===== MÉTHODES ABSTRAITES IMPLÉMENTÉES ===== //
+    
+    formatResumeData(gameState) {
+        const wordProgress = SaveGameManager.formatWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const message = `Une partie est en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.currentCategory}</em><br><br>Reprendre ?`;
+        return { message };
     }
+    
+    getStartGameParams() {
+        return true; // clearSave par défaut
+    }
+    
+    getGameStateForSave() {
+        if (!this.gameEngine || !this.gameEngine.gameActive) {
+            return null;
+        }
+        
+        return {
+            currentWord: this.gameEngine.currentWord,
+            currentCategory: this.gameEngine.currentCategory,
+            guessedLetters: [...this.gameEngine.guessedLetters],
+            wrongLetters: [...this.gameEngine.wrongLetters],
+            remainingTries: this.gameEngine.remainingTries
+        };
+    }
+    
+    // ===== MÉTHODES SPÉCIFIQUES AU MODE STANDARD ===== //
     
     startGame(clearSave = true) {
         // Supprimer la sauvegarde seulement si demandé explicitement
         if (clearSave) {
-            localStorage.removeItem(this.saveKey);
+            this.saveManager.clearSave();
         }
         if (this.gameEngine) {
             this.gameEngine.startNewGame();
@@ -180,160 +201,6 @@ class StandardMode extends BaseGameMode {
         if (this.gameEngine) {
             this.gameEngine.updateStreakDisplay();
         }
-    }
-    
-    // ===== GESTION DE LA SAUVEGARDE DE PARTIE ===== //
-    
-    saveGameState() {
-        if (!this.gameEngine || !this.gameEngine.gameActive) {
-            // Pas de partie en cours, supprimer la sauvegarde
-            localStorage.removeItem(this.saveKey);
-            return;
-        }
-        
-        const gameState = {
-            currentWord: this.gameEngine.currentWord,
-            currentCategory: this.gameEngine.currentCategory,
-            guessedLetters: [...this.gameEngine.guessedLetters],
-            wrongLetters: [...this.gameEngine.wrongLetters],
-            remainingTries: this.gameEngine.remainingTries,
-            timestamp: Date.now()
-        };
-        
-        try {
-            localStorage.setItem(this.saveKey, JSON.stringify(gameState));
-            console.log('💾 Partie sauvegardée', gameState);
-        } catch (error) {
-            console.warn('⚠️ Impossible de sauvegarder la partie:', error.message);
-        }
-    }
-    
-    checkForSavedGame() {
-        const savedData = localStorage.getItem(this.saveKey);
-        if (!savedData) return;
-        
-        try {
-            const gameState = JSON.parse(savedData);
-            
-            // Vérifier que la sauvegarde n'est pas trop ancienne (24h max)
-            const maxAge = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
-            if (Date.now() - gameState.timestamp > maxAge) {
-                localStorage.removeItem(this.saveKey);
-                return;
-            }
-            
-            // Vérifier si on a déjà proposé la reprise dans cette session
-            const sessionKey = `${this.saveKey}_offered_${gameState.timestamp}`;
-            if (sessionStorage.getItem(sessionKey)) {
-                console.log('Reprise déjà proposée dans cette session');
-                return;
-            }
-            
-            // Marquer qu'on a proposé la reprise pour cette sauvegarde spécifique
-            sessionStorage.setItem(sessionKey, 'true');
-            
-            // Proposer de reprendre la partie
-            this.showResumeGameOption(gameState);
-            
-        } catch (error) {
-            console.error('Erreur lors du chargement de la partie sauvegardée:', error);
-            localStorage.removeItem(this.saveKey);
-        }
-    }
-    
-    showResumeGameOption(gameState) {
-        if (!this.app.getUIModule()) return;
-        
-        const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-        const message = `Une partie est en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.currentCategory}</em><br><br>Reprendre ?`;
-        
-        // Créer un toast personnalisé avec boutons
-        this.showResumeToast(message, gameState);
-    }
-    
-    showResumeToast(message, gameState) {
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-resume toast-show';
-        toast.style.cssText = `
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, 0);
-            background: var(--bg-secondary);
-            border: 2px solid var(--primary-color);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            z-index: 1001;
-            backdrop-filter: blur(10px);
-            min-width: 320px;
-            text-align: center;
-        `;
-        
-        toast.innerHTML = `
-            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem; line-height: 1.8; text-align: center;">
-                ${message}
-            </div>
-            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
-                <button id="resumeGameBtn" class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
-                    ▶️ Reprendre
-                </button>
-                <button id="newGameInsteadBtn" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
-                    🆕 Nouvelle partie
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(toast);
-        
-        // Gestionnaires d'événements
-        document.getElementById('resumeGameBtn').addEventListener('click', () => {
-            this.resumeGame(gameState);
-            document.body.removeChild(toast);
-        });
-        
-        document.getElementById('newGameInsteadBtn').addEventListener('click', () => {
-            localStorage.removeItem(this.saveKey);
-            this.startGame(false); // Démarrer sans effacer la sauvegarde (déjà fait)
-            document.body.removeChild(toast);
-        });
-    }
-    
-    resumeGame(gameState) {
-        if (!this.gameEngine) return;
-        
-        // Restaurer l'état du jeu
-        this.gameEngine.currentWord = gameState.currentWord;
-        this.gameEngine.currentCategory = gameState.currentCategory;
-        this.gameEngine.guessedLetters = [...gameState.guessedLetters];
-        this.gameEngine.wrongLetters = [...gameState.wrongLetters];
-        this.gameEngine.remainingTries = gameState.remainingTries;
-        this.gameEngine.gameActive = true;
-        
-        // Mettre à jour l'affichage
-        this.gameEngine.updateDisplay();
-        
-        // Redessiner le hangman avec les erreurs déjà commises
-        this.gameEngine.refreshHangman();
-        
-        console.log('🔄 Partie reprise', gameState);
-        
-        // Toast de confirmation simple
-        if (this.app.getUIModule()) {
-            this.app.getUIModule().showToast('Partie reprise !', 'success', 3000);
-        }
-    }
-    
-    getWordProgress(word, guessedLetters) {
-        // Créer l'affichage du mot avec les lettres trouvées
-        return word.split('').map(letter => 
-            guessedLetters.includes(letter.toUpperCase()) ? letter : '_'
-        ).join(' ');
-    }
-    
-    cleanup() {
-        console.log('🧹 Nettoyage du mode Standard');
-        // Sauvegarder avant de nettoyer
-        this.saveGameState();
     }
 }
 
@@ -544,9 +411,9 @@ class TimeAttackGameMode extends BaseGameMode {
 /**
  * Mode Catégorie - Parcourir tous les mots d'une catégorie
  */
-class CategoryMode extends BaseGameMode {
+class CategoryMode extends BaseGameModeWithSave {
     constructor(app, gameEngine) {
-        super(app, gameEngine);
+        super(app, gameEngine, 'pendu_current_category_game');
         this.name = 'category';
         this.selectedCategory = null;
         this.categoryWords = [];
@@ -554,14 +421,55 @@ class CategoryMode extends BaseGameMode {
         this.wordsFound = 0;
         this.totalWords = 0;
         this.completedWords = new Set();
-        this.saveKey = 'pendu_current_category_game';
     }
     
-    initialize() {
-        console.log('📚 Initialisation du mode Catégorie');
-        this.setupUI();
-        this.checkForSavedGame();
+    // ===== MÉTHODES ABSTRAITES IMPLÉMENTÉES ===== //
+    
+    formatResumeData(gameState) {
+        const wordProgress = SaveGameManager.formatWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const progress = `${gameState.wordsFound}/${gameState.totalWords} mots`;
+        const message = `Catégorie en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.selectedCategory} (${progress})</em><br><br>Reprendre ?`;
+        return { message };
     }
+    
+    getStartGameParams() {
+        return [this.selectedCategory, true]; // categoryName, clearSave
+    }
+    
+    getGameStateForSave() {
+        if (!this.gameEngine || !this.gameEngine.gameActive || !this.selectedCategory) {
+            return null;
+        }
+        
+        return {
+            // État du mot actuel
+            currentWord: this.gameEngine.currentWord,
+            currentCategory: this.gameEngine.currentCategory,
+            guessedLetters: [...this.gameEngine.guessedLetters],
+            wrongLetters: [...this.gameEngine.wrongLetters],
+            remainingTries: this.gameEngine.remainingTries,
+            
+            // État de progression dans la catégorie
+            selectedCategory: this.selectedCategory,
+            currentIndex: this.currentIndex,
+            wordsFound: this.wordsFound,
+            totalWords: this.totalWords,
+            completedWords: Array.from(this.completedWords),
+            categoryWords: [...this.categoryWords]
+        };
+    }
+    
+    restoreModeSpecificState(gameState) {
+        // Restaurer l'état de progression dans la catégorie
+        this.selectedCategory = gameState.selectedCategory;
+        this.currentIndex = gameState.currentIndex;
+        this.wordsFound = gameState.wordsFound;
+        this.totalWords = gameState.totalWords;
+        this.completedWords = new Set(gameState.completedWords);
+        this.categoryWords = [...gameState.categoryWords];
+    }
+    
+    // ===== MÉTHODES SPÉCIFIQUES AU MODE CATÉGORIE ===== //
     
     startGame(categoryName = null, clearSave = true) {
         if (categoryName) {
@@ -777,179 +685,10 @@ class CategoryMode extends BaseGameMode {
         };
     }
     
-    // ===== GESTION DE LA SAUVEGARDE DE PARTIE CATÉGORIE ===== //
-    
-    saveGameState() {
-        if (!this.gameEngine || !this.gameEngine.gameActive || !this.selectedCategory) {
-            // Pas de partie en cours, supprimer la sauvegarde
-            localStorage.removeItem(this.saveKey);
-            return;
-        }
-        
-        const gameState = {
-            // État du mot actuel
-            currentWord: this.gameEngine.currentWord,
-            currentCategory: this.gameEngine.currentCategory,
-            guessedLetters: [...this.gameEngine.guessedLetters],
-            wrongLetters: [...this.gameEngine.wrongLetters],
-            remainingTries: this.gameEngine.remainingTries,
-            
-            // État de progression dans la catégorie
-            selectedCategory: this.selectedCategory,
-            currentIndex: this.currentIndex,
-            wordsFound: this.wordsFound,
-            totalWords: this.totalWords,
-            completedWords: Array.from(this.completedWords),
-            categoryWords: [...this.categoryWords],
-            
-            timestamp: Date.now()
-        };
-        
-        try {
-            localStorage.setItem(this.saveKey, JSON.stringify(gameState));
-            console.log('💾 Partie catégorie sauvegardée', gameState);
-        } catch (error) {
-            console.warn('⚠️ Impossible de sauvegarder la partie catégorie:', error.message);
-        }
-    }
-    
-    checkForSavedGame() {
-        const savedData = localStorage.getItem(this.saveKey);
-        if (!savedData) return;
-        
-        try {
-            const gameState = JSON.parse(savedData);
-            
-            // Vérifier que la sauvegarde n'est pas trop ancienne (24h max)
-            const maxAge = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
-            if (Date.now() - gameState.timestamp > maxAge) {
-                localStorage.removeItem(this.saveKey);
-                return;
-            }
-            
-            // Vérifier si on a déjà proposé la reprise dans cette session
-            const sessionKey = `${this.saveKey}_offered_${gameState.timestamp}`;
-            if (sessionStorage.getItem(sessionKey)) {
-                console.log('Reprise catégorie déjà proposée dans cette session');
-                return;
-            }
-            
-            // Marquer qu'on a proposé la reprise pour cette sauvegarde spécifique
-            sessionStorage.setItem(sessionKey, 'true');
-            
-            // Proposer de reprendre la partie
-            this.showResumeGameOption(gameState);
-            
-        } catch (error) {
-            console.error('Erreur lors du chargement de la partie catégorie sauvegardée:', error);
-            localStorage.removeItem(this.saveKey);
-        }
-    }
-    
-    showResumeGameOption(gameState) {
-        if (!this.app.getUIModule()) return;
-        
-        const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-        const progress = `${gameState.wordsFound}/${gameState.totalWords} mots`;
-        const message = `Catégorie en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.selectedCategory} (${progress})</em><br><br>Reprendre ?`;
-        
-        // Créer un toast personnalisé avec boutons
-        this.showResumeToast(message, gameState);
-    }
-    
-    showResumeToast(message, gameState) {
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-resume toast-show';
-        toast.style.cssText = `
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, 0);
-            background: var(--bg-secondary);
-            border: 2px solid var(--primary-color);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            z-index: 1001;
-            backdrop-filter: blur(10px);
-            min-width: 350px;
-            text-align: center;
-        `;
-        
-        toast.innerHTML = `
-            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem; line-height: 1.8; text-align: center;">
-                ${message}
-            </div>
-            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
-                <button id="resumeCategoryGameBtn" class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
-                    ▶️ Reprendre
-                </button>
-                <button id="newCategoryGameInsteadBtn" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">  
-                    🆕 Nouvelle partie
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(toast);
-        
-        // Gestionnaires d'événements
-        document.getElementById('resumeCategoryGameBtn').addEventListener('click', () => {
-            this.resumeGame(gameState);
-            document.body.removeChild(toast);
-        });
-        
-        document.getElementById('newCategoryGameInsteadBtn').addEventListener('click', () => {
-            localStorage.removeItem(this.saveKey);
-            this.startGame(this.selectedCategory, false); // Démarrer sans effacer la sauvegarde (déjà fait)
-            document.body.removeChild(toast);
-        });
-    }
-    
-    resumeGame(gameState) {
-        if (!this.gameEngine) return;
-        
-        // Restaurer l'état de progression dans la catégorie
-        this.selectedCategory = gameState.selectedCategory;
-        this.currentIndex = gameState.currentIndex;
-        this.wordsFound = gameState.wordsFound;
-        this.totalWords = gameState.totalWords;
-        this.completedWords = new Set(gameState.completedWords);
-        this.categoryWords = [...gameState.categoryWords];
-        
-        // Restaurer l'état du mot actuel
-        this.gameEngine.currentWord = gameState.currentWord;
-        this.gameEngine.currentCategory = gameState.currentCategory;
-        this.gameEngine.guessedLetters = [...gameState.guessedLetters];
-        this.gameEngine.wrongLetters = [...gameState.wrongLetters];
-        this.gameEngine.remainingTries = gameState.remainingTries;
-        this.gameEngine.gameActive = true;
-        
-        // Mettre à jour l'affichage
-        this.gameEngine.updateDisplay();
-        this.updateDisplay();
-        
-        // Redessiner le hangman avec les erreurs déjà commises
-        this.gameEngine.refreshHangman();
-        
-        console.log('🔄 Partie catégorie reprise', gameState);
-        
-        // Toast de confirmation simple
-        if (this.app.getUIModule()) {
-            this.app.getUIModule().showToast('Partie reprise !', 'success', 3000);
-        }
-    }
-    
-    getWordProgress(word, guessedLetters) {
-        // Créer l'affichage du mot avec les lettres trouvées
-        return word.split('').map(letter => 
-            guessedLetters.includes(letter.toUpperCase()) ? letter : '_'
-        ).join(' ');
-    }
-    
     cleanup() {
-        console.log('🧹 Nettoyage du mode Catégorie');
-        // Sauvegarder avant de nettoyer
-        this.saveGameState();
+        super.cleanup(); // Appel de la méthode de base qui sauvegarde
         
+        // Nettoyage spécifique au mode catégorie
         this.selectedCategory = null;
         this.categoryWords = [];
         this.currentIndex = 0;
