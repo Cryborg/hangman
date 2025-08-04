@@ -115,7 +115,7 @@ class PenduGameEngine {
             const response = await fetch('words.json');
             const data = await response.json();
             this.categories = data.categories;
-            this.totalWords = this.categories.reduce((total, cat) => total + cat.words.length, 0);
+            this.totalWords = this.categories.reduce((total, cat) => total + cat.mots.length, 0);
             console.log(`📚 ${this.categories.length} catégories chargées (${this.totalWords} mots au total)`);
             return true;
         } catch (error) {
@@ -167,9 +167,9 @@ class PenduGameEngine {
     getAvailableWords() {
         const allWords = [];
         this.categories.forEach(category => {
-            category.words.forEach(word => {
+            category.mots.forEach(word => {
                 if (!this.sessionWords.has(word)) {
-                    allWords.push({ word, category: category.name });
+                    allWords.push({ word, category: category.nom });
                 }
             });
         });

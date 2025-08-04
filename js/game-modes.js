@@ -433,9 +433,9 @@ class CategoryMode extends BaseGameMode {
     loadCategoryWords() {
         // Charger tous les mots de la catégorie sélectionnée
         if (this.gameEngine && this.gameEngine.categories) {
-            const category = this.gameEngine.categories.find(cat => cat.name === this.selectedCategory);
+            const category = this.gameEngine.categories.find(cat => cat.nom === this.selectedCategory);
             if (category) {
-                this.categoryWords = [...category.words];
+                this.categoryWords = [...category.mots];
                 this.totalWords = this.categoryWords.length;
                 console.log(`📚 Catégorie "${this.selectedCategory}" : ${this.totalWords} mots`);
             }
