@@ -1,0 +1,101 @@
+/* CSS simplifié pour les tests - Copie les parties essentielles du CSS principal */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--arcade-bg-primary, #2d2d2d);
+    color: #e94560;
+    min-height: 100vh;
+}
+
+/* Styles essentiels pour les tests */
+.game-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.word-display {
+    font-size: 2.5rem;
+    letter-spacing: 0;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 1rem;
+}
+
+.word-display .word-group {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.word-display span {
+    border-bottom: 3px solid #f39c12;
+    margin: 0 0.2rem;
+    padding: 0 0.5rem;
+    display: inline-block;
+    min-width: 2rem;
+    text-align: center;
+}
+
+/* Styles mobile simplifiés */
+@media (max-width: 768px) {
+    .game-info {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .word-display {
+        font-size: 1.2rem;
+        letter-spacing: 0;
+        margin: 0 auto 0.4rem auto;
+        padding: 0 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        line-height: 1.8;
+        text-align: center;
+    }
+    
+    .word-display .word-group {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+    
+    .word-display span {
+        margin: 0 0.02rem;
+        padding: 0 0.15rem;
+        min-width: 1.1rem;
+        border-bottom-width: 2px;
+        font-size: inherit;
+        text-align: center;
+    }
+}

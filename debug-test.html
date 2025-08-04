@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test - Centrage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #2d2d2d;
+            color: white;
+            font-family: monospace;
+            padding: 20px;
+        }
+        
+        .debug-container {
+            border: 2px solid red;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .game-info {
+            border: 2px solid green;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .word-display {
+            border: 2px solid blue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .word-group {
+            border: 1px solid yellow;
+            display: inline-flex;
+            justify-content: center;
+        }
+        
+        span {
+            border-bottom: 2px solid orange;
+            padding: 0 0.2rem;
+            min-width: 1.2rem;
+            text-align: center;
+        }
+        
+        h3 {
+            color: orange;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug du centrage</h1>
+    
+    <div class="debug-container">
+        <h3>Test 1: Mot court (CHAT)</h3>
+        <div class="game-info">
+            <div class="word-display">
+                <div class="word-group">
+                    <span>_</span><span>_</span><span>_</span><span>_</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="debug-container">
+        <h3>Test 2: Mots multiples (MICHAEL JACKSON)</h3>
+        <div class="game-info">
+            <div class="word-display">
+                <div class="word-group">
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                </div>
+                <div class="word-group">
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="debug-container">
+        <h3>Test 3: Mot très long (ANTICONSTITUTIONNELLEMENT)</h3>
+        <div class="game-info">
+            <div class="word-display">
+                <div class="word-group">
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                    <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('Largeur écran:', window.innerWidth);
+        
+        // Vérifier les styles appliqués
+        const gameInfos = document.querySelectorAll('.game-info');
+        gameInfos.forEach((info, i) => {
+            const computed = window.getComputedStyle(info);
+            console.log(`Game-info ${i+1}:`, {
+                display: computed.display,
+                justifyContent: computed.justifyContent,
+                width: computed.width,
+                textAlign: computed.textAlign
+            });
+        });
+        
+        const wordDisplays = document.querySelectorAll('.word-display');
+        wordDisplays.forEach((display, i) => {
+            const computed = window.getComputedStyle(display);
+            console.log(`Word-display ${i+1}:`, {
+                display: computed.display,
+                justifyContent: computed.justifyContent,
+                width: computed.width,
+                textAlign: computed.textAlign
+            });
+        });
+    </script>
+</body>
+</html>

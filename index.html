@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Pendu</title>
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <script src="version.js"></script>
+    <link rel="stylesheet" href="styles.css?v=1.0.1">
+    <script src="../../arcade-theme-integration.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Jeu du Pendu</h1>
+        
+        <div class="game-area">
+            <div class="top-section">
+                <!-- Ligne du haut : Catégorie et Progression -->
+                <div class="game-header">
+                    <div class="category-card">
+                        <h3>Catégorie</h3>
+                        <p id="categoryName"></p>
+                    </div>
+                    <div class="progress-card">
+                        <h3>Progression</h3>
+                        <p id="wordsProgress">0/0</p>
+                    </div>
+                </div>
+                
+                <!-- Ligne du bas : Statistiques de la partie -->
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Essais restants</span>
+                        <span class="stat-value" id="triesLeft">6</span>
+                    </div>
+                    <div class="stat-item wrong-letters-stat">
+                        <span class="stat-label">Lettres essayées</span>
+                        <div class="stat-value" id="wrongLetters">-</div>
+                    </div>
+                </div>
+                
+                <div class="hangman-container">
+                    <svg id="hangman" width="250" height="300" viewBox="0 0 250 300">
+                        <!-- Base -->
+                        <line class="part" x1="10" y1="290" x2="150" y2="290" stroke="#666" stroke-width="4"/>
+                        <!-- Poteau vertical -->
+                        <line class="part" x1="50" y1="290" x2="50" y2="10" stroke="#666" stroke-width="4"/>
+                        <!-- Poteau horizontal -->
+                        <line class="part" x1="50" y1="10" x2="150" y2="10" stroke="#666" stroke-width="4"/>
+                        <!-- Corde -->
+                        <line class="part" x1="150" y1="10" x2="150" y2="60" stroke="#666" stroke-width="4"/>
+                        <!-- Tête -->
+                        <circle class="part body-part" cx="150" cy="80" r="20" stroke="#ff6b6b" stroke-width="3" fill="none"/>
+                        <!-- Corps -->
+                        <line class="part body-part" x1="150" y1="100" x2="150" y2="180" stroke="#ff6b6b" stroke-width="3"/>
+                        <!-- Bras gauche -->
+                        <line class="part body-part" x1="150" y1="130" x2="120" y2="150" stroke="#ff6b6b" stroke-width="3"/>
+                        <!-- Bras droit -->
+                        <line class="part body-part" x1="150" y1="130" x2="180" y2="150" stroke="#ff6b6b" stroke-width="3"/>
+                        <!-- Jambe gauche -->
+                        <line class="part body-part" x1="150" y1="180" x2="120" y2="220" stroke="#ff6b6b" stroke-width="3"/>
+                        <!-- Jambe droite -->
+                        <line class="part body-part" x1="150" y1="180" x2="180" y2="220" stroke="#ff6b6b" stroke-width="3"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="game-info">
+                <div class="word-display" id="wordDisplay"></div>
+            </div>
+        </div>
+        
+        <div class="keyboard" id="keyboard"></div>
+        
+        <div class="game-controls">
+            <button id="newGameBtn" class="btn">Nouvelle Partie</button>
+            <div class="version-display" id="versionDisplay"></div>
+        </div>
+        
+        <div id="gameMessage" class="game-message"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test d'affichage - Jeu du Pendu</title>
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <script src="version.js"></script>
+    <link rel="stylesheet" href="styles.css?v=1.0.1">
+    <style>
+        body {
+            padding: 1rem 0;
+        }
+        .test-container {
+            background: var(--arcade-bg-secondary, rgba(60, 60, 60, 0.9));
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem;
+        }
+        .test-label {
+            color: #f39c12;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            opacity: 0.7;
+        }
+        .test-section {
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #f39c12;
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+        /* Utilise les mêmes styles que le jeu principal */
+/* Plus besoin de debug, le CSS principal est corrigé */
+    </style>
+</head>
+<body>
+    <h2>🎮 Tests d'affichage mobile</h2>
+    
+    <div class="test-section">
+        <div class="test-container">
+            <div class="test-label">Mots très longs</div>
+            <div class="game-info">
+                <div class="word-display" id="test1"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Artiste : Michael Jackson</div>
+            <div class="game-info">
+                <div class="word-display" id="test2"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Film : Le Seigneur des Anneaux</div>
+            <div class="game-info">
+                <div class="word-display" id="test3"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Groupe : Red Hot Chili Peppers</div>
+            <div class="game-info">
+                <div class="word-display" id="test4"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Jeu vidéo : Grand Theft Auto</div>
+            <div class="game-info">
+                <div class="word-display" id="test5"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Film : Les Aventuriers de l'Arche Perdue</div>
+            <div class="game-info">
+                <div class="word-display" id="test6"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Série : Stranger Things</div>
+            <div class="game-info">
+                <div class="word-display" id="test7"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Groupe : Guns N' Roses</div>
+            <div class="game-info">
+                <div class="word-display" id="test8"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Mot composé avec tirets</div>
+            <div class="game-info">
+                <div class="word-display" id="test9"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Personnage : Dark Vador</div>
+            <div class="game-info">
+                <div class="word-display" id="test10"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Très très long titre</div>
+            <div class="game-info">
+                <div class="word-display" id="test11"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Mot court</div>
+            <div class="game-info">
+                <div class="word-display" id="test12"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Avec apostrophe</div>
+            <div class="game-info">
+                <div class="word-display" id="test13"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Maximum de lettres possible</div>
+            <div class="game-info">
+                <div class="word-display" id="test14"></div>
+            </div>
+        </div>
+
+        <div class="test-container">
+            <div class="test-label">Partiellement deviné</div>
+            <div class="game-info">
+                <div class="word-display" id="test15"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données de test
+        const testWords = [
+            { id: 'test1', word: 'ANTICONSTITUTIONNELLEMENT', guessed: [] },
+            { id: 'test2', word: 'MICHAEL JACKSON', guessed: [] },
+            { id: 'test3', word: 'LE SEIGNEUR DES ANNEAUX', guessed: [] },
+            { id: 'test4', word: 'RED HOT CHILI PEPPERS', guessed: [] },
+            { id: 'test5', word: 'GRAND THEFT AUTO', guessed: [] },
+            { id: 'test6', word: "LES AVENTURIERS DE L'ARCHE PERDUE", guessed: [] },
+            { id: 'test7', word: 'STRANGER THINGS', guessed: [] },
+            { id: 'test8', word: "GUNS N' ROSES", guessed: [] },
+            { id: 'test9', word: 'RENDEZ-VOUS', guessed: [] },
+            { id: 'test10', word: 'DARK VADOR', guessed: [] },
+            { id: 'test11', word: "PIRATES DES CARAIBES LA MALEDICTION DU BLACK PEARL", guessed: [] },
+            { id: 'test12', word: 'CHAT', guessed: [] },
+            { id: 'test13', word: "L'EMPIRE CONTRE-ATTAQUE", guessed: [] },
+            { id: 'test14', word: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', guessed: [] },
+            { id: 'test15', word: 'TERMINATOR', guessed: ['T', 'E', 'R', 'A', 'O'] }
+        ];
+
+        // Fonction pour afficher un mot - IDENTIQUE à celle du jeu principal
+        function displayWord(testData) {
+            const element = document.getElementById(testData.id);
+            if (!element) return;
+
+            // Exactement le même code que updateDisplay() dans script.js
+            const currentWord = testData.word;
+            const guessedLetters = testData.guessed;
+            
+            // Séparer les mots et créer des groupes
+            const words = currentWord.split(' ');
+            element.innerHTML = words.map(word => {
+                const letters = word.split('').map(letter => {
+                    const display = guessedLetters.includes(letter) ? letter : '_';
+                    const color = guessedLetters.includes(letter) ? 'style="color: #2ed573"' : '';
+                    return `<span ${color}>${display}</span>`;
+                }).join('');
+                return `<div class="word-group">${letters}</div>`;
+            }).join('');
+            
+            // Ajuster la taille si nécessaire sur mobile - EXACTEMENT comme dans script.js
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    // Réinitialiser d'abord
+                    element.style.fontSize = '1.2rem';
+                    
+                    // Vérifier chaque groupe de mots
+                    const wordGroups = element.querySelectorAll('.word-group');
+                    const containerWidth = element.parentElement.clientWidth - 16; // Avec padding
+                    
+                    let needsScaling = false;
+                    let maxScale = 1;
+                    
+                    wordGroups.forEach(group => {
+                        const groupWidth = group.scrollWidth;
+                        if (groupWidth > containerWidth) {
+                            needsScaling = true;
+                            const scale = containerWidth / groupWidth;
+                            if (scale < maxScale) {
+                                maxScale = scale;
+                            }
+                        }
+                    });
+                    
+                    if (needsScaling) {
+                        // Appliquer une taille de police réduite
+                        const newFontSize = Math.max(0.8, 1.2 * maxScale);
+                        element.style.fontSize = `${newFontSize}rem`;
+                        
+                        // Réduire aussi l'espacement et les marges
+                        element.querySelectorAll('span').forEach(span => {
+                            span.style.padding = `0 ${0.15 * maxScale}rem`;
+                            span.style.minWidth = `${1.1 * maxScale}rem`;
+                        });
+                        
+                        console.log(`${testData.id}: Font réduite à ${newFontSize.toFixed(2)}rem`);
+                    }
+                }, 10);
+            } else {
+                element.style.fontSize = '';
+            }
+        }
+
+        // Afficher tous les mots de test
+        testWords.forEach(testData => displayWord(testData));
+
+        // Réappliquer les scales au redimensionnement
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                testWords.forEach(testData => displayWord(testData));
+            }, 250);
+        });
+
+        // Log des dimensions pour debug
+        console.log('Largeur écran:', window.innerWidth);
+        console.log('Tests chargés:', testWords.length);
+    </script>
+</body>
+</html>
