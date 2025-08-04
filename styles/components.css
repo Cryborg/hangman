@@ -327,21 +327,34 @@
     box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
 }
 
+.keyboard button:active:not(:disabled) {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
 .keyboard button:disabled {
+    cursor: not-allowed;
+}
+
+/* Boutons disabled sans état spécial (gris) - avec scale seulement pour ceux-ci */
+.keyboard button:disabled:not(.correct):not(.wrong) {
     background: rgba(0, 0, 0, 0.5);
     color: #666;
-    cursor: not-allowed;
-    transform: scale(0.95);
+    transform: scale(0.95); /* Scale seulement pour les boutons gris */
 }
 
 .keyboard button.correct {
-    background: rgba(46, 213, 115, 0.4);
-    border-color: var(--success-color);
+    background: #2ed573 !important; /* Force la couleur même si disabled */
+    border-color: #27ae60;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(46, 213, 115, 0.4);
 }
 
 .keyboard button.wrong {
-    background: rgba(255, 107, 107, 0.4);
-    border-color: var(--error-color);
+    background: #e74c3c !important; /* Force la couleur même si disabled */
+    border-color: #c0392b;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
 }
 
 /* ===== AFFICHAGE DU MOT ===== */

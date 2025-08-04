@@ -154,10 +154,15 @@ class PenduUI {
         const keyboard = document.getElementById('keyboard');
         if (!keyboard) return;
         
-        // Créer le clavier virtuel sur mobile ET tablette
-        if (window.innerWidth > 1024) {
+        // Créer le clavier virtuel uniquement sur mobile/tablette (même seuil que le CSS)
+        if (window.innerWidth > 768) {
             keyboard.innerHTML = '';
             return;
+        }
+        
+        // Ne créer le clavier que s'il n'existe pas déjà
+        if (keyboard.children.length > 0) {
+            return; // Le clavier existe déjà, ne pas le recréer
         }
         
         keyboard.innerHTML = '';
@@ -173,16 +178,17 @@ class PenduUI {
             row.split('').forEach(letter => {
                 const button = document.createElement('button');
                 button.textContent = letter;
-                button.className = 'keyboard-btn';
+                // Pas besoin de classe spéciale, le CSS utilise .keyboard button
                 button.setAttribute('data-letter', letter);
                 
-                // Animation au tap
-                button.addEventListener('touchstart', () => {
-                    button.style.transform = 'scale(0.95)';
-                });
+                // Note: Animation tactile gérée par CSS :active pour éviter conflits transform
                 
-                button.addEventListener('touchend', () => {
-                    button.style.transform = '';
+                // Event listener pour les clics/taps
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!button.disabled && this.app.getGameManager()) {
+                        this.app.getGameManager().guessLetter(letter);
+                    }
                 });
                 
                 keyboard.appendChild(button);
@@ -199,17 +205,18 @@ class PenduUI {
         switch (state) {
             case 'correct':
                 button.classList.add('correct');
+                button.disabled = true;  // Désactiver les lettres correctes
                 break;
             case 'wrong':
                 button.classList.add('wrong');
+                button.disabled = true;  // Désactiver les lettres incorrectes
                 break;
             case 'disabled':
                 button.disabled = true;
                 break;
         }
         
-        // Animation de feedback
-        this.pulseElement(button, 300);
+        // Note: Animation pulse supprimée pour éviter les décalages visuels
     }
     
     updateKeyboard(guessedLetters, wrongLetters) {
@@ -228,7 +235,7 @@ class PenduUI {
     }
     
     resetKeyboard() {
-        const buttons = document.querySelectorAll('.keyboard-btn');
+        const buttons = document.querySelectorAll('#keyboard button');
         buttons.forEach(button => {
             button.classList.remove('correct', 'wrong');
             button.disabled = false;

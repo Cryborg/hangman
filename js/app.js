@@ -86,7 +86,18 @@ class PenduApp {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const view = link.getAttribute('data-view');
-                this.showView(view);
+                
+                // Traitement spécial pour le lien "Jouer"
+                if (view === 'game') {
+                    // Ouvrir la modal de sélection du mode au lieu de naviguer
+                    if (this.modalManager) {
+                        this.modalManager.showGameModeModal();
+                    }
+                } else {
+                    // Navigation normale pour les autres liens
+                    this.showView(view);
+                }
+                
                 this.closeMenu(); // Fermer le menu mobile après clic
             });
         });
@@ -208,6 +219,14 @@ class PenduApp {
                 if (this.gameManager) {
                     // Le GameManager s'initialise automatiquement
                     console.log('✅ GameManager prêt');
+                    
+                    // Ne rien faire automatiquement - laisser l'utilisateur sur la vue jeu
+                    // La modal sera ouverte uniquement par les boutons explicites
+                }
+                // Créer le clavier virtuel si on est sur mobile
+                if (this.uiModule) {
+                    this.uiModule.createVirtualKeyboard();
+                    console.log('🎹 Clavier virtuel initialisé');
                 }
                 break;
             case 'stats':

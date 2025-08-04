@@ -184,6 +184,11 @@ class PenduGameEngine {
         
         // Réinitialiser l'affichage du pendu
         this.resetHangman();
+        
+        // Réinitialiser le clavier virtuel
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().resetKeyboard();
+        }
     }
     
     resetHangman() {
@@ -333,6 +338,9 @@ class PenduGameEngine {
         }
         
         // Mettre à jour le clavier virtuel
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().createVirtualKeyboard();
+        }
         if (this.app.getUIModule()) {
             this.app.getUIModule().updateKeyboard(this.guessedLetters, this.wrongLetters);
         }
