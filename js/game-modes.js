@@ -77,6 +77,7 @@ class StandardMode extends BaseGameMode {
         super(app, gameEngine);
         this.name = 'standard';
         this.saveKey = 'pendu_current_game';
+        this.resumeOffered = false; // Flag pour éviter de re-proposer après refresh
     }
     
     initialize() {
@@ -85,9 +86,11 @@ class StandardMode extends BaseGameMode {
         this.checkForSavedGame();
     }
     
-    startGame() {
-        // Supprimer toute sauvegarde existante et démarrer une partie normale
-        localStorage.removeItem(this.saveKey);
+    startGame(clearSave = true) {
+        // Supprimer la sauvegarde seulement si demandé explicitement
+        if (clearSave) {
+            localStorage.removeItem(this.saveKey);
+        }
         if (this.gameEngine) {
             this.gameEngine.startNewGame();
         }
@@ -107,7 +110,7 @@ class StandardMode extends BaseGameMode {
         if (this.app.getUIModule()) {
             this.app.getUIModule().celebrateWin();
             
-            let message = `🎉 Bravo ! "${word}" trouvé !`;
+            let message = `Bravo ! "${word}" trouvé !`;
             if (errorsCount === 0) {
                 message += ' (Parfait !)';
             }
@@ -121,7 +124,7 @@ class StandardMode extends BaseGameMode {
                 newAchievements.forEach((achievement, index) => {
                     setTimeout(() => {
                         this.app.getUIModule().showToast(
-                            `🏆 ${achievement.title} débloqué !`,
+                            `${achievement.title} débloqué !`,
                             'achievement',
                             3000
                         );
@@ -141,7 +144,7 @@ class StandardMode extends BaseGameMode {
         
         // Message de défaite
         if (this.app.getUIModule()) {
-            const message = `😞 Perdu ! Le mot était "${word}"`;
+            const message = `Perdu ! Le mot était "${word}"`;
             this.app.getUIModule().showToast(message, 'lose', 5000);
         }
         
@@ -216,6 +219,16 @@ class StandardMode extends BaseGameMode {
                 return;
             }
             
+            // Vérifier si on a déjà proposé la reprise dans cette session
+            const sessionKey = `${this.saveKey}_offered_${gameState.timestamp}`;
+            if (sessionStorage.getItem(sessionKey)) {
+                console.log('Reprise déjà proposée dans cette session');
+                return;
+            }
+            
+            // Marquer qu'on a proposé la reprise pour cette sauvegarde spécifique
+            sessionStorage.setItem(sessionKey, 'true');
+            
             // Proposer de reprendre la partie
             this.showResumeGameOption(gameState);
             
@@ -229,7 +242,7 @@ class StandardMode extends BaseGameMode {
         if (!this.app.getUIModule()) return;
         
         const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-        const message = `Une partie est en cours : "${wordProgress}" (${gameState.currentCategory}). Reprendre ?`;
+        const message = `Une partie est en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.currentCategory}</em><br><br>Reprendre ?`;
         
         // Créer un toast personnalisé avec boutons
         this.showResumeToast(message, gameState);
@@ -254,7 +267,7 @@ class StandardMode extends BaseGameMode {
         `;
         
         toast.innerHTML = `
-            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem;">
+            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem; line-height: 1.8; text-align: center;">
                 ${message}
             </div>
             <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
@@ -277,6 +290,7 @@ class StandardMode extends BaseGameMode {
         
         document.getElementById('newGameInsteadBtn').addEventListener('click', () => {
             localStorage.removeItem(this.saveKey);
+            this.startGame(false); // Démarrer sans effacer la sauvegarde (déjà fait)
             document.body.removeChild(toast);
         });
     }
@@ -295,17 +309,14 @@ class StandardMode extends BaseGameMode {
         // Mettre à jour l'affichage
         this.gameEngine.updateDisplay();
         
+        // Redessiner le hangman avec les erreurs déjà commises
+        this.gameEngine.refreshHangman();
+        
         console.log('🔄 Partie reprise', gameState);
         
-        // Toast de confirmation avec détails de la partie
+        // Toast de confirmation simple
         if (this.app.getUIModule()) {
-            const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-            const errorsCount = 6 - gameState.remainingTries;
-            let message = `🔄 Partie reprise ! Mot : "${wordProgress}"`;
-            if (errorsCount > 0) {
-                message += ` (${errorsCount} erreur${errorsCount > 1 ? 's' : ''})`;
-            }
-            this.app.getUIModule().showToast(message, 'success', 4000);
+            this.app.getUIModule().showToast('Partie reprise !', 'success', 3000);
         }
     }
     
@@ -371,7 +382,7 @@ class TimeAttackGameMode extends BaseGameMode {
         
         // Message rapide
         if (this.app.getUIModule()) {
-            this.app.getUIModule().showToast(`✅ "${word}"`, 'win', 800);
+            this.app.getUIModule().showToast(`"${word}"`, 'win', 800);
         }
         
         // Passer au mot suivant rapidement
@@ -389,7 +400,7 @@ class TimeAttackGameMode extends BaseGameMode {
         
         // Message rapide d'échec
         if (this.app.getUIModule()) {
-            this.app.getUIModule().showToast(`❌ "${word}"`, 'lose', 1000);
+            this.app.getUIModule().showToast(`"${word}"`, 'lose', 1000);
         }
         
         // Passer au mot suivant
@@ -549,13 +560,15 @@ class CategoryMode extends BaseGameMode {
         this.checkForSavedGame();
     }
     
-    startGame(categoryName = null) {
+    startGame(categoryName = null, clearSave = true) {
         if (categoryName) {
             this.selectedCategory = categoryName;
         }
         
-        // Supprimer toute sauvegarde existante
-        localStorage.removeItem(this.saveKey);
+        // Supprimer la sauvegarde seulement si demandé explicitement
+        if (clearSave) {
+            localStorage.removeItem(this.saveKey);
+        }
         
         // Vérifier que le gameEngine est prêt
         if (!this.gameEngine || !this.gameEngine.categories || this.gameEngine.categories.length === 0) {
@@ -641,7 +654,7 @@ class CategoryMode extends BaseGameMode {
         // Message de progression
         if (this.app.getUIModule()) {
             const progress = `${this.wordsFound}/${this.totalWords}`;
-            let message = `✅ "${word}" trouvé ! (${progress})`;
+            let message = `"${word}" trouvé ! (${progress})`;
             if (errorsCount === 0) {
                 message += ' 🌟';
             }
@@ -665,7 +678,7 @@ class CategoryMode extends BaseGameMode {
         // Message d'échec
         if (this.app.getUIModule()) {
             const progress = `${this.wordsFound}/${this.totalWords}`;
-            const message = `❌ "${word}" raté... (${progress})`;
+            const message = `"${word}" raté... (${progress})`;
             this.app.getUIModule().showToast(message, 'lose', 2000);
         }
         
@@ -715,9 +728,19 @@ class CategoryMode extends BaseGameMode {
     }
     
     updateButtonsVisibility() {
+        // En mode catégorie, masquer les boutons inappropriés
+        const newGameBtn = document.getElementById('newGameBtn');
         const restartBtn = document.getElementById('restartGameBtn');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
+        
+        if (newGameBtn) {
+            newGameBtn.style.display = 'none'; // "Suivant" n'a pas de sens
+        }
         if (restartBtn) {
-            restartBtn.style.display = 'inline-block';
+            restartBtn.style.display = 'none'; // "Rejouer" n'a pas de sens
+        }
+        if (backToMenuBtn) {
+            backToMenuBtn.style.display = 'none'; // "Menu" est redondant
         }
     }
     
@@ -797,6 +820,16 @@ class CategoryMode extends BaseGameMode {
                 return;
             }
             
+            // Vérifier si on a déjà proposé la reprise dans cette session
+            const sessionKey = `${this.saveKey}_offered_${gameState.timestamp}`;
+            if (sessionStorage.getItem(sessionKey)) {
+                console.log('Reprise catégorie déjà proposée dans cette session');
+                return;
+            }
+            
+            // Marquer qu'on a proposé la reprise pour cette sauvegarde spécifique
+            sessionStorage.setItem(sessionKey, 'true');
+            
             // Proposer de reprendre la partie
             this.showResumeGameOption(gameState);
             
@@ -810,8 +843,8 @@ class CategoryMode extends BaseGameMode {
         if (!this.app.getUIModule()) return;
         
         const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-        const progress = `${gameState.wordsFound}/${gameState.totalWords}`;
-        const message = `Catégorie "${gameState.selectedCategory}" en cours : mot "${wordProgress}" (${progress}). Reprendre ?`;
+        const progress = `${gameState.wordsFound}/${gameState.totalWords} mots`;
+        const message = `Catégorie en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.selectedCategory} (${progress})</em><br><br>Reprendre ?`;
         
         // Créer un toast personnalisé avec boutons
         this.showResumeToast(message, gameState);
@@ -836,7 +869,7 @@ class CategoryMode extends BaseGameMode {
         `;
         
         toast.innerHTML = `
-            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1rem; line-height: 1.4;">
+            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem; line-height: 1.8; text-align: center;">
                 ${message}
             </div>
             <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
@@ -859,6 +892,7 @@ class CategoryMode extends BaseGameMode {
         
         document.getElementById('newCategoryGameInsteadBtn').addEventListener('click', () => {
             localStorage.removeItem(this.saveKey);
+            this.startGame(this.selectedCategory, false); // Démarrer sans effacer la sauvegarde (déjà fait)
             document.body.removeChild(toast);
         });
     }
@@ -886,21 +920,14 @@ class CategoryMode extends BaseGameMode {
         this.gameEngine.updateDisplay();
         this.updateDisplay();
         
+        // Redessiner le hangman avec les erreurs déjà commises
+        this.gameEngine.refreshHangman();
+        
         console.log('🔄 Partie catégorie reprise', gameState);
         
-        // Toast de confirmation avec détails de la partie
+        // Toast de confirmation simple
         if (this.app.getUIModule()) {
-            const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
-            const progress = `${this.wordsFound}/${this.totalWords}`;
-            const errorsCount = 6 - gameState.remainingTries;
-            
-            let message = `🔄 Catégorie "${this.selectedCategory}" reprise ! (${progress})`;
-            message += `\nMot actuel : "${wordProgress}"`;
-            if (errorsCount > 0) {
-                message += ` (${errorsCount} erreur${errorsCount > 1 ? 's' : ''})`;
-            }
-            
-            this.app.getUIModule().showToast(message, 'success', 5000);
+            this.app.getUIModule().showToast('Partie reprise !', 'success', 3000);
         }
     }
     

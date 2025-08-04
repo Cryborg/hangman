@@ -337,6 +337,15 @@ class PenduGameEngine {
         // Mettre à jour les autres affichages
         if (this.categoryDisplay) {
             this.categoryDisplay.textContent = this.currentCategory;
+            
+            // Mettre à jour l'icône de la catégorie
+            const categoryIcon = document.querySelector('.category-icon');
+            if (categoryIcon && this.categories.length > 0) {
+                const category = this.categories.find(cat => cat.nom === this.currentCategory);
+                if (category && category.icone) {
+                    categoryIcon.textContent = category.icone;
+                }
+            }
         }
         
         if (this.triesLeftDisplay) {
@@ -362,6 +371,22 @@ class PenduGameEngine {
         
         if (hangmanParts[errorIndex + 3]) { // +3 pour ignorer la structure de base
             hangmanParts[errorIndex + 3].classList.add('visible');
+        }
+    }
+    
+    refreshHangman() {
+        // Redessiner complètement le hangman selon l'état actuel
+        // D'abord tout réinitialiser
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().resetHangman();
+        }
+        
+        // Puis afficher le nombre d'erreurs correspondant
+        const errorsCount = 6 - this.remainingTries;
+        if (this.app.getUIModule()) {
+            for (let i = 0; i < errorsCount; i++) {
+                this.app.getUIModule().showHangmanPart(i);
+            }
         }
     }
     

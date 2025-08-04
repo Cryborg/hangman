@@ -146,6 +146,12 @@ class PenduUI {
         baseParts.forEach(part => {
             part.classList.add('visible');
         });
+        
+        // Réinitialiser les points visuels
+        const dots = document.querySelectorAll('#triesDotsDisplay .dot');
+        dots.forEach(dot => {
+            dot.classList.add('filled');
+        });
     }
     
     // ===== GESTION DU CLAVIER VIRTUEL ===== //
@@ -253,15 +259,6 @@ class PenduUI {
         const words = word.split(' ');
         
         words.forEach((currentWord, wordIndex) => {
-            if (wordIndex > 0 && showSpaces) {
-                // Ajouter un espace entre les mots
-                const space = document.createElement('span');
-                space.textContent = ' ';
-                space.style.border = 'none';
-                space.style.minWidth = '1rem';
-                wordDisplay.appendChild(space);
-            }
-            
             const wordGroup = document.createElement('div');
             wordGroup.className = 'word-group';
             
@@ -279,6 +276,14 @@ class PenduUI {
             });
             
             wordDisplay.appendChild(wordGroup);
+            
+            // Ajouter un indicateur d'espace après chaque mot sauf le dernier
+            if (wordIndex < words.length - 1 && showSpaces) {
+                const spaceIndicator = document.createElement('div');
+                spaceIndicator.className = 'space-indicator';
+                spaceIndicator.innerHTML = '&nbsp;'; // Espace visible
+                wordDisplay.appendChild(spaceIndicator);
+            }
         });
     }
     
@@ -311,19 +316,30 @@ class PenduUI {
     
     updateGameStats(triesLeft, wrongLetters, currentStreak = null) {
         const triesLeftDisplay = document.getElementById('triesLeft');
+        const triesDotsDisplay = document.getElementById('triesDotsDisplay');
         const wrongLettersDisplay = document.getElementById('wrongLetters');
         const streakDisplay = document.getElementById('streakDisplay');
         
-        if (triesLeftDisplay) {
-            triesLeftDisplay.textContent = triesLeft;
+        // Mise à jour des points visuels pour les essais
+        if (triesDotsDisplay) {
+            const dots = triesDotsDisplay.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < triesLeft) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
             
             // Animation si peu d'essais restants
-            if (triesLeft <= 2) {
-                triesLeftDisplay.style.color = 'var(--error-color)';
-                this.pulseElement(triesLeftDisplay.parentNode, 1000);
-            } else {
-                triesLeftDisplay.style.color = '';
+            if (triesLeft <= 2 && triesLeft > 0) {
+                this.pulseElement(triesDotsDisplay.parentNode, 1000);
             }
+        }
+        
+        // Garder la valeur textuelle cachée pour compatibilité
+        if (triesLeftDisplay) {
+            triesLeftDisplay.textContent = triesLeft;
         }
         
         if (wrongLettersDisplay) {

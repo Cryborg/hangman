@@ -1,0 +1,294 @@
+/* ===== NOUVEAU HEADER DE JEU MINIMALISTE ===== */
+
+/* Container principal du header unifié */
+.game-header-unified {
+    background: var(--bg-secondary);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-primary);
+    margin-bottom: var(--spacing-xl);
+    width: 100%;
+}
+
+/* Layout desktop : header à côté du hangman */
+@media (min-width: 769px) {
+    .top-section {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: var(--spacing-xl);
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .game-header-unified {
+        flex: 1;
+        max-width: none;
+        margin-bottom: 0;
+        height: fit-content;
+    }
+    
+    .hangman-container {
+        flex-shrink: 0;
+        width: 280px;
+        order: 2; /* Hangman à droite */
+    }
+    
+    /* Ajuster les tailles de police pour desktop */
+    .category-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .category-icon {
+        font-size: 2.2rem;
+    }
+}
+
+/* Titre de la catégorie */
+.category-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.category-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px var(--primary-shadow));
+}
+
+.category-title h2 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px var(--primary-shadow);
+    margin: 0;
+}
+
+/* Barre de statistiques */
+.game-stats-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: nowrap; /* Empêcher le passage à la ligne */
+    overflow-x: auto; /* Si vraiment trop long, permettre le scroll horizontal */
+}
+
+/* Groupes de stats */
+.stat-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-round);
+    transition: all var(--transition-normal);
+    cursor: help;
+    position: relative;
+    flex-shrink: 0; /* Empêcher la compression */
+    white-space: nowrap; /* Empêcher le retour à la ligne du texte */
+}
+
+.stat-group:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 1.1rem;
+}
+
+.stat-group span:not(.stat-icon) {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 150px; /* Limiter la largeur pour les lettres */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Points visuels pour les essais */
+.tries-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--error-color);
+    opacity: 0.3;
+    transition: all var(--transition-normal);
+}
+
+.dot.filled {
+    background: var(--success-color);
+    opacity: 1;
+    box-shadow: 0 0 5px var(--success-color);
+}
+
+/* Tooltip au hover */
+.stat-group[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-sm);
+    border: 1px solid var(--border-primary);
+    z-index: 1000;
+}
+
+.stat-group[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--bg-tertiary) transparent transparent transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-normal);
+    margin-bottom: 3px;
+}
+
+.stat-group[data-tooltip]:hover::before,
+.stat-group[data-tooltip]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* Time Attack bar (mode chronométré) */
+.time-attack-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-light);
+}
+
+.time-attack-bar .stat-group {
+    background: rgba(243, 156, 18, 0.1);
+    border: 1px solid var(--primary-color);
+}
+
+/* Animation pour les changements de valeurs */
+@keyframes pulse-value {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.stat-group span:not(.stat-icon).updated {
+    animation: pulse-value 0.3s ease;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    .game-header-unified {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* S'assurer que le layout mobile reste en colonne */
+    .top-section {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+    
+    .category-title h2 {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+    
+    .category-title {
+        margin-bottom: var(--spacing-sm);
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    .category-icon {
+        font-size: 1.8rem;
+    }
+    
+    .game-stats-bar {
+        gap: 8px;
+        padding: 0 var(--spacing-xs);
+    }
+    
+    .stat-group {
+        padding: 4px 8px;
+        gap: 3px;
+    }
+    
+    .stat-icon {
+        font-size: 1rem;
+    }
+    
+    .stat-group span:not(.stat-icon) {
+        font-size: 0.85rem;
+        max-width: 100px;
+    }
+    
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+    
+    /* Tooltips désactivés sur mobile (touch) */
+    .stat-group[data-tooltip]::before,
+    .stat-group[data-tooltip]::after {
+        display: none;
+    }
+}
+
+/* Animation spéciale pour la série en feu */
+.stat-group:has(#streakDisplay) {
+    position: relative;
+}
+
+.stat-group:has(#streakDisplay):has(span:not(:empty):not([textContent="0"])) .stat-icon {
+    animation: flame-flicker 1.5s ease-in-out infinite;
+}
+
+@keyframes flame-flicker {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    75% { transform: scale(1.1) rotate(5deg); }
+}
+
+/* Masquer l'ancien design (mais pas le clavier) */
+.game-header:not(#keyboard),
+.game-stats:not(#keyboard),
+.category-card,
+.progress-card,
+.streak-card,
+.stat-item {
+    display: none !important;
+}

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="styles/views.css?v=2.0.0">
     <link rel="stylesheet" href="styles/responsive.css?v=2.0.0">
     <link rel="stylesheet" href="styles/modal.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/game-header.css?v=2.1.0">
     <script src="../../arcade-theme-integration.js"></script>
 </head>
 <body>
@@ -31,7 +32,7 @@
         <nav class="nav-menu" id="navMenu">
             <ul>
                 <li><a href="#" data-view="menu" class="nav-link active">🏠 Menu</a></li>
-                <li><a href="#" data-view="game" class="nav-link">🎮 Jouer</a></li>
+                <li><a href="#" id="restartGameLink" class="nav-link">🔄 Recommencer</a></li>
                 <li><a href="#" data-view="stats" class="nav-link">📊 Statistiques</a></li>
             </ul>
         </nav>
@@ -151,37 +152,61 @@
         <div class="container">
             <div class="game-area">
                 <div class="top-section">
-                    <!-- Ligne du haut : Catégorie, Progression et Série -->
-                    <div class="game-header">
-                        <div class="category-card">
-                            <p id="categoryName"></p>
+                    <!-- Nouveau design minimaliste unifié -->
+                    <div class="game-header-unified">
+                        <div class="category-title">
+                            <span class="category-icon">🎬</span>
+                            <h2 id="categoryName">Catégorie</h2>
                         </div>
-                        <div class="progress-card" id="progressCard">
-                            <h3>Progression</h3>
-                            <p id="wordsProgress">0/0</p>
+                        
+                        <div class="game-stats-bar">
+                            <!-- Progression -->
+                            <div class="stat-group" data-tooltip="Mots trouvés">
+                                <span class="stat-icon">📊</span>
+                                <span id="wordsProgress">0/0</span>
+                            </div>
+                            
+                            <!-- Série -->
+                            <div class="stat-group" data-tooltip="Série actuelle">
+                                <span class="stat-icon">🔥</span>
+                                <span id="streakDisplay">0</span>
+                            </div>
+                            
+                            <!-- Essais restants (visuels) -->
+                            <div class="stat-group" data-tooltip="Essais restants">
+                                <span class="stat-icon">❤️</span>
+                                <span class="tries-dots" id="triesDotsDisplay">
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                </span>
+                                <span class="tries-text hidden" id="triesLeft">6</span>
+                            </div>
+                            
+                            <!-- Lettres essayées -->
+                            <div class="stat-group" data-tooltip="Lettres essayées">
+                                <span class="stat-icon">🔤</span>
+                                <span id="wrongLetters">-</span>
+                            </div>
                         </div>
-                        <div class="streak-card" id="streakCard">
-                            <h3>🔥 Série</h3>
-                            <p id="streakDisplay">0</p>
-                        </div>
-                        <!-- Card Time Attack (cachée par défaut) -->
-                        <div class="time-attack-card hidden" id="timeAttackCard">
-                            <h3>⏱️ Time Attack</h3>
-                            <p class="timer" id="timerDisplay">00:00</p>
-                            <p class="score">Score: <span id="scoreDisplay">0</span></p>
-                            <p class="highscore">Record: <span id="currentHighscore">0</span></p>
-                        </div>
-                    </div>
-                    
-                    <!-- Ligne du bas : Statistiques de la partie -->
-                    <div class="game-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Essais restants</span>
-                            <span class="stat-value" id="triesLeft">6</span>
-                        </div>
-                        <div class="stat-item wrong-letters-stat">
-                            <span class="stat-label">Lettres essayées</span>
-                            <div class="stat-value" id="wrongLetters">-</div>
+                        
+                        <!-- Time Attack Stats (cachées par défaut) -->
+                        <div class="time-attack-bar hidden" id="timeAttackCard">
+                            <div class="stat-group" data-tooltip="Temps restant">
+                                <span class="stat-icon">⏱️</span>
+                                <span id="timerDisplay">00:00</span>
+                            </div>
+                            <div class="stat-group" data-tooltip="Score actuel">
+                                <span class="stat-icon">⭐</span>
+                                <span id="scoreDisplay">0</span>
+                            </div>
+                            <div class="stat-group" data-tooltip="Meilleur score">
+                                <span class="stat-icon">🏆</span>
+                                <span id="currentHighscore">0</span>
+                            </div>
                         </div>
                     </div>
                     

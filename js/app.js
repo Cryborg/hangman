@@ -87,26 +87,24 @@ class PenduApp {
                 e.preventDefault();
                 const view = link.getAttribute('data-view');
                 
-                // Traitement spécial pour le lien "Jouer"
-                if (view === 'game') {
-                    // Si on est déjà en jeu, ne rien faire
-                    if (this.currentView === 'game') {
-                        console.log('Déjà en jeu, clic ignoré');
-                        return;
-                    }
-                    
-                    // Sinon, ouvrir la modal de sélection du mode
-                    if (this.modalManager) {
-                        this.modalManager.showGameModeModal();
-                    }
-                } else {
-                    // Navigation normale pour les autres liens
+                // Navigation normale pour les liens avec data-view
+                if (view) {
                     this.showView(view);
                 }
                 
                 this.closeMenu(); // Fermer le menu mobile après clic
             });
         });
+        
+        // Bouton "Recommencer" spécial
+        const restartGameLink = document.getElementById('restartGameLink');
+        if (restartGameLink) {
+            restartGameLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showRestartConfirmation();
+                this.closeMenu();
+            });
+        }
         
         // Boutons du menu principal
         const startGameBtn = document.getElementById('startGameBtn');
@@ -356,6 +354,66 @@ class PenduApp {
         this.showView('game');
         
         console.log(`🔄 Redémarrage en mode ${settings.mode}`);
+    }
+    
+    showRestartConfirmation() {
+        // Vérifier s'il y a une partie en cours
+        if (!this.gameManager || !this.gameManager.getCurrentGameMode()) {
+            // Pas de partie en cours, ouvrir directement la modal de sélection
+            if (this.modalManager) {
+                this.modalManager.showGameModeModal();
+            }
+            return;
+        }
+        
+        // Il y a une partie en cours, demander confirmation
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-restart toast-show';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background: var(--bg-secondary);
+            border: 2px solid var(--warning-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            min-width: 320px;
+            text-align: center;
+        `;
+        
+        toast.innerHTML = `
+            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem; line-height: 1.8; text-align: center;">
+                ⚠️ Une partie est en cours<br><br>
+                Voulez-vous vraiment recommencer ?<br>
+                <em style="color: var(--text-secondary); font-size: 0.9rem;">La progression actuelle sera perdue</em>
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
+                <button id="confirmRestartBtn" class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                    🔄 Recommencer
+                </button>
+                <button id="cancelRestartBtn" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                    ❌ Annuler
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Gestionnaires d'événements
+        document.getElementById('confirmRestartBtn').addEventListener('click', () => {
+            document.body.removeChild(toast);
+            // Ouvrir la modal de sélection de mode
+            if (this.modalManager) {
+                this.modalManager.showGameModeModal();
+            }
+        });
+        
+        document.getElementById('cancelRestartBtn').addEventListener('click', () => {
+            document.body.removeChild(toast);
+        });
     }
 }
 

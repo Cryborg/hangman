@@ -322,7 +322,7 @@ class PenduStats {
     showAchievementToast(achievement) {
         if (!this.app.getUIModule()) return;
         
-        const message = `🏆 ${achievement.title} débloqué !`;
+        const message = `${achievement.title} débloqué !`;
         this.app.getUIModule().showToast(message, 'achievement', 4000);
     }
     

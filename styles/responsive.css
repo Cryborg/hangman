@@ -176,7 +176,7 @@
     }
     
     .word-display span {
-        margin: 0 0.02rem;
+        margin: 0 0.15rem;
         padding: 0 0.15rem;
         min-width: 1.1rem;
         min-height: 1.2em;
@@ -184,6 +184,15 @@
         border-bottom-width: 2px;
         font-size: inherit;
         text-align: center;
+    }
+    
+    /* Indicateur d'espace plus petit sur mobile */
+    .space-indicator {
+        width: 1rem;
+    }
+    
+    .space-indicator::after {
+        font-size: 1rem;
     }
     
     .keyboard {

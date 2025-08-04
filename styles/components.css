@@ -300,13 +300,20 @@
 /* ===== CLAVIER MOBILE ===== */
 
 .keyboard {
-    display: none;
+    display: none; /* Sera affiché par le JS sur mobile */
     grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-xl);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* Afficher le clavier sur mobile uniquement */
+@media (max-width: 768px) {
+    .keyboard:not(:empty) {
+        display: grid;
+    }
 }
 
 .keyboard button {
@@ -397,6 +404,24 @@
 .word-display span:empty::before {
     content: '\00a0'; /* Espace insécable pour maintenir la hauteur et largeur */
     visibility: hidden;
+}
+
+/* Indicateur d'espace entre les mots */
+.space-indicator {
+    display: inline-flex;
+    width: 1.5rem;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+}
+
+.space-indicator::after {
+    content: '·';
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    opacity: 0.5;
+    position: absolute;
+    bottom: -0.3em;
 }
 
 /* ===== TOASTS ===== */
