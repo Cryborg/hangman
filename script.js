@@ -113,7 +113,6 @@ function initGame() {
     remainingTries = 6;
     gameActive = true;
     
-    hideGameMessage();
     resetHangman();
     createKeyboard();
     updateDisplay();
@@ -312,9 +311,6 @@ function showGameMessage(message, type) {
     showToast(message, type);
 }
 
-function hideGameMessage() {
-    // Plus besoin avec le système de toast
-}
 
 function showToast(message, type = 'info', duration = 4000) {
     // Supprimer les anciens toasts
