@@ -408,11 +408,19 @@ class CategoryMode extends BaseGameMode {
     startGame(categoryName = null) {
         if (categoryName) {
             this.selectedCategory = categoryName;
-            this.loadCategoryWords();
         }
         
+        // Vérifier que le gameEngine est prêt
+        if (!this.gameEngine || !this.gameEngine.categories || this.gameEngine.categories.length === 0) {
+            console.error('❌ GameEngine non prêt pour le mode catégorie');
+            setTimeout(() => this.startGame(), 500); // Réessayer dans 500ms
+            return;
+        }
+        
+        this.loadCategoryWords();
+        
         if (this.categoryWords.length === 0) {
-            console.error('Aucun mot dans la catégorie sélectionnée');
+            console.error('❌ Aucun mot dans la catégorie sélectionnée');
             return;
         }
         
@@ -432,6 +440,13 @@ class CategoryMode extends BaseGameMode {
     
     loadCategoryWords() {
         // Charger tous les mots de la catégorie sélectionnée
+        console.log('🔍 loadCategoryWords() appelé');
+        console.log('📊 État:', {
+            gameEngine: !!this.gameEngine,
+            categories: this.gameEngine ? this.gameEngine.categories?.length : 'N/A',
+            selectedCategory: this.selectedCategory
+        });
+        
         if (this.gameEngine && this.gameEngine.categories) {
             console.log(`🔍 Recherche de la catégorie: "${this.selectedCategory}"`);
             console.log('📋 Catégories disponibles:', this.gameEngine.categories.map(cat => cat.nom));
@@ -441,9 +456,16 @@ class CategoryMode extends BaseGameMode {
                 this.categoryWords = [...category.mots];
                 this.totalWords = this.categoryWords.length;
                 console.log(`📚 Catégorie "${this.selectedCategory}" : ${this.totalWords} mots`);
+                console.log('🔤 Premiers mots:', this.categoryWords.slice(0, 5));
             } else {
                 console.error(`❌ Catégorie "${this.selectedCategory}" non trouvée`);
+                console.log('❗ Comparaison exacte avec les noms disponibles:');
+                this.gameEngine.categories.forEach(cat => {
+                    console.log(`"${cat.nom}" === "${this.selectedCategory}" ?`, cat.nom === this.selectedCategory);
+                });
             }
+        } else {
+            console.error('❌ GameEngine ou categories non disponibles');
         }
     }
     
