@@ -6,80 +6,190 @@
     <title>Jeu du Pendu</title>
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <script src="version.js"></script>
-    <link rel="stylesheet" href="styles.css?v=1.0.2">
+    <!-- CSS modulaire -->
+    <link rel="stylesheet" href="styles/base.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/layout.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/components.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/views.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/responsive.css?v=2.0.0">
     <script src="../../arcade-theme-integration.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Jeu du Pendu</h1>
+    <!-- Header avec menu hamburger -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1>🎲 Jeu du Pendu</h1>
+            <button class="hamburger-menu" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
         
-        <div class="game-area">
-            <div class="top-section">
-                <!-- Ligne du haut : Catégorie et Progression -->
-                <div class="game-header">
-                    <div class="category-card">
-                        <h3>Catégorie</h3>
-                        <p id="categoryName"></p>
+        <!-- Menu de navigation -->
+        <nav class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="#" data-view="menu" class="nav-link active">🏠 Menu</a></li>
+                <li><a href="#" data-view="game" class="nav-link">🎮 Jouer</a></li>
+                <li><a href="#" data-view="stats" class="nav-link">📊 Statistiques</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Vue Menu Principal -->
+    <div class="view active" id="menuView">
+        <div class="container">
+            <div class="menu-content">
+                <div class="welcome-section">
+                    <h2>Bienvenue dans le Pendu ! 🎯</h2>
+                    <p>Testez vos connaissances avec plus de 650 mots répartis en 17 catégories</p>
+                </div>
+                
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalFoundWords">0</span>
+                            <span class="stat-label">Mots trouvés</span>
+                        </div>
                     </div>
-                    <div class="progress-card">
-                        <h3>Progression</h3>
-                        <p id="wordsProgress">0/0</p>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="currentStreak">0</span>
+                            <span class="stat-label">Série actuelle</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalAchievements">0</span>
+                            <span class="stat-label">Succès débloqués</span>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Ligne du bas : Statistiques de la partie -->
-                <div class="game-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Essais restants</span>
-                        <span class="stat-value" id="triesLeft">6</span>
+                <div class="menu-actions">
+                    <button class="btn btn-primary" id="startGameBtn">🎮 Commencer une partie</button>
+                    <button class="btn btn-secondary" id="viewStatsBtn">📊 Voir mes statistiques</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vue Jeu -->
+    <div class="view" id="gameView">
+        <div class="container">
+            <div class="game-area">
+                <div class="top-section">
+                    <!-- Ligne du haut : Catégorie, Progression et Série -->
+                    <div class="game-header">
+                        <div class="category-card">
+                            <h3>Catégorie</h3>
+                            <p id="categoryName"></p>
+                        </div>
+                        <div class="progress-card">
+                            <h3>Progression</h3>
+                            <p id="wordsProgress">0/0</p>
+                        </div>
+                        <div class="streak-card">
+                            <h3>🔥 Série</h3>
+                            <p id="streakDisplay">0</p>
+                        </div>
                     </div>
-                    <div class="stat-item wrong-letters-stat">
-                        <span class="stat-label">Lettres essayées</span>
-                        <div class="stat-value" id="wrongLetters">-</div>
+                    
+                    <!-- Ligne du bas : Statistiques de la partie -->
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Essais restants</span>
+                            <span class="stat-value" id="triesLeft">6</span>
+                        </div>
+                        <div class="stat-item wrong-letters-stat">
+                            <span class="stat-label">Lettres essayées</span>
+                            <div class="stat-value" id="wrongLetters">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hangman-container">
+                        <svg id="hangman" width="250" height="300" viewBox="0 0 250 300">
+                            <!-- Base -->
+                            <line class="part" x1="10" y1="290" x2="150" y2="290" stroke="#666" stroke-width="4"/>
+                            <!-- Poteau vertical -->
+                            <line class="part" x1="50" y1="290" x2="50" y2="10" stroke="#666" stroke-width="4"/>
+                            <!-- Poteau horizontal -->
+                            <line class="part" x1="50" y1="10" x2="150" y2="10" stroke="#666" stroke-width="4"/>
+                            <!-- Corde -->
+                            <line class="part" x1="150" y1="10" x2="150" y2="60" stroke="#666" stroke-width="4"/>
+                            <!-- Tête -->
+                            <circle class="part body-part" cx="150" cy="80" r="20" stroke="#ff6b6b" stroke-width="3" fill="none"/>
+                            <!-- Corps -->
+                            <line class="part body-part" x1="150" y1="100" x2="150" y2="180" stroke="#ff6b6b" stroke-width="3"/>
+                            <!-- Bras gauche -->
+                            <line class="part body-part" x1="150" y1="130" x2="120" y2="150" stroke="#ff6b6b" stroke-width="3"/>
+                            <!-- Bras droit -->
+                            <line class="part body-part" x1="150" y1="130" x2="180" y2="150" stroke="#ff6b6b" stroke-width="3"/>
+                            <!-- Jambe gauche -->
+                            <line class="part body-part" x1="150" y1="180" x2="120" y2="220" stroke="#ff6b6b" stroke-width="3"/>
+                            <!-- Jambe droite -->
+                            <line class="part body-part" x1="150" y1="180" x2="180" y2="220" stroke="#ff6b6b" stroke-width="3"/>
+                        </svg>
                     </div>
                 </div>
                 
-                <div class="hangman-container">
-                    <svg id="hangman" width="250" height="300" viewBox="0 0 250 300">
-                        <!-- Base -->
-                        <line class="part" x1="10" y1="290" x2="150" y2="290" stroke="#666" stroke-width="4"/>
-                        <!-- Poteau vertical -->
-                        <line class="part" x1="50" y1="290" x2="50" y2="10" stroke="#666" stroke-width="4"/>
-                        <!-- Poteau horizontal -->
-                        <line class="part" x1="50" y1="10" x2="150" y2="10" stroke="#666" stroke-width="4"/>
-                        <!-- Corde -->
-                        <line class="part" x1="150" y1="10" x2="150" y2="60" stroke="#666" stroke-width="4"/>
-                        <!-- Tête -->
-                        <circle class="part body-part" cx="150" cy="80" r="20" stroke="#ff6b6b" stroke-width="3" fill="none"/>
-                        <!-- Corps -->
-                        <line class="part body-part" x1="150" y1="100" x2="150" y2="180" stroke="#ff6b6b" stroke-width="3"/>
-                        <!-- Bras gauche -->
-                        <line class="part body-part" x1="150" y1="130" x2="120" y2="150" stroke="#ff6b6b" stroke-width="3"/>
-                        <!-- Bras droit -->
-                        <line class="part body-part" x1="150" y1="130" x2="180" y2="150" stroke="#ff6b6b" stroke-width="3"/>
-                        <!-- Jambe gauche -->
-                        <line class="part body-part" x1="150" y1="180" x2="120" y2="220" stroke="#ff6b6b" stroke-width="3"/>
-                        <!-- Jambe droite -->
-                        <line class="part body-part" x1="150" y1="180" x2="180" y2="220" stroke="#ff6b6b" stroke-width="3"/>
-                    </svg>
+                <div class="game-info">
+                    <div class="word-display" id="wordDisplay"></div>
                 </div>
             </div>
             
-            <div class="game-info">
-                <div class="word-display" id="wordDisplay"></div>
+            <div class="keyboard" id="keyboard"></div>
+            
+            <div class="game-controls">
+                <button id="newGameBtn" class="btn">Suivant</button>
+                <button id="backToMenuBtn" class="btn btn-secondary">🏠 Retour au menu</button>
             </div>
+            
+            <div id="gameMessage" class="game-message"></div>
         </div>
-        
-        <div class="keyboard" id="keyboard"></div>
-        
-        <div class="game-controls">
-            <button id="newGameBtn" class="btn">Nouvelle Partie</button>
-            <div class="version-display" id="versionDisplay"></div>
-        </div>
-        
-        <div id="gameMessage" class="game-message"></div>
     </div>
     
-    <script src="script.js"></script>
+    <!-- Vue Statistiques -->
+    <div class="view" id="statsView">
+        <div class="container">
+            <div class="stats-content">
+                <h2>📊 Mes Statistiques</h2>
+                
+                <div class="stats-overview">
+                    <div class="big-stat-card">
+                        <div class="big-stat-number" id="statsFoundWords">0</div>
+                        <div class="big-stat-label">Mots trouvés</div>
+                        <div class="big-stat-total" id="statsTotalWords">sur 0</div>
+                    </div>
+                    <div class="big-stat-card">
+                        <div class="big-stat-number" id="statsBestStreak">0</div>
+                        <div class="big-stat-label">Meilleure série</div>
+                        <div class="big-stat-current">Actuelle: <span id="statsCurrentStreak">0</span></div>
+                    </div>
+                </div>
+                
+                <div class="achievements-section">
+                    <h3>🏆 Succès débloqués</h3>
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Les achievements seront générés dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="stats-actions">
+                    <button class="btn btn-primary" id="playFromStatsBtn">🎮 Jouer maintenant</button>
+                    <button class="btn btn-secondary" id="backToMenuFromStatsBtn">🏠 Retour au menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript modulaire -->
+    <script src="js/ui.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

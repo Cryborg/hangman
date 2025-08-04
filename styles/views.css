@@ -1,0 +1,184 @@
+/* ===== VIEWS - STYLES SPÉCIFIQUES AUX VUES ===== */
+
+/* ===== VUE MENU PRINCIPAL ===== */
+
+.menu-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) 0;
+}
+
+.welcome-section {
+    margin-bottom: var(--spacing-xxl);
+}
+
+.welcome-section h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 20px var(--primary-shadow);
+    margin-bottom: var(--spacing-md);
+}
+
+.welcome-section p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Statistiques rapides */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xxl);
+}
+
+/* Actions du menu */
+.menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+/* ===== VUE JEU ===== */
+
+#gameView .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+}
+
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-xl);
+}
+
+.top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+    width: 100%;
+}
+
+/* Interface stats du jeu */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+}
+
+.stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem;
+    border: 1px solid var(--border-light);
+}
+
+.stat-item .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.stat-item .stat-value {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.wrong-letters-stat .stat-value {
+    min-height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contrôles du jeu */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+/* ===== VUE STATISTIQUES ===== */
+
+.stats-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) 0;
+}
+
+.stats-content h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 20px var(--primary-shadow);
+    margin-bottom: var(--spacing-xxl);
+}
+
+/* Vue d'ensemble statistiques */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xxl);
+}
+
+/* Section achievements */
+.achievements-section {
+    margin-bottom: var(--spacing-xxl);
+}
+
+.achievements-section h3 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Actions statistiques */
+.stats-actions {
+    text-align: center;
+}
+
+.stats-actions .btn {
+    margin: 0 var(--spacing-md);
+}

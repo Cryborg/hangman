@@ -1,5 +1,5 @@
 // Version du jeu du Pendu
-const PENDU_VERSION = '1.1.0';
+const PENDU_VERSION = '2.0.0';
 
 // Auto-application de la version aux CSS du pendu
 document.addEventListener('DOMContentLoaded', function() {

@@ -1,0 +1,130 @@
+/* ===== BASE - RESET, VARIABLES, STYLES DE BASE ===== */
+
+/* Reset et base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--arcade-bg-primary, #2d2d2d);
+    color: #e94560;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Variables CSS personnalisées */
+:root {
+    /* Couleurs principales */
+    --primary-color: #f39c12;
+    --primary-shadow: rgba(243, 156, 18, 0.5);
+    --secondary-color: #e94560;
+    --success-color: #2ed573;
+    --error-color: #ff6b6b;
+    --warning-color: #ff6b35;
+    
+    /* Arrière-plans */
+    --bg-primary: var(--arcade-bg-primary, #2d2d2d);
+    --bg-secondary: var(--arcade-bg-secondary, rgba(60, 60, 60, 0.9));
+    --bg-tertiary: rgba(72, 72, 72, 0.8);
+    
+    /* Textes */
+    --text-primary: var(--arcade-text-primary, #e8eaed);
+    --text-secondary: var(--arcade-text-secondary, #9aa0a6);
+    
+    /* Bordures */
+    --border-primary: var(--arcade-border, rgba(95, 99, 104, 0.3));
+    --border-light: rgba(255, 255, 255, 0.1);
+    
+    /* Animations */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Espacements */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 15px;
+    --radius-xl: 20px;
+    --radius-round: 50px;
+}
+
+/* Typographie de base */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Animations globales */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.shake {
+    animation: shake var(--transition-slow) ease;
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-normal) ease;
+}
+
+.slide-in {
+    animation: slideIn var(--transition-normal) ease;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Utilitaires */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.hidden { display: none !important; }
+.visible { display: block !important; }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
