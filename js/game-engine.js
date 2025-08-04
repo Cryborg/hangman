@@ -112,7 +112,7 @@ class PenduGameEngine {
     
     async loadCategories() {
         try {
-            const response = await fetch('words.json');
+            const response = await fetch('categories.json');
             const data = await response.json();
             this.categories = data.categories;
             this.totalWords = this.categories.reduce((total, cat) => total + cat.mots.length, 0);

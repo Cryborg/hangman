@@ -121,41 +121,14 @@ class ModalManager {
         // Vider la grille
         this.categoriesGrid.innerHTML = '';
         
-        // Icônes par catégorie (complètes pour toutes les catégories)
-        const categoryIcons = {
-            'Animaux': '🐾',
-            'Fruits et Légumes': '🍎',
-            'Métiers': '👷',
-            'Objets du Quotidien': '🏠',
-            'Sports': '⚽',
-            'Pays': '🌍',
-            'Couleurs': '🎨',
-            'Véhicules': '🚗',
-            'Chanteurs et Chanteuses': '🎤',
-            'Groupes de Musique': '🎸',
-            'Acteurs et Actrices': '🎭',
-            'Dessins Animés': '📺',
-            'Séries TV': '📺',
-            'Films Cultes': '🎬',
-            'Jeux de Société': '🎲',
-            'Jeux Vidéo': '🎮',
-            'Instruments de Musique': '🎵',
-            'Fleurs': '🌸',
-            'Monuments': '🗿',
-            'Villes': '🏙️',
-            'Pièces de la Maison': '🏡',
-            'Appareils Électroménager': '🔌',
-            'Personnages Harry Potter': '⚡',
-            'Lieux Harry Potter': '🏰'
-        };
-        
         // Créer un élément pour chaque catégorie
         categories.forEach(category => {
             const categoryItem = document.createElement('div');
             categoryItem.className = 'category-item';
             categoryItem.dataset.categoryName = category.nom;
             
-            const icon = categoryIcons[category.nom] || '📂';
+            // Utiliser l'icône depuis les données JSON ou une icône par défaut
+            const icon = category.icone || '📂';
             
             categoryItem.innerHTML = `
                 <span class="category-icon">${icon}</span>

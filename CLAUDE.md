@@ -18,7 +18,7 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 /games/pendu/
 ├── index.html                 # Page principale avec 3 vues
 ├── version.js                 # Gestion de version et cache busting
-├── words.json                 # Base de données des mots (17 catégories)
+├── categories.json            # Base de données des catégories avec mots et icônes
 ├── styles/                    # CSS modulaire
 │   ├── base.css              # Reset, variables, animations globales
 │   ├── layout.css            # Header, navigation, système de vues
@@ -169,7 +169,7 @@ onGameWin() -> statsModule.onGameWin() -> uiModule.showToast()
 ## 🔄 Points d'entrée pour modifications
 
 ### Ajouter une nouvelle catégorie
-1. Modifier `words.json` : ajouter dans l'array `categories`
+1. Modifier `categories.json` : ajouter dans l'array `categories`
 2. La détection est automatique, aucun code à modifier
 
 ### Ajouter un achievement
@@ -206,7 +206,7 @@ penduApp.getUIModule().showToast('Test', 'success')
 ```
 
 ### Fichiers à modifier selon le besoin
-- **Nouveau contenu** : `words.json`
+- **Nouveau contenu** : `categories.json`
 - **Nouvelles fonctionnalités jeu** : `js/game.js`
 - **Nouvelles stats/achievements** : `js/stats.js`
 - **Nouvelles interfaces** : `js/ui.js` + CSS correspondant
