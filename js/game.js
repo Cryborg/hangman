@@ -94,6 +94,11 @@ class PenduGame {
             // Calculer le nombre total de mots
             this.totalWords = this.categories.reduce((total, category) => total + category.mots.length, 0);
             
+            // Transmettre le total au module stats
+            if (this.app.getStatsModule()) {
+                this.app.getStatsModule().setTotalWords(this.totalWords);
+            }
+            
             console.log(`📚 ${this.categories.length} catégories chargées`);
             console.log(`📖 ${this.totalWords} mots disponibles`);
             

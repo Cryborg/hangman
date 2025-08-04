@@ -130,10 +130,8 @@ class PenduStats {
             this.stats.foundWords = wordsSet.size;
         }
         
-        // Calculer le nombre total de mots disponibles
-        if (typeof categories !== 'undefined' && categories.length > 0) {
-            this.stats.totalWords = categories.reduce((total, category) => total + category.mots.length, 0);
-        }
+        // Le nombre total de mots sera mis à jour par le module game
+        // après le chargement des catégories
         
         this.updateAchievementCount();
         this.saveStats();
@@ -233,7 +231,13 @@ class PenduStats {
     }
     
     hasCompletedCategory() {
-        if (typeof categories === 'undefined') return false;
+        // Obtenir les catégories depuis le module game
+        if (!this.app || !this.app.getGameModule()) return false;
+        
+        const gameModule = this.app.getGameModule();
+        const categories = gameModule.categories;
+        
+        if (!categories || categories.length === 0) return false;
         
         const foundWords = localStorage.getItem('pendu_foundWords');
         if (!foundWords) return false;
@@ -244,6 +248,12 @@ class PenduStats {
         return categories.some(category => {
             return category.mots.every(word => wordsSet.has(word));
         });
+    }
+    
+    // Méthode pour mettre à jour le total de mots
+    setTotalWords(total) {
+        this.stats.totalWords = total;
+        this.saveStats();
     }
     
     // Méthodes pour l'affichage

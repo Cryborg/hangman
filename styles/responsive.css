@@ -291,15 +291,16 @@
     .top-section {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: auto auto;
+        grid-template-rows: auto auto auto;
         gap: var(--spacing-lg);
         margin-bottom: var(--spacing-lg);
         grid-template-areas: 
-            "category progression hangman"
+            "category progression streak"
+            "tries letters hangman"
             "tries letters hangman";
     }
     
-    /* Placement des éléments */
+    /* Header sur toute la largeur avec grille */
     .game-header {
         display: contents;
         margin-bottom: 0;
@@ -314,7 +315,7 @@
     }
     
     .streak-card {
-        grid-area: progression;
+        grid-area: streak;
     }
     
     .game-stats {
@@ -424,19 +425,7 @@
         justify-content: center;
     }
     
-    /* Support 3 cartes dans game-header */
-    .game-header {
-        display: flex;
-        justify-content: space-between;
-        gap: var(--spacing-lg);
-    }
-    
-    .category-card,
-    .progress-card,
-    .streak-card {
-        flex: 1;
-        padding: var(--spacing-lg);
-    }
+    /* Les cartes du header sont gérées par la grille principale */
 }
 
 /* ===== TRÈS LARGE ÉCRAN (min-width: 1200px) ===== */

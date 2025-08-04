@@ -1,9 +1,3 @@
-Fonctionnalités de scoring & compétition
-
-- Streak counter : Compteur de victoires consécutives
-- Achievements : "Première victoire", "10 mots trouvés", "Maître des
-  80s"...
-
 Modes de jeu variés
 
 - Mode Time Attack : Trouver un maximum de mots en 5 minutes
