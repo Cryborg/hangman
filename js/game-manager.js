@@ -28,7 +28,8 @@ class PenduGameManager {
             categoryName: null
         };
         
-        this.initialize();
+        // L'initialisation sera lancée explicitement par l'app
+        this.isInitialized = false;
     }
     
     async initialize() {
@@ -50,6 +51,7 @@ class PenduGameManager {
         // Définir le mode standard par défaut
         this.setGameMode('standard');
         
+        this.isInitialized = true;
         console.log('✅ Game Manager initialisé');
     }
     

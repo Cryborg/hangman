@@ -87,6 +87,10 @@
     {
       "nom": "Appareils Électroménager",
       "mots": ["LAVE LINGE", "LAVE VAISSELLE", "REFRIGERATEUR", "CONGELATEUR", "MICRO ONDES", "FOUR", "ASPIRATEUR", "SECHE LINGE", "CAFETIERE", "GRILLE PAIN", "MIXEUR", "ROBOT MENAGER", "CENTRIFUGEUSE", "BOUILLOIRE", "RICE COOKER", "FRITEUSE", "PLANCHA", "BARBECUE", "CLIMATISEUR", "VENTILATEUR", "RADIATEUR", "HUMIDIFICATEUR", "PURIFICATEUR", "NETTOYEUR VAPEUR", "FER A REPASSER", "STEAMER"]
+    },
+    {
+      "nom": "Harry Potter",
+      "mots": ["Harry Potter", "Hermione Granger", "Ron Weasley", "Poufsouffle", "Griffondor", "Serpentard", "Serdaigle"]
     }
   ]
 }

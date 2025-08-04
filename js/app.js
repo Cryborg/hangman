@@ -140,6 +140,8 @@ class PenduApp {
         // Initialiser les modules (ils seront définis dans leurs fichiers respectifs)
         if (typeof PenduGameManager !== 'undefined') {
             this.gameManager = new PenduGameManager(this);
+            // Lancer l'initialisation explicitement
+            await this.gameManager.initialize();
         }
         
         if (typeof PenduStats !== 'undefined') {
