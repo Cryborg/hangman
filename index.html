@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles/components.css?v=2.0.0">
     <link rel="stylesheet" href="styles/views.css?v=2.0.0">
     <link rel="stylesheet" href="styles/responsive.css?v=2.0.0">
+    <link rel="stylesheet" href="styles/modal.css?v=2.0.0">
     <script src="../../arcade-theme-integration.js"></script>
 </head>
 <body>
@@ -73,6 +74,48 @@
                     <button class="btn btn-primary" id="startGameBtn">🎮 Commencer une partie</button>
                     <button class="btn btn-secondary" id="viewStatsBtn">📊 Voir mes statistiques</button>
                 </div>
+                
+                <!-- Modal de sélection du mode de jeu -->
+                <div class="modal" id="gameModeModal">
+                    <div class="modal-content">
+                        <h3>🎯 Choisissez votre mode de jeu</h3>
+                        
+                        <div class="game-modes">
+                            <div class="mode-card" data-mode="standard">
+                                <div class="mode-icon">🎲</div>
+                                <h4>Mode Standard</h4>
+                                <p>Trouvez les mots à votre rythme</p>
+                                <ul class="mode-features">
+                                    <li>Pas de limite de temps</li>
+                                    <li>Progression sauvegardée</li>
+                                    <li>Achievements débloquables</li>
+                                </ul>
+                                <button class="btn btn-primary select-mode-btn" data-mode="standard">Jouer Standard</button>
+                            </div>
+                            
+                            <div class="mode-card" data-mode="timeattack">
+                                <div class="mode-icon">⏱️</div>
+                                <h4>Time Attack</h4>
+                                <p>Trouvez un maximum de mots avant la fin du chrono !</p>
+                                <div class="time-options">
+                                    <label>Durée :</label>
+                                    <div class="time-buttons">
+                                        <button class="time-btn active" data-time="1">1 min</button>
+                                        <button class="time-btn" data-time="2">2 min</button>
+                                        <button class="time-btn" data-time="3">3 min</button>
+                                        <button class="time-btn" data-time="5">5 min</button>
+                                    </div>
+                                </div>
+                                <div class="highscore-preview">
+                                    <span>🏆 Record : <span id="timeAttackHighscore">--</span></span>
+                                </div>
+                                <button class="btn btn-primary select-mode-btn" data-mode="timeattack">Jouer Time Attack</button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary close-modal-btn">❌ Annuler</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -85,16 +128,22 @@
                     <!-- Ligne du haut : Catégorie, Progression et Série -->
                     <div class="game-header">
                         <div class="category-card">
-                            <h3>Catégorie</h3>
                             <p id="categoryName"></p>
                         </div>
-                        <div class="progress-card">
+                        <div class="progress-card" id="progressCard">
                             <h3>Progression</h3>
                             <p id="wordsProgress">0/0</p>
                         </div>
-                        <div class="streak-card">
+                        <div class="streak-card" id="streakCard">
                             <h3>🔥 Série</h3>
                             <p id="streakDisplay">0</p>
+                        </div>
+                        <!-- Card Time Attack (cachée par défaut) -->
+                        <div class="time-attack-card hidden" id="timeAttackCard">
+                            <h3>⏱️ Time Attack</h3>
+                            <p class="timer" id="timerDisplay">00:00</p>
+                            <p class="score">Score: <span id="scoreDisplay">0</span></p>
+                            <p class="highscore">Record: <span id="currentHighscore">0</span></p>
                         </div>
                     </div>
                     
@@ -145,7 +194,8 @@
             
             <div class="game-controls">
                 <button id="newGameBtn" class="btn">Suivant</button>
-                <button id="backToMenuBtn" class="btn btn-secondary">🏠 Retour au menu</button>
+                <button id="restartGameBtn" class="btn btn-restart">🔄 Rejouer</button>
+                <button id="backToMenuBtn" class="btn btn-secondary">🏠 Menu</button>
             </div>
             
             <div id="gameMessage" class="game-message"></div>
@@ -189,6 +239,7 @@
     <!-- JavaScript modulaire -->
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
+    <script src="js/timeattack.js"></script>
     <script src="js/game.js"></script>
     <script src="js/app.js"></script>
 </body>

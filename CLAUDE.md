@@ -7,6 +7,7 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 - **Navigation multi-vues** : Menu principal, jeu, statistiques
 - **Menu hamburger responsive** : Navigation adaptée mobile/desktop
 - **Système de progression** : Streak counter, achievements, stats détaillées
+- **Mode Time Attack** : Chrono 1-5min, highscores par durée, sélection de mode
 - **Architecture modulaire** : CSS et JS organisés en modules spécialisés
 - **17 catégories** : 650+ mots répartis en catégories variées
 - **Sauvegarde persistante** : Progression conservée entre sessions
@@ -23,11 +24,13 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 │   ├── layout.css            # Header, navigation, système de vues
 │   ├── components.css        # Boutons, cartes, toast, hangman, clavier
 │   ├── views.css             # Styles spécifiques aux vues (menu/jeu/stats)
+│   ├── modal.css             # Modal de sélection, Time Attack UI
 │   └── responsive.css        # Media queries (mobile/desktop)
 ├── js/                       # JavaScript modulaire
 │   ├── app.js               # Point d'entrée, navigation, coordination
-│   ├── game.js              # Logique du jeu du pendu
+│   ├── game.js              # Logique du jeu du pendu (Standard + Time Attack)
 │   ├── stats.js             # Statistiques et système d'achievements
+│   ├── timeattack.js        # Mode Time Attack, timer, highscores
 │   └── ui.js                # Interactions UI, toasts, animations
 └── CLAUDE.md                # Cette documentation
 ```
@@ -149,9 +152,10 @@ onGameWin() -> statsModule.onGameWin() -> uiModule.showToast()
 
 ## 🚀 Gestion des versions
 
-### Version actuelle : **2.0.0**
+### Version actuelle : **2.1.0**
 
 ### Historique des versions
+- **2.1.0** : Mode Time Attack - Sélection de mode, timer, scores par durée, highscores sauvegardés
 - **2.0.0** : Refonte majeure - Architecture modulaire, navigation multi-vues, système d'achievements complet, streak counter
 - **1.1.0** : Ajout de 11 nouvelles catégories (Dessins Animés, Séries TV, Films Cultes, etc.)
 - **1.0.1** : Système de tracking des mots uniques + session sans répétition

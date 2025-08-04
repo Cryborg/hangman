@@ -66,6 +66,27 @@
     box-shadow: 0 5px 15px rgba(243, 156, 18, 0.2);
 }
 
+.btn-restart {
+    background: linear-gradient(135deg, #2ed573, #1dd8aa);
+    color: #fff;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    border-radius: var(--radius-round);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    font-family: inherit;
+}
+
+.btn-restart:hover {
+    background: linear-gradient(135deg, #1dd8aa, #2ed573);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(46, 213, 115, 0.4);
+}
+
 /* ===== CARTES ===== */
 
 .card {
@@ -141,7 +162,17 @@
     letter-spacing: 0.5px;
 }
 
-.category-card p, 
+.category-card p {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    margin: 0;
+}
+
 .progress-card p {
     font-size: 1.1rem;
     font-weight: bold;

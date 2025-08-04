@@ -14,6 +14,7 @@ class PenduGame {
         this.gameActive = false;
         this.sessionWords = new Set(); // Mots vus dans cette session
         this.totalWords = 0;
+        this.gameMode = 'standard'; // 'standard' ou 'timeattack'
         
         // Références DOM
         this.wordDisplay = null;
@@ -22,11 +23,13 @@ class PenduGame {
         this.progressDisplay = null;
         this.keyboard = null;
         this.newGameBtn = null;
+        this.restartGameBtn = null;
         this.categoryDisplay = null;
         this.streakDisplay = null;
         
         this.initializeDOMReferences();
         this.initializeEventListeners();
+        this.updateButtonsVisibility();
     }
     
     initializeDOMReferences() {
@@ -36,6 +39,7 @@ class PenduGame {
         this.progressDisplay = document.getElementById('wordsProgress');
         this.keyboard = document.getElementById('keyboard');
         this.newGameBtn = document.getElementById('newGameBtn');
+        this.restartGameBtn = document.getElementById('restartGameBtn');
         this.categoryDisplay = document.getElementById('categoryName');
         this.streakDisplay = document.getElementById('streakDisplay');
     }
@@ -44,6 +48,15 @@ class PenduGame {
         // Bouton nouvelle partie
         if (this.newGameBtn) {
             this.newGameBtn.addEventListener('click', () => this.startNewGame());
+        }
+        
+        // Bouton redémarrage rapide
+        if (this.restartGameBtn) {
+            this.restartGameBtn.addEventListener('click', () => {
+                if (this.app) {
+                    this.app.restartWithSameSettings();
+                }
+            });
         }
         
         // Clavier physique
@@ -168,6 +181,13 @@ class PenduGame {
         baseParts.forEach(part => {
             part.classList.add('visible');
         });
+        
+        // Réinitialiser l'apparence du mot
+        const wordDisplay = document.getElementById('wordDisplay');
+        if (wordDisplay) {
+            wordDisplay.style.color = '';
+            wordDisplay.style.animation = '';
+        }
     }
     
     updateDisplay() {
@@ -273,9 +293,22 @@ class PenduGame {
         // Calculer le nombre d'erreurs
         const errorsCount = this.wrongLetters.length;
         
-        // Mettre à jour les statistiques
+        // Mode Time Attack : traitement spécial
+        if (this.gameMode === 'timeattack' && this.app.getTimeAttackModule()) {
+            this.app.getTimeAttackModule().onWordFound(this.currentWord);
+            
+            // En Time Attack, on passe rapidement au mot suivant
+            if (this.app.getTimeAttackModule().isTimeAttackActive()) {
+                setTimeout(() => {
+                    this.startNewGame();
+                }, 800);
+                return;
+            }
+        }
+        
+        // Mode Standard : traitement normal
         let newAchievements = [];
-        if (this.app.getStatsModule()) {
+        if (this.app.getStatsModule() && this.gameMode === 'standard') {
             newAchievements = this.app.getStatsModule().onGameWin(
                 this.currentWord, 
                 this.currentCategory, 
@@ -288,11 +321,13 @@ class PenduGame {
             this.app.getUIModule().celebrateWin();
             
             let message = `🎉 Bravo ! "${this.currentWord}" trouvé !`;
-            if (errorsCount === 0) {
+            if (errorsCount === 0 && this.gameMode === 'standard') {
                 message += ' (Parfait !)';
             }
             
-            this.app.getUIModule().showToast(message, 'win', 4000);
+            // Toast plus court en Time Attack
+            const duration = this.gameMode === 'timeattack' ? 1500 : 4000;
+            this.app.getUIModule().showToast(message, 'win', duration);
         }
         
         // Afficher les nouveaux achievements
@@ -325,21 +360,67 @@ class PenduGame {
     handleLoss() {
         this.gameActive = false;
         
-        // Mettre à jour les statistiques
-        if (this.app.getStatsModule()) {
+        // Révéler le mot complet avant tout traitement
+        this.revealCompleteWord();
+        
+        // Mode Time Attack : traitement spécial
+        if (this.gameMode === 'timeattack' && this.app.getTimeAttackModule()) {
+            this.app.getTimeAttackModule().onWordFailed();
+            
+            // En Time Attack, on passe rapidement au mot suivant
+            if (this.app.getTimeAttackModule().isTimeAttackActive()) {
+                if (this.app.getUIModule()) {
+                    this.app.getUIModule().showToast(`❌ "${this.currentWord}"`, 'lose', 1000);
+                }
+                return; // Le Time Attack gérera le prochain mot
+            }
+        }
+        
+        // Mode Standard : traitement normal
+        if (this.app.getStatsModule() && this.gameMode === 'standard') {
             this.app.getStatsModule().onGameLoss();
         }
         
         // Afficher le message de défaite
         if (this.app.getUIModule()) {
             const message = `😞 Perdu ! Le mot était "${this.currentWord}"`;
-            this.app.getUIModule().showToast(message, 'lose', 5000);
+            const duration = this.gameMode === 'timeattack' ? 2000 : 5000;
+            this.app.getUIModule().showToast(message, 'lose', duration);
         }
         
         // Mettre à jour les affichages
-        this.updateStreakDisplay();
+        if (this.gameMode === 'standard') {
+            this.updateStreakDisplay();
+        }
         
         console.log(`❌ Défaite ! Mot: ${this.currentWord}`);
+    }
+    
+    revealCompleteWord() {
+        // Révéler toutes les lettres manquantes
+        const allLetters = this.currentWord.toUpperCase().split('').filter(letter => /[A-Z]/.test(letter));
+        const uniqueLetters = [...new Set(allLetters)];
+        
+        // Ajouter toutes les lettres manquantes à guessedLetters
+        uniqueLetters.forEach(letter => {
+            if (!this.guessedLetters.includes(letter)) {
+                this.guessedLetters.push(letter);
+            }
+        });
+        
+        // Mettre à jour l'affichage avec une animation
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().updateWordDisplay(this.currentWord, this.guessedLetters);
+            
+            // Animation spéciale pour les lettres révélées
+            setTimeout(() => {
+                const wordDisplay = document.getElementById('wordDisplay');
+                if (wordDisplay) {
+                    wordDisplay.style.color = '#ff6b6b'; // Rouge pour montrer l'échec
+                    wordDisplay.style.animation = 'shake 0.5s ease';
+                }
+            }, 100);
+        }
     }
     
     showErrorMessage() {
@@ -393,6 +474,35 @@ class PenduGame {
             remainingTries: this.remainingTries,
             gameActive: this.gameActive
         };
+    }
+    
+    // ===== MÉTHODES POUR LE MODE TIME ATTACK ===== //
+    
+    setGameMode(mode) {
+        this.gameMode = mode;
+        this.updateButtonsVisibility();
+        console.log(`🎮 Mode de jeu: ${mode}`);
+    }
+    
+    updateButtonsVisibility() {
+        if (this.restartGameBtn) {
+            if (this.gameMode === 'timeattack') {
+                this.restartGameBtn.style.display = 'inline-block';
+            } else {
+                this.restartGameBtn.style.display = 'none';
+            }
+        }
+    }
+    
+    getGameMode() {
+        return this.gameMode;
+    }
+    
+    endGame() {
+        this.gameActive = false;
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().clearGameMessage();
+        }
     }
     
     // Méthode pour débugger (à supprimer en production)

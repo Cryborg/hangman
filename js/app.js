@@ -5,6 +5,12 @@ class PenduApp {
         this.currentView = 'menu';
         this.isMenuOpen = false;
         
+        // Paramètres de la dernière partie
+        this.lastGameSettings = {
+            mode: 'standard',
+            timeAttackDuration: 1 // en minutes
+        };
+        
         // Références DOM
         this.hamburgerMenu = null;
         this.navMenu = null;
@@ -15,6 +21,7 @@ class PenduApp {
         this.gameModule = null;
         this.statsModule = null;
         this.uiModule = null;
+        this.timeAttackModule = null;
         
         this.init();
     }
@@ -89,7 +96,12 @@ class PenduApp {
         const viewStatsBtn = document.getElementById('viewStatsBtn');
         
         if (startGameBtn) {
-            startGameBtn.addEventListener('click', () => this.showView('game'));
+            startGameBtn.addEventListener('click', () => {
+                // Ouvrir la modal de sélection du mode
+                if (this.timeAttackModule) {
+                    this.timeAttackModule.showModal();
+                }
+            });
         }
         
         if (viewStatsBtn) {
@@ -136,6 +148,10 @@ class PenduApp {
         
         if (typeof PenduUI !== 'undefined') {
             this.uiModule = new PenduUI(this);
+        }
+        
+        if (typeof TimeAttackMode !== 'undefined') {
+            this.timeAttackModule = new TimeAttackMode(this);
         }
     }
     
@@ -262,6 +278,48 @@ class PenduApp {
     
     getUIModule() {
         return this.uiModule;
+    }
+    
+    getTimeAttackModule() {
+        return this.timeAttackModule;
+    }
+    
+    // ===== GESTION DES PARAMÈTRES DE JEU ===== //
+    
+    setLastGameSettings(mode, timeAttackDuration = null) {
+        this.lastGameSettings.mode = mode;
+        if (timeAttackDuration) {
+            this.lastGameSettings.timeAttackDuration = timeAttackDuration;
+        }
+    }
+    
+    getLastGameSettings() {
+        return { ...this.lastGameSettings };
+    }
+    
+    restartWithSameSettings() {
+        const settings = this.getLastGameSettings();
+        
+        if (settings.mode === 'timeattack') {
+            // Configurer le Time Attack avec les mêmes paramètres
+            if (this.timeAttackModule) {
+                this.timeAttackModule.selectTime(settings.timeAttackDuration);
+                this.timeAttackModule.startTimeAttack();
+            }
+        } else {
+            // Mode standard
+            if (this.gameModule) {
+                this.gameModule.setGameMode('standard');
+                if (this.timeAttackModule) {
+                    this.timeAttackModule.setupStandardUI();
+                }
+            }
+        }
+        
+        // Aller à la vue jeu et démarrer
+        this.showView('game');
+        
+        console.log(`🔄 Redémarrage en mode ${settings.mode}`);
     }
 }
 
