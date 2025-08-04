@@ -1,4 +1,4 @@
-/* ===== MODAL - STYLES POUR LA SÉLECTION DU MODE DE JEU ===== */
+/* ===== MODALS - STYLES POUR LA SÉLECTION DES MODES ET CATÉGORIES ===== */
 
 /* Modal overlay */
 .modal {
@@ -171,10 +171,83 @@
 }
 
 /* Close modal button */
-.close-modal-btn {
+.close-modal-btn,
+.close-category-modal-btn {
     display: block;
     margin: 0 auto;
     min-width: 150px;
+}
+
+/* ===== MODAL SÉLECTION DE CATÉGORIE ===== */
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-xl) 0;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+}
+
+.category-item {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.category-item:hover {
+    border-color: var(--primary-color);
+    background: rgba(243, 156, 18, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+.category-item:active {
+    transform: translateY(0);
+}
+
+.category-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.category-count {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.category-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    display: block;
+}
+
+/* Scrollbar styling pour la grille */
+.categories-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.categories-grid::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+}
+
+.categories-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.categories-grid::-webkit-scrollbar-thumb:hover {
+    background: #e67e22;
 }
 
 /* ===== TIME ATTACK CARD ===== */

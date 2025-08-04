@@ -111,9 +111,35 @@
                                 </div>
                                 <button class="btn btn-primary select-mode-btn" data-mode="timeattack">Jouer Time Attack</button>
                             </div>
+                            
+                            <div class="mode-card" data-mode="category">
+                                <div class="mode-icon">📚</div>
+                                <h4>Mode Catégorie</h4>
+                                <p>Tentez de deviner TOUS les mots d'une catégorie !</p>
+                                <ul class="mode-features">
+                                    <li>Progression automatique</li>
+                                    <li>Pourcentage de réussite</li>
+                                    <li>Pas de limite d'erreurs</li>
+                                </ul>
+                                <button class="btn btn-primary select-mode-btn" data-mode="category">Choisir une catégorie</button>
+                            </div>
                         </div>
                         
                         <button class="btn btn-secondary close-modal-btn">❌ Annuler</button>
+                    </div>
+                </div>
+                
+                <!-- Modal de sélection de catégorie -->
+                <div class="modal" id="categoryModal">
+                    <div class="modal-content">
+                        <h3>📚 Choisissez votre catégorie</h3>
+                        <p>Tentez de deviner tous les mots de la catégorie sélectionnée !</p>
+                        
+                        <div class="categories-grid" id="categoriesGrid">
+                            <!-- Les catégories seront générées dynamiquement -->
+                        </div>
+                        
+                        <button class="btn btn-secondary close-category-modal-btn">❌ Retour</button>
                     </div>
                 </div>
             </div>
@@ -239,8 +265,10 @@
     <!-- JavaScript modulaire -->
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
-    <script src="js/timeattack.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/game-modes.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/game-manager.js"></script>
+    <script src="js/modal-manager.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

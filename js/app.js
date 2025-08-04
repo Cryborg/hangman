@@ -18,10 +18,10 @@ class PenduApp {
         this.views = null;
         
         // Modules
-        this.gameModule = null;
+        this.gameManager = null; // Nouveau gestionnaire principal
         this.statsModule = null;
         this.uiModule = null;
-        this.timeAttackModule = null;
+        this.modalManager = null;
         
         this.init();
     }
@@ -98,8 +98,8 @@ class PenduApp {
         if (startGameBtn) {
             startGameBtn.addEventListener('click', () => {
                 // Ouvrir la modal de sélection du mode
-                if (this.timeAttackModule) {
-                    this.timeAttackModule.showModal();
+                if (this.modalManager) {
+                    this.modalManager.showGameModeModal();
                 }
             });
         }
@@ -138,8 +138,8 @@ class PenduApp {
         // Plus tard, on pourra les charger dynamiquement avec import()
         
         // Initialiser les modules (ils seront définis dans leurs fichiers respectifs)
-        if (typeof PenduGame !== 'undefined') {
-            this.gameModule = new PenduGame(this);
+        if (typeof PenduGameManager !== 'undefined') {
+            this.gameManager = new PenduGameManager(this);
         }
         
         if (typeof PenduStats !== 'undefined') {
@@ -150,8 +150,8 @@ class PenduApp {
             this.uiModule = new PenduUI(this);
         }
         
-        if (typeof TimeAttackMode !== 'undefined') {
-            this.timeAttackModule = new TimeAttackMode(this);
+        if (typeof ModalManager !== 'undefined') {
+            this.modalManager = new ModalManager(this);
         }
     }
     
@@ -202,8 +202,9 @@ class PenduApp {
                 this.updateMenuStats();
                 break;
             case 'game':
-                if (this.gameModule) {
-                    this.gameModule.initGame();
+                if (this.gameManager) {
+                    // Le GameManager s'initialise automatiquement
+                    console.log('✅ GameManager prêt');
                 }
                 break;
             case 'stats':
@@ -268,8 +269,13 @@ class PenduApp {
         return this.currentView;
     }
     
+    getGameManager() {
+        return this.gameManager;
+    }
+    
+    // Méthode de compatibilité
     getGameModule() {
-        return this.gameModule;
+        return this.gameManager;
     }
     
     getStatsModule() {
@@ -280,8 +286,8 @@ class PenduApp {
         return this.uiModule;
     }
     
-    getTimeAttackModule() {
-        return this.timeAttackModule;
+    getModalManager() {
+        return this.modalManager;
     }
     
     // ===== GESTION DES PARAMÈTRES DE JEU ===== //
@@ -300,20 +306,9 @@ class PenduApp {
     restartWithSameSettings() {
         const settings = this.getLastGameSettings();
         
-        if (settings.mode === 'timeattack') {
-            // Configurer le Time Attack avec les mêmes paramètres
-            if (this.timeAttackModule) {
-                this.timeAttackModule.selectTime(settings.timeAttackDuration);
-                this.timeAttackModule.startTimeAttack();
-            }
-        } else {
-            // Mode standard
-            if (this.gameModule) {
-                this.gameModule.setGameMode('standard');
-                if (this.timeAttackModule) {
-                    this.timeAttackModule.setupStandardUI();
-                }
-            }
+        // Le redémarrage est maintenant géré par le GameManager
+        if (this.gameManager) {
+            this.gameManager.restartWithSameSettings();
         }
         
         // Aller à la vue jeu et démarrer
