@@ -40,6 +40,7 @@
     flex-direction: column;
     gap: var(--spacing-md);
     align-items: center;
+    margin-bottom: var(--spacing-xl);
 }
 
 /* ===== VUE JEU ===== */
@@ -51,6 +52,18 @@
         flex-direction: column;
         justify-content: center;
         min-height: calc(100vh - 80px);
+    }
+    
+    /* Hauteur stable pour la zone d'affichage du mot sur desktop aussi */
+    .game-info {
+        min-height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .word-display {
+        min-height: 3.5rem;
     }
 }
 

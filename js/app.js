@@ -89,7 +89,13 @@ class PenduApp {
                 
                 // Traitement spécial pour le lien "Jouer"
                 if (view === 'game') {
-                    // Ouvrir la modal de sélection du mode au lieu de naviguer
+                    // Si on est déjà en jeu, ne rien faire
+                    if (this.currentView === 'game') {
+                        console.log('Déjà en jeu, clic ignoré');
+                        return;
+                    }
+                    
+                    // Sinon, ouvrir la modal de sélection du mode
                     if (this.modalManager) {
                         this.modalManager.showGameModeModal();
                     }

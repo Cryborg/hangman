@@ -30,7 +30,7 @@
     background: linear-gradient(135deg, var(--primary-color), #e67e22);
     color: #fff;
     border: none;
-    padding: var(--spacing-md) var(--spacing-xxl);
+    padding: calc(var(--spacing-md) * 1.5) var(--spacing-xxl);
     font-size: 1.2rem;
     border-radius: var(--radius-round);
     cursor: pointer;
@@ -50,7 +50,7 @@
     background: transparent;
     color: var(--text-primary);
     border: 2px solid var(--border-primary);
-    padding: 0.8rem 2rem;
+    padding: 1.2rem 2rem;
     font-size: 1rem;
     border-radius: var(--radius-round);
     cursor: pointer;
@@ -388,7 +388,15 @@
     padding: 0 0.5rem;
     display: inline-block;
     min-width: 2rem;
+    min-height: 1.2em;
+    line-height: 1.2;
     text-align: center;
+}
+
+/* Assurer un espacement consistant pour les lettres vides */
+.word-display span:empty::before {
+    content: '\00a0'; /* Espace insécable pour maintenir la hauteur et largeur */
+    visibility: hidden;
 }
 
 /* ===== TOASTS ===== */

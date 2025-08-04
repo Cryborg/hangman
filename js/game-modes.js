@@ -76,18 +76,22 @@ class StandardMode extends BaseGameMode {
     constructor(app, gameEngine) {
         super(app, gameEngine);
         this.name = 'standard';
+        this.saveKey = 'pendu_current_game';
     }
     
     initialize() {
         console.log('🎲 Initialisation du mode Standard');
         this.setupUI();
+        this.checkForSavedGame();
     }
     
     startGame() {
-        // Démarrer une partie normale
+        // Supprimer toute sauvegarde existante et démarrer une partie normale
+        localStorage.removeItem(this.saveKey);
         if (this.gameEngine) {
             this.gameEngine.startNewGame();
         }
+        // La sauvegarde sera créée lors de la première tentative
     }
     
     onWordWin(word, category, errorsCount) {
@@ -176,8 +180,146 @@ class StandardMode extends BaseGameMode {
         }
     }
     
+    // ===== GESTION DE LA SAUVEGARDE DE PARTIE ===== //
+    
+    saveGameState() {
+        if (!this.gameEngine || !this.gameEngine.gameActive) {
+            // Pas de partie en cours, supprimer la sauvegarde
+            localStorage.removeItem(this.saveKey);
+            return;
+        }
+        
+        const gameState = {
+            currentWord: this.gameEngine.currentWord,
+            currentCategory: this.gameEngine.currentCategory,
+            guessedLetters: [...this.gameEngine.guessedLetters],
+            wrongLetters: [...this.gameEngine.wrongLetters],
+            remainingTries: this.gameEngine.remainingTries,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem(this.saveKey, JSON.stringify(gameState));
+        console.log('💾 Partie sauvegardée', gameState);
+    }
+    
+    checkForSavedGame() {
+        const savedData = localStorage.getItem(this.saveKey);
+        if (!savedData) return;
+        
+        try {
+            const gameState = JSON.parse(savedData);
+            
+            // Vérifier que la sauvegarde n'est pas trop ancienne (24h max)
+            const maxAge = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+            if (Date.now() - gameState.timestamp > maxAge) {
+                localStorage.removeItem(this.saveKey);
+                return;
+            }
+            
+            // Proposer de reprendre la partie
+            this.showResumeGameOption(gameState);
+            
+        } catch (error) {
+            console.error('Erreur lors du chargement de la partie sauvegardée:', error);
+            localStorage.removeItem(this.saveKey);
+        }
+    }
+    
+    showResumeGameOption(gameState) {
+        if (!this.app.getUIModule()) return;
+        
+        const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const message = `Une partie est en cours : "${wordProgress}" (${gameState.currentCategory}). Reprendre ?`;
+        
+        // Créer un toast personnalisé avec boutons
+        this.showResumeToast(message, gameState);
+    }
+    
+    showResumeToast(message, gameState) {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-resume toast-show';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            min-width: 320px;
+            text-align: center;
+        `;
+        
+        toast.innerHTML = `
+            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1.1rem;">
+                ${message}
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
+                <button id="resumeGameBtn" class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                    ▶️ Reprendre
+                </button>
+                <button id="newGameInsteadBtn" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                    🆕 Nouvelle partie
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Gestionnaires d'événements
+        document.getElementById('resumeGameBtn').addEventListener('click', () => {
+            this.resumeGame(gameState);
+            document.body.removeChild(toast);
+        });
+        
+        document.getElementById('newGameInsteadBtn').addEventListener('click', () => {
+            localStorage.removeItem(this.saveKey);
+            document.body.removeChild(toast);
+        });
+    }
+    
+    resumeGame(gameState) {
+        if (!this.gameEngine) return;
+        
+        // Restaurer l'état du jeu
+        this.gameEngine.currentWord = gameState.currentWord;
+        this.gameEngine.currentCategory = gameState.currentCategory;
+        this.gameEngine.guessedLetters = [...gameState.guessedLetters];
+        this.gameEngine.wrongLetters = [...gameState.wrongLetters];
+        this.gameEngine.remainingTries = gameState.remainingTries;
+        this.gameEngine.gameActive = true;
+        
+        // Mettre à jour l'affichage
+        this.gameEngine.updateDisplay();
+        
+        console.log('🔄 Partie reprise', gameState);
+        
+        // Toast de confirmation avec détails de la partie
+        if (this.app.getUIModule()) {
+            const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
+            const errorsCount = 6 - gameState.remainingTries;
+            let message = `🔄 Partie reprise ! Mot : "${wordProgress}"`;
+            if (errorsCount > 0) {
+                message += ` (${errorsCount} erreur${errorsCount > 1 ? 's' : ''})`;
+            }
+            this.app.getUIModule().showToast(message, 'success', 4000);
+        }
+    }
+    
+    getWordProgress(word, guessedLetters) {
+        // Créer l'affichage du mot avec les lettres trouvées
+        return word.split('').map(letter => 
+            guessedLetters.includes(letter.toUpperCase()) ? letter : '_'
+        ).join(' ');
+    }
+    
     cleanup() {
         console.log('🧹 Nettoyage du mode Standard');
+        // Sauvegarder avant de nettoyer
+        this.saveGameState();
     }
 }
 
@@ -398,17 +540,22 @@ class CategoryMode extends BaseGameMode {
         this.wordsFound = 0;
         this.totalWords = 0;
         this.completedWords = new Set();
+        this.saveKey = 'pendu_current_category_game';
     }
     
     initialize() {
         console.log('📚 Initialisation du mode Catégorie');
         this.setupUI();
+        this.checkForSavedGame();
     }
     
     startGame(categoryName = null) {
         if (categoryName) {
             this.selectedCategory = categoryName;
         }
+        
+        // Supprimer toute sauvegarde existante
+        localStorage.removeItem(this.saveKey);
         
         // Vérifier que le gameEngine est prêt
         if (!this.gameEngine || !this.gameEngine.categories || this.gameEngine.categories.length === 0) {
@@ -436,6 +583,11 @@ class CategoryMode extends BaseGameMode {
         // Démarrer avec le premier mot
         this.startNextWord();
         this.updateDisplay();
+        
+        // Créer la première sauvegarde
+        setTimeout(() => {
+            this.saveGameState();
+        }, 100);
     }
     
     loadCategoryWords() {
@@ -496,6 +648,9 @@ class CategoryMode extends BaseGameMode {
             this.app.getUIModule().showToast(message, 'win', 2000);
         }
         
+        // Sauvegarder l'état
+        this.saveGameState();
+        
         // Passer au mot suivant après un délai
         setTimeout(() => {
             this.startNextWord();
@@ -513,6 +668,9 @@ class CategoryMode extends BaseGameMode {
             const message = `❌ "${word}" raté... (${progress})`;
             this.app.getUIModule().showToast(message, 'lose', 2000);
         }
+        
+        // Sauvegarder l'état
+        this.saveGameState();
         
         // Passer au mot suivant
         setTimeout(() => {
@@ -593,13 +751,176 @@ class CategoryMode extends BaseGameMode {
         };
     }
     
+    // ===== GESTION DE LA SAUVEGARDE DE PARTIE CATÉGORIE ===== //
+    
+    saveGameState() {
+        if (!this.gameEngine || !this.gameEngine.gameActive || !this.selectedCategory) {
+            // Pas de partie en cours, supprimer la sauvegarde
+            localStorage.removeItem(this.saveKey);
+            return;
+        }
+        
+        const gameState = {
+            // État du mot actuel
+            currentWord: this.gameEngine.currentWord,
+            currentCategory: this.gameEngine.currentCategory,
+            guessedLetters: [...this.gameEngine.guessedLetters],
+            wrongLetters: [...this.gameEngine.wrongLetters],
+            remainingTries: this.gameEngine.remainingTries,
+            
+            // État de progression dans la catégorie
+            selectedCategory: this.selectedCategory,
+            currentIndex: this.currentIndex,
+            wordsFound: this.wordsFound,
+            totalWords: this.totalWords,
+            completedWords: Array.from(this.completedWords),
+            categoryWords: [...this.categoryWords],
+            
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem(this.saveKey, JSON.stringify(gameState));
+        console.log('💾 Partie catégorie sauvegardée', gameState);
+    }
+    
+    checkForSavedGame() {
+        const savedData = localStorage.getItem(this.saveKey);
+        if (!savedData) return;
+        
+        try {
+            const gameState = JSON.parse(savedData);
+            
+            // Vérifier que la sauvegarde n'est pas trop ancienne (24h max)
+            const maxAge = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+            if (Date.now() - gameState.timestamp > maxAge) {
+                localStorage.removeItem(this.saveKey);
+                return;
+            }
+            
+            // Proposer de reprendre la partie
+            this.showResumeGameOption(gameState);
+            
+        } catch (error) {
+            console.error('Erreur lors du chargement de la partie catégorie sauvegardée:', error);
+            localStorage.removeItem(this.saveKey);
+        }
+    }
+    
+    showResumeGameOption(gameState) {
+        if (!this.app.getUIModule()) return;
+        
+        const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const progress = `${gameState.wordsFound}/${gameState.totalWords}`;
+        const message = `Catégorie "${gameState.selectedCategory}" en cours : mot "${wordProgress}" (${progress}). Reprendre ?`;
+        
+        // Créer un toast personnalisé avec boutons
+        this.showResumeToast(message, gameState);
+    }
+    
+    showResumeToast(message, gameState) {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-resume toast-show';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            min-width: 350px;
+            text-align: center;
+        `;
+        
+        toast.innerHTML = `
+            <div style="margin-bottom: var(--spacing-md); color: var(--text-primary); font-size: 1rem; line-height: 1.4;">
+                ${message}
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
+                <button id="resumeCategoryGameBtn" class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                    ▶️ Reprendre
+                </button>
+                <button id="newCategoryGameInsteadBtn" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">  
+                    🆕 Nouvelle partie
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Gestionnaires d'événements
+        document.getElementById('resumeCategoryGameBtn').addEventListener('click', () => {
+            this.resumeGame(gameState);
+            document.body.removeChild(toast);
+        });
+        
+        document.getElementById('newCategoryGameInsteadBtn').addEventListener('click', () => {
+            localStorage.removeItem(this.saveKey);
+            document.body.removeChild(toast);
+        });
+    }
+    
+    resumeGame(gameState) {
+        if (!this.gameEngine) return;
+        
+        // Restaurer l'état de progression dans la catégorie
+        this.selectedCategory = gameState.selectedCategory;
+        this.currentIndex = gameState.currentIndex;
+        this.wordsFound = gameState.wordsFound;
+        this.totalWords = gameState.totalWords;
+        this.completedWords = new Set(gameState.completedWords);
+        this.categoryWords = [...gameState.categoryWords];
+        
+        // Restaurer l'état du mot actuel
+        this.gameEngine.currentWord = gameState.currentWord;
+        this.gameEngine.currentCategory = gameState.currentCategory;
+        this.gameEngine.guessedLetters = [...gameState.guessedLetters];
+        this.gameEngine.wrongLetters = [...gameState.wrongLetters];
+        this.gameEngine.remainingTries = gameState.remainingTries;
+        this.gameEngine.gameActive = true;
+        
+        // Mettre à jour l'affichage
+        this.gameEngine.updateDisplay();
+        this.updateDisplay();
+        
+        console.log('🔄 Partie catégorie reprise', gameState);
+        
+        // Toast de confirmation avec détails de la partie
+        if (this.app.getUIModule()) {
+            const wordProgress = this.getWordProgress(gameState.currentWord, gameState.guessedLetters);
+            const progress = `${this.wordsFound}/${this.totalWords}`;
+            const errorsCount = 6 - gameState.remainingTries;
+            
+            let message = `🔄 Catégorie "${this.selectedCategory}" reprise ! (${progress})`;
+            message += `\nMot actuel : "${wordProgress}"`;
+            if (errorsCount > 0) {
+                message += ` (${errorsCount} erreur${errorsCount > 1 ? 's' : ''})`;
+            }
+            
+            this.app.getUIModule().showToast(message, 'success', 5000);
+        }
+    }
+    
+    getWordProgress(word, guessedLetters) {
+        // Créer l'affichage du mot avec les lettres trouvées
+        return word.split('').map(letter => 
+            guessedLetters.includes(letter.toUpperCase()) ? letter : '_'
+        ).join(' ');
+    }
+    
     cleanup() {
+        console.log('🧹 Nettoyage du mode Catégorie');
+        // Sauvegarder avant de nettoyer
+        this.saveGameState();
+        
         this.selectedCategory = null;
         this.categoryWords = [];
         this.currentIndex = 0;
         this.wordsFound = 0;
         this.totalWords = 0;
         this.completedWords.clear();
-        console.log('🧹 Nettoyage du mode Catégorie');
     }
 }

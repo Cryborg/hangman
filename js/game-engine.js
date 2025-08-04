@@ -226,6 +226,11 @@ class PenduGameEngine {
             this.guessedLetters.push(letter);
             this.updateDisplay();
             
+            // Sauvegarder l'état de la partie (si applicable)
+            if (this.currentGameMode && this.currentGameMode.saveGameState) {
+                this.currentGameMode.saveGameState();
+            }
+            
             // Vérifier la victoire
             if (this.isWordComplete()) {
                 this.handleWin();
@@ -237,6 +242,11 @@ class PenduGameEngine {
             this.remainingTries--;
             this.updateHangman();
             this.updateDisplay();
+            
+            // Sauvegarder l'état de la partie (si applicable)
+            if (this.currentGameMode && this.currentGameMode.saveGameState) {
+                this.currentGameMode.saveGameState();
+            }
             
             // Vérifier la défaite
             if (this.remainingTries <= 0) {
