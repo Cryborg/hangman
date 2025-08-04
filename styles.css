@@ -284,7 +284,7 @@ h1 {
 
 .toast {
     position: fixed;
-    top: 20%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, 0) scale(0.8);
     background: var(--arcade-bg-secondary, rgba(60, 60, 60, 0.95));
@@ -542,15 +542,138 @@ h1 {
     }
 }
 
+/* ===== OPTIMISATIONS DESKTOP ===== */
+
 @media (min-width: 769px) {
+    /* Masquer le clavier mobile */
     .keyboard {
         display: none !important;
     }
     
+    /* Container mieux adapté */
+    .container {
+        max-width: 1200px;
+        width: 95%;
+        padding: 2rem;
+        height: auto;
+    }
+    
+    /* Masquer le titre */
+    h1 {
+        display: none;
+    }
+    
+    /* Layout principal en grille 3 colonnes */
     .top-section {
-        flex-direction: row-reverse;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        grid-template-areas: 
+            "category progression hangman"
+            "tries letters hangman";
+    }
+    
+    /* Placement des éléments */
+    .game-header {
+        display: contents;
+        margin-bottom: 0;
+    }
+    
+    .category-card {
+        grid-area: category;
+    }
+    
+    .progress-card {
+        grid-area: progression;
+    }
+    
+    .game-stats {
+        display: contents;
+        margin-bottom: 0;
+    }
+    
+    .stat-item:first-child {
+        grid-area: tries;
+    }
+    
+    .stat-item:last-child {
+        grid-area: letters;
+    }
+    
+    /* Pendu occupe 2 lignes */
+    .hangman-container {
+        grid-area: hangman;
+        padding: 1.5rem;
+        display: flex;
         justify-content: center;
-        align-items: flex-start;
-        gap: 3rem;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+    }
+    
+    #hangman {
+        width: 100%;
+        height: auto;
+        max-width: 200px;
+        max-height: 250px;
+    }
+    
+    /* Styles communs pour toutes les cartes */
+    .category-card, .progress-card, .stat-item {
+        padding: 1.5rem;
+        border-radius: 12px;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--arcade-bg-tertiary, rgba(72, 72, 72, 0.8));
+        border: 1px solid var(--arcade-border-light, rgba(255, 255, 255, 0.1));
+    }
+    
+    .category-card h3, .progress-card h3, .stat-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+        color: var(--arcade-text-secondary, #9aa0a6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .category-card p, .progress-card p, .stat-value {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--arcade-text-primary, #e8eaed);
+    }
+    
+    /* Zone du mot plus grande */
+    .word-display {
+        font-size: 2.8rem;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+    }
+    
+    .word-display span {
+        min-width: 2.2rem;
+        padding: 0 0.6rem;
+        border-bottom-width: 3px;
+        margin: 0 0.25rem;
+    }
+    
+    /* Contrôles visibles et centrés */
+    .game-controls {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        justify-content: center;
+        gap: 2rem;
+    }
+    
+    .btn {
+        padding: 0.9rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 30px;
     }
 }
