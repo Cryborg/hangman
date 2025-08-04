@@ -121,15 +121,15 @@ class ModalManager {
         // Vider la grille
         this.categoriesGrid.innerHTML = '';
         
-        // Icônes par catégorie (à adapter selon vos catégories)
+        // Icônes par catégorie (complètes pour toutes les catégories)
         const categoryIcons = {
             'Animaux': '🐾',
             'Fruits et Légumes': '🍎',
-            'Pays': '🌍',
-            'Sports': '⚽',
-            'Couleurs': '🎨',
             'Métiers': '👷',
             'Objets du Quotidien': '🏠',
+            'Sports': '⚽',
+            'Pays': '🌍',
+            'Couleurs': '🎨',
             'Nature': '🌳',
             'Moyens de Transport': '🚗',
             'Nourriture': '🍕',
@@ -140,6 +140,9 @@ class ModalManager {
             'Jeux Vidéo': '🎮',
             'Sciences': '🔬',
             'Histoire': '📚',
+            'Villes': '🏙️',
+            'Pièces de la Maison': '🏡',
+            'Appareils Électroménager': '🔌',
             'Personnages Harry Potter': '⚡',
             'Lieux Harry Potter': '🏰'
         };

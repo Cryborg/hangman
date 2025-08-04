@@ -202,6 +202,7 @@ class PenduApp {
         switch (viewName) {
             case 'menu':
                 this.updateMenuStats();
+                this.updateWelcomeText();
                 break;
             case 'game':
                 if (this.gameManager) {
@@ -215,6 +216,19 @@ class PenduApp {
                 }
                 break;
         }
+    }
+    
+    updateWelcomeText() {
+        const welcomeDescription = document.getElementById('welcomeDescription');
+        if (!welcomeDescription || !this.gameManager) return;
+        
+        const categories = this.gameManager.getAvailableCategories();
+        if (categories.length === 0) return;
+        
+        const totalWords = categories.reduce((total, cat) => total + cat.mots.length, 0);
+        const categoryCount = categories.length;
+        
+        welcomeDescription.textContent = `Testez vos connaissances avec ${totalWords} mots répartis en ${categoryCount} catégories`;
     }
     
     updateMenuStats() {
