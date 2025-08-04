@@ -140,7 +140,8 @@ class ModalManager {
             'Jeux Vidéo': '🎮',
             'Sciences': '🔬',
             'Histoire': '📚',
-            'Personnages Harry Potter': '⚡'
+            'Personnages Harry Potter': '⚡',
+            'Lieux Harry Potter': '🏰'
         };
         
         // Créer un élément pour chaque catégorie

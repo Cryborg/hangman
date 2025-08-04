@@ -1,7 +1,3 @@
-Modes de jeu variés
-
-- Mode Time Attack : Trouver un maximum de mots en 5 minutes
-- Mode Catégorie : Choisir sa catégorie favorite et tenter de deviner TOUS les mots, avec pourcentage final
 
 Fonctionnalités sociales & partage
 
