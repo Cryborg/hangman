@@ -162,7 +162,7 @@ class PenduUI {
         
         // Créer le clavier virtuel uniquement sur mobile/tablette (même seuil que le CSS)
         if (window.innerWidth > 768) {
-            keyboard.innerHTML = '';
+            this.clearVirtualKeyboard(); // Nettoyer proprement
             return;
         }
         
@@ -171,8 +171,6 @@ class PenduUI {
             return; // Le clavier existe déjà, ne pas le recréer
         }
         
-        keyboard.innerHTML = '';
-        
         // Disposition AZERTY sur 3 lignes
         const azertyRows = [
             'AZERTYUIOP',
@@ -180,26 +178,47 @@ class PenduUI {
             'WXCVBN'
         ];
         
+        // Utiliser la délégation d'événements pour éviter les multiple listeners
+        const handleKeyboardClick = (e) => {
+            const button = e.target.closest('button[data-letter]');
+            if (!button || button.disabled) return;
+            
+            e.preventDefault();
+            const letter = button.getAttribute('data-letter');
+            if (this.app.getGameManager()) {
+                this.app.getGameManager().guessLetter(letter);
+            }
+        };
+        
+        // Supprimer l'ancien listener s'il existe
+        keyboard.removeEventListener('click', this._keyboardClickHandler);
+        // Ajouter le nouveau listener avec délégation
+        this._keyboardClickHandler = handleKeyboardClick;
+        keyboard.addEventListener('click', handleKeyboardClick);
+        
+        // Créer les boutons
         azertyRows.forEach(row => {
             row.split('').forEach(letter => {
                 const button = document.createElement('button');
                 button.textContent = letter;
-                // Pas besoin de classe spéciale, le CSS utilise .keyboard button
                 button.setAttribute('data-letter', letter);
-                
-                // Note: Animation tactile gérée par CSS :active pour éviter conflits transform
-                
-                // Event listener pour les clics/taps
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (!button.disabled && this.app.getGameManager()) {
-                        this.app.getGameManager().guessLetter(letter);
-                    }
-                });
-                
                 keyboard.appendChild(button);
             });
         });
+    }
+    
+    clearVirtualKeyboard() {
+        const keyboard = document.getElementById('keyboard');
+        if (!keyboard) return;
+        
+        // Nettoyer les event listeners
+        if (this._keyboardClickHandler) {
+            keyboard.removeEventListener('click', this._keyboardClickHandler);
+            this._keyboardClickHandler = null;
+        }
+        
+        // Vider le contenu
+        keyboard.innerHTML = '';
     }
     
     updateKeyboardButton(letter, state) {
@@ -437,5 +456,23 @@ class PenduUI {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    }
+    
+    // ===== NETTOYAGE DES RESSOURCES ===== //
+    
+    cleanup() {
+        // Nettoyer le clavier virtuel
+        this.clearVirtualKeyboard();
+        
+        // Nettoyer tous les toasts actifs
+        this.activeToasts.forEach(toast => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        });
+        this.activeToasts = [];
+        this.toastQueue = [];
+        
+        console.log('🧹 UI nettoyée');
     }
 }

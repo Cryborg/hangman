@@ -138,8 +138,16 @@ class PenduStats {
     }
     
     saveStats() {
-        localStorage.setItem('pendu_stats', JSON.stringify(this.stats));
-        localStorage.setItem('pendu_achievements', JSON.stringify(this.achievements));
+        try {
+            localStorage.setItem('pendu_stats', JSON.stringify(this.stats));
+            localStorage.setItem('pendu_achievements', JSON.stringify(this.achievements));
+        } catch (error) {
+            console.warn('⚠️ Impossible de sauvegarder les statistiques:', error.message);
+            // Fallback: continuer sans sauvegarde
+            if (error.name === 'QuotaExceededError') {
+                console.warn('💾 Stockage local plein, nettoyage recommandé');
+            }
+        }
     }
     
     // Méthodes pour mettre à jour les stats

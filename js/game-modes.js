@@ -77,7 +77,6 @@ class StandardMode extends BaseGameMode {
         super(app, gameEngine);
         this.name = 'standard';
         this.saveKey = 'pendu_current_game';
-        this.resumeOffered = false; // Flag pour éviter de re-proposer après refresh
     }
     
     initialize() {
@@ -201,8 +200,12 @@ class StandardMode extends BaseGameMode {
             timestamp: Date.now()
         };
         
-        localStorage.setItem(this.saveKey, JSON.stringify(gameState));
-        console.log('💾 Partie sauvegardée', gameState);
+        try {
+            localStorage.setItem(this.saveKey, JSON.stringify(gameState));
+            console.log('💾 Partie sauvegardée', gameState);
+        } catch (error) {
+            console.warn('⚠️ Impossible de sauvegarder la partie:', error.message);
+        }
     }
     
     checkForSavedGame() {
@@ -802,8 +805,12 @@ class CategoryMode extends BaseGameMode {
             timestamp: Date.now()
         };
         
-        localStorage.setItem(this.saveKey, JSON.stringify(gameState));
-        console.log('💾 Partie catégorie sauvegardée', gameState);
+        try {
+            localStorage.setItem(this.saveKey, JSON.stringify(gameState));
+            console.log('💾 Partie catégorie sauvegardée', gameState);
+        } catch (error) {
+            console.warn('⚠️ Impossible de sauvegarder la partie catégorie:', error.message);
+        }
     }
     
     checkForSavedGame() {

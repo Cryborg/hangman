@@ -56,6 +56,9 @@ class PenduGameEngine {
         this.restartGameBtn = document.getElementById('restartGameBtn');
         this.categoryDisplay = document.getElementById('categoryName');
         this.streakDisplay = document.getElementById('streakDisplay');
+        
+        // Cache des éléments du hangman pour optimiser les performances
+        this.hangmanParts = document.querySelectorAll('#hangman .part');
     }
     
     initializeEventListeners() {
@@ -193,8 +196,7 @@ class PenduGameEngine {
     
     resetHangman() {
         // Afficher seulement la structure de base
-        const hangmanParts = document.querySelectorAll('#hangman .part');
-        hangmanParts.forEach((part, index) => {
+        this.hangmanParts.forEach((part, index) => {
             if (index < 4) { // Structure de base (4 premiers éléments)
                 part.classList.add('visible');
             } else {
@@ -366,11 +368,10 @@ class PenduGameEngine {
     }
     
     updateHangman() {
-        const hangmanParts = document.querySelectorAll('#hangman .part');
         const errorIndex = 6 - this.remainingTries;
         
-        if (hangmanParts[errorIndex + 3]) { // +3 pour ignorer la structure de base
-            hangmanParts[errorIndex + 3].classList.add('visible');
+        if (this.hangmanParts[errorIndex + 3]) { // +3 pour ignorer la structure de base
+            this.hangmanParts[errorIndex + 3].classList.add('visible');
         }
     }
     
