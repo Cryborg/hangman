@@ -27,7 +27,6 @@ class SaveGameManager {
         
         try {
             localStorage.setItem(this.saveKey, JSON.stringify(stateWithTimestamp));
-            console.log('💾 Partie sauvegardée', stateWithTimestamp);
         } catch (error) {
             console.warn('⚠️ Impossible de sauvegarder la partie:', error.message);
         }
@@ -38,7 +37,9 @@ class SaveGameManager {
      */
     checkForSavedGame() {
         const savedData = localStorage.getItem(this.saveKey);
-        if (!savedData) return;
+        if (!savedData) {
+            return;
+        }
         
         try {
             const gameState = JSON.parse(savedData);
@@ -53,7 +54,6 @@ class SaveGameManager {
             // Vérifier si on a déjà proposé la reprise dans cette session
             const sessionKey = `${this.saveKey}_offered_${gameState.timestamp}`;
             if (sessionStorage.getItem(sessionKey)) {
-                console.log('Reprise déjà proposée dans cette session');
                 return;
             }
             
@@ -150,9 +150,16 @@ class SaveGameManager {
     /**
      * Formate la progression d'un mot pour l'affichage
      */
-    static formatWordProgress(word, guessedLetters) {
-        return word.split('').map(letter => 
-            guessedLetters.includes(letter.toUpperCase()) ? letter : '_'
-        ).join(' ');
+    static formatWordProgress(word, guessedLetters, difficultyOptions = {}) {
+        const accentDifficulty = difficultyOptions.accents || false;
+        const numberDifficulty = difficultyOptions.numbers || false;
+        
+        return word.split(' ').map(currentWord => {
+            return currentWord.split('').map(letter => {
+                // Utiliser l'utilitaire dédié
+                const shouldShow = WordUtils.shouldShowCharacter(letter, guessedLetters, accentDifficulty, numberDifficulty);
+                return shouldShow ? letter : '_';
+            }).join(' '); // Espace entre chaque lettre
+        }).join('   '); // Triple espace entre les mots
     }
 }

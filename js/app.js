@@ -263,6 +263,7 @@ class PenduApp {
         const totalFoundWords = document.getElementById('totalFoundWords');
         const currentStreak = document.getElementById('currentStreak');
         const totalAchievements = document.getElementById('totalAchievements');
+        const bestStreak = document.getElementById('bestStreak');
         
         if (totalFoundWords) {
             totalFoundWords.textContent = stats.foundWords;
@@ -274,6 +275,10 @@ class PenduApp {
         
         if (totalAchievements) {
             totalAchievements.textContent = stats.unlockedAchievements;
+        }
+        
+        if (bestStreak) {
+            bestStreak.textContent = stats.bestStreak;
         }
     }
     

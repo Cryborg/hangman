@@ -117,20 +117,13 @@ class CategoryMode extends BaseGameModeWithSave {
         
         if (this.gameEngine && this.gameEngine.categories) {
             console.log(`🔍 Recherche de la catégorie: "${this.selectedCategory}"`);
-            console.log('📋 Catégories disponibles:', this.gameEngine.categories.map(cat => cat.nom));
             
             const category = this.gameEngine.categories.find(cat => cat.nom === this.selectedCategory);
             if (category) {
                 this.categoryWords = [...category.mots];
                 this.totalWords = this.categoryWords.length;
-                console.log(`📚 Catégorie "${this.selectedCategory}" : ${this.totalWords} mots`);
-                console.log('🔤 Premiers mots:', this.categoryWords.slice(0, 5));
             } else {
                 console.error(`❌ Catégorie "${this.selectedCategory}" non trouvée`);
-                console.log('❗ Comparaison exacte avec les noms disponibles:');
-                this.gameEngine.categories.forEach(cat => {
-                    console.log(`"${cat.nom}" === "${this.selectedCategory}" ?`, cat.nom === this.selectedCategory);
-                });
             }
         } else {
             console.error('❌ GameEngine ou categories non disponibles');
@@ -167,8 +160,8 @@ class CategoryMode extends BaseGameModeWithSave {
         // Sauvegarder l'état
         this.saveGameState();
         
-        // Passer au mot suivant après un délai
-        setTimeout(() => {
+        // Passer au mot suivant après un délai (méthode commune)
+        this.scheduleNextWord(() => {
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
@@ -188,8 +181,8 @@ class CategoryMode extends BaseGameModeWithSave {
         // Sauvegarder l'état
         this.saveGameState();
         
-        // Passer au mot suivant
-        setTimeout(() => {
+        // Passer au mot suivant (méthode commune)
+        this.scheduleNextWord(() => {
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
@@ -226,18 +219,9 @@ class CategoryMode extends BaseGameModeWithSave {
         if (progressCard) progressCard.classList.remove('hidden');
         if (streakCard) streakCard.classList.add('hidden');
         
-        this.updateButtonsVisibility();
         this.updateDisplay();
     }
     
-    updateButtonsVisibility() {
-        // En mode catégorie, masquer le bouton "Suivant" (progression automatique)
-        const newGameBtn = document.getElementById('newGameBtn');
-        
-        if (newGameBtn) {
-            newGameBtn.style.display = 'none'; // "Suivant" n'a pas de sens en mode auto
-        }
-    }
     
     updateDisplay() {
         // Mettre à jour la progression

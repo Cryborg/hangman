@@ -12,7 +12,11 @@ class StandardMode extends BaseGameModeWithSave {
     // ===== MÉTHODES ABSTRAITES IMPLÉMENTÉES ===== //
     
     formatResumeData(gameState) {
-        const wordProgress = SaveGameManager.formatWordProgress(gameState.currentWord, gameState.guessedLetters);
+        const wordProgress = SaveGameManager.formatWordProgress(
+            gameState.currentWord, 
+            gameState.guessedLetters,
+            gameState.difficultyOptions || {}
+        );
         const message = `Une partie est en cours :<br><br><strong>"${wordProgress}"</strong><br><em>${gameState.currentCategory}</em><br><br>Reprendre ?`;
         return { message };
     }
@@ -31,8 +35,29 @@ class StandardMode extends BaseGameModeWithSave {
             currentCategory: this.gameEngine.currentCategory,
             guessedLetters: [...this.gameEngine.guessedLetters],
             wrongLetters: [...this.gameEngine.wrongLetters],
-            remainingTries: this.gameEngine.remainingTries
+            remainingTries: this.gameEngine.remainingTries,
+            // Sauvegarder les options de difficulté
+            difficultyOptions: {
+                accents: document.getElementById('accentDifficulty')?.checked || false,
+                numbers: document.getElementById('numberDifficulty')?.checked || false
+            }
         };
+    }
+    
+    restoreModeSpecificState(gameState) {
+        // Restaurer les options de difficulté si elles sont sauvegardées
+        if (gameState.difficultyOptions) {
+            const accentCheckbox = document.getElementById('accentDifficulty');
+            const numberCheckbox = document.getElementById('numberDifficulty');
+            
+            if (accentCheckbox) {
+                accentCheckbox.checked = gameState.difficultyOptions.accents;
+            }
+            if (numberCheckbox) {
+                numberCheckbox.checked = gameState.difficultyOptions.numbers;
+            }
+            
+        }
     }
     
     // ===== MÉTHODES SPÉCIFIQUES AU MODE STANDARD ===== //
@@ -66,7 +91,7 @@ class StandardMode extends BaseGameModeWithSave {
                 message += ' (Parfait !)';
             }
             
-            this.app.getUIModule().showToast(message, 'win', 4000);
+            this.app.getUIModule().showToast(message, 'win', 2500);
         }
         
         // Afficher les nouveaux achievements
@@ -83,6 +108,13 @@ class StandardMode extends BaseGameModeWithSave {
                 });
             }, 2000);
         }
+        
+        // Passer au mot suivant automatiquement (méthode commune)
+        this.scheduleNextWord(() => {
+            if (this.gameEngine) {
+                this.gameEngine.startNewGame();
+            }
+        }, 3000);
         
         this.updateDisplay();
     }
@@ -116,18 +148,8 @@ class StandardMode extends BaseGameModeWithSave {
         if (progressCard) progressCard.classList.remove('hidden');
         if (streakCard) streakCard.classList.remove('hidden');
         
-        // Configurer la visibilité des boutons
-        this.updateButtonsVisibility();
     }
     
-    updateButtonsVisibility() {
-        const gameControls = document.querySelector('.game-controls');
-        
-        // Centrer le bouton Suivant
-        if (gameControls) {
-            gameControls.style.justifyContent = 'center';
-        }
-    }
     
     updateDisplay() {
         // Mettre à jour l'affichage de la série

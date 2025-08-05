@@ -86,7 +86,7 @@
 /* Groupes de stats */
 .stat-group {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 4px;
     padding: 6px 10px;
     background: rgba(0, 0, 0, 0.2);
@@ -105,6 +105,11 @@
 
 .stat-icon {
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 1.2em; /* Hauteur fixe pour alignement */
 }
 
 .stat-group span:not(.stat-icon) {
@@ -114,29 +119,12 @@
     max-width: 150px; /* Limiter la largeur pour les lettres */
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* Points visuels pour les essais */
-.tries-dots {
-    display: inline-flex;
-    gap: 4px;
+    display: flex;
     align-items: center;
+    line-height: 1.2;
+    height: 1.2em; /* Même hauteur que l'icône */
 }
 
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--error-color);
-    opacity: 0.3;
-    transition: all var(--transition-normal);
-}
-
-.dot.filled {
-    background: var(--success-color);
-    opacity: 1;
-    box-shadow: 0 0 5px var(--success-color);
-}
 
 /* Tooltip au hover */
 .stat-group[data-tooltip]::before {
@@ -257,10 +245,6 @@
         max-width: 100px;
     }
     
-    .dot {
-        width: 8px;
-        height: 8px;
-    }
     
     /* Tooltips désactivés sur mobile (touch) */
     .stat-group[data-tooltip]::before,

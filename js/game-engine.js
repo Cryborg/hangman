@@ -27,10 +27,8 @@ class PenduGameEngine {
         // Références DOM
         this.wordDisplay = null;
         this.wrongLettersDisplay = null;
-        this.triesLeftDisplay = null;
         this.progressDisplay = null;
         this.keyboard = null;
-        this.newGameBtn = null;
         this.restartGameBtn = null;
         this.categoryDisplay = null;
         this.streakDisplay = null;
@@ -49,10 +47,8 @@ class PenduGameEngine {
     initializeDOMReferences() {
         this.wordDisplay = document.getElementById('wordDisplay');
         this.wrongLettersDisplay = document.getElementById('wrongLetters');
-        this.triesLeftDisplay = document.getElementById('triesLeft');
         this.progressDisplay = document.getElementById('wordsProgress');
         this.keyboard = document.getElementById('keyboard');
-        this.newGameBtn = document.getElementById('newGameBtn');
         this.restartGameBtn = document.getElementById('restartGameBtn');
         this.categoryDisplay = document.getElementById('categoryName');
         this.streakDisplay = document.getElementById('streakDisplay');
@@ -62,16 +58,7 @@ class PenduGameEngine {
     }
     
     initializeEventListeners() {
-        // Bouton nouvelle partie
-        if (this.newGameBtn) {
-            this.newGameBtn.addEventListener('click', () => {
-                if (this.currentGameMode) {
-                    this.currentGameMode.startGame();
-                } else {
-                    this.startNewGame();
-                }
-            });
-        }
+        // Plus de bouton "Suivant" - passage automatique
         
         // Bouton redémarrage (délégué au mode actuel)
         if (this.restartGameBtn) {
@@ -104,7 +91,6 @@ class PenduGameEngine {
             this.currentGameMode.initialize();
         }
         
-        console.log(`🎮 Mode de jeu: ${gameMode ? gameMode.getName() : 'aucun'}`);
     }
     
     getCurrentGameMode() {
@@ -119,7 +105,6 @@ class PenduGameEngine {
             const data = await response.json();
             this.categories = data.categories;
             this.totalWords = this.categories.reduce((total, cat) => total + cat.mots.length, 0);
-            console.log(`📚 ${this.categories.length} catégories chargées (${this.totalWords} mots au total)`);
             return true;
         } catch (error) {
             console.error('❌ Erreur lors du chargement des mots:', error);
@@ -155,7 +140,6 @@ class PenduGameEngine {
         // Mettre à jour l'affichage
         this.updateDisplay();
         
-        console.log(`🎮 Nouveau mot: ${this.currentWord} (${this.currentCategory})`);
     }
     
     setSpecificWord(word, category) {
@@ -164,7 +148,6 @@ class PenduGameEngine {
         this.currentCategory = category;
         this.resetGameState();
         this.updateDisplay();
-        console.log(`🎯 Mot défini: ${word} (${category})`);
     }
     
     getAvailableWords() {
@@ -262,15 +245,63 @@ class PenduGameEngine {
     handleKeyPress(e) {
         if (!this.gameActive) return;
         
-        const letter = e.key.toUpperCase();
+        const key = e.key;
+        let letter = key.toUpperCase();
+        
+        // Vérifier les différents types de caractères
+        let isValidInput = false;
+        
+        // Lettres de base A-Z
         if (/^[A-Z]$/.test(letter)) {
+            isValidInput = true;
+        }
+        // Accents français (si la difficulté accents est activée)
+        else if (/^[ÀÂÉÈÊÏÎÔÙÛÇ]$/.test(letter)) {
+            const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
+            if (accentDifficulty) {
+                isValidInput = true;
+            }
+        }
+        // Chiffres (si la difficulté chiffres est activée)
+        else if (/^[0-9]$/.test(key)) {
+            const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+            if (numberDifficulty) {
+                letter = key; // Garder le chiffre tel quel
+                isValidInput = true;
+            }
+        }
+        
+        if (isValidInput) {
             e.preventDefault();
             this.guessLetter(letter);
         }
     }
     
     isWordComplete() {
-        const wordLetters = this.currentWord.toUpperCase().split('').filter(letter => /[A-Z]/.test(letter));
+        // Récupérer les options de difficulté
+        const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
+        const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+        
+        // Filtrer les caractères à deviner selon les options de difficulté
+        const wordLetters = this.currentWord.toUpperCase().split('').filter(letter => {
+            // Lettres de base (sans accent)
+            if (/[A-Z]/.test(letter)) {
+                return true;
+            }
+            
+            // Lettres accentuées : seulement si la difficulté accents est activée
+            if (/[ÀÂÉÈÊÏÎÔÙÛÇ]/.test(letter)) {
+                return accentDifficulty;
+            }
+            
+            // Chiffres : seulement si la difficulté chiffres est activée
+            if (/[0-9]/.test(letter)) {
+                return numberDifficulty;
+            }
+            
+            return false; // Autres caractères non pris en compte
+        });
+        
         return wordLetters.every(letter => this.guessedLetters.includes(letter));
     }
     
@@ -285,7 +316,6 @@ class PenduGameEngine {
             this.currentGameMode.onWordWin(this.currentWord, this.currentCategory, errorsCount);
         }
         
-        console.log(`✅ Victoire ! Mot: ${this.currentWord}, Erreurs: ${errorsCount}`);
     }
     
     handleLoss() {
@@ -299,7 +329,6 @@ class PenduGameEngine {
             this.currentGameMode.onWordLoss(this.currentWord);
         }
         
-        console.log(`❌ Défaite ! Mot: ${this.currentWord}`);
     }
     
     revealCompleteWord() {
@@ -350,9 +379,6 @@ class PenduGameEngine {
             }
         }
         
-        if (this.triesLeftDisplay) {
-            this.triesLeftDisplay.textContent = this.remainingTries;
-        }
         
         if (this.wrongLettersDisplay) {
             this.wrongLettersDisplay.textContent = this.wrongLetters.length > 0 ? this.wrongLetters.join(', ') : '-';
@@ -397,6 +423,9 @@ class PenduGameEngine {
             this.streakDisplay.textContent = stats.currentStreak;
         }
     }
+    
+    // ===== UTILITAIRES ===== //
+    
     
     // ===== UTILITAIRES ===== //
     
@@ -458,12 +487,4 @@ class PenduGameEngine {
         return this.sessionWords;
     }
     
-    // Méthode pour débugger (à supprimer en production)
-    revealWord() {
-        if (this.gameActive) {
-            console.log(`🔍 DEBUG - Mot actuel: ${this.currentWord}`);
-            return this.currentWord;
-        }
-        return null;
-    }
 }

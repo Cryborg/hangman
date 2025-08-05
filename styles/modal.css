@@ -1,5 +1,91 @@
 /* ===== MODALS - STYLES POUR LA SÉLECTION DES MODES ET CATÉGORIES ===== */
 
+/* Options de difficulté */
+.difficulty-options {
+    background: rgba(255, 107, 107, 0.1);
+    border: 2px solid rgba(255, 107, 107, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.difficulty-options h4 {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.difficulty-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.difficulty-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.difficulty-checkbox:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.difficulty-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.difficulty-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    position: relative;
+    background: transparent;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.difficulty-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.difficulty-checkbox input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 3px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.difficulty-checkbox .label-text {
+    flex: 1;
+}
+
+.difficulty-checkbox .label-text strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 0.95em;
+}
+
+.difficulty-checkbox .label-text small {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    line-height: 1.3;
+}
+
 /* Modal overlay */
 .modal {
     display: none;

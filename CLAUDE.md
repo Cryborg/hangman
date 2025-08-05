@@ -1,4 +1,4 @@
-# Jeu du Pendu - Documentation Architecture v3.1.0
+# Jeu du Pendu - Documentation Architecture v4.1.0
 
 ## Vue d'ensemble
 Jeu du pendu moderne avec système de navigation, statistiques avancées, achievements, architecture modulaire et trois modes de jeu distincts.
@@ -12,7 +12,10 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
   - **Mode Time Attack** : Chrono 1-5min, highscores par durée
   - **Mode Catégorie** : Deviner tous les mots d'une catégorie sans limite d'erreurs
 - **Architecture modulaire** : CSS et JS organisés en modules spécialisés
-- **20 catégories** : 750+ mots répartis en catégories variées
+- **20 catégories** : 750+ mots avec accents français corrects répartis en catégories variées
+- **Système de difficulté** : Options pour accents requis et chiffres cachés
+- **Clavier virtuel professionnel** : AZERTY adaptatif avec appuis longs pour accents (mobile)
+- **Support clavier physique complet** : Accents et chiffres français sur desktop
 - **Sauvegarde persistante** : Progression conservée entre sessions
 
 ## 📁 Architecture des fichiers
@@ -27,14 +30,16 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 ├── styles/                    # CSS modulaire
 │   ├── base.css              # Reset, variables, animations globales
 │   ├── layout.css            # Header, navigation, système de vues (avec fix scroll mobile)
-│   ├── components.css        # Boutons, cartes, toast, hangman, clavier
+│   ├── components.css        # Boutons, cartes, toast, hangman
+│   ├── virtual-keyboard.css  # Clavier virtuel mobile AZERTY avec appuis longs
 │   ├── views.css             # Styles spécifiques aux vues (menu/jeu/stats)
 │   ├── modal.css             # Modal de sélection des modes et catégories
 │   ├── game-header.css       # Header unifié du jeu avec stats en temps réel
 │   └── responsive.css        # Media queries (mobile/desktop) avec fix scroll
 └── js/                        # JavaScript modulaire avec architecture orientée objet
     ├── app.js                # Point d'entrée, navigation, coordination
-    ├── ui.js                 # Interactions UI, toasts, animations
+    ├── ui.js                 # Interactions UI, toasts, animations, proxy clavier
+    ├── virtual-keyboard.js   # Clavier virtuel mobile professionnel AZERTY
     ├── stats.js              # Statistiques et système d'achievements
     ├── modal-manager.js      # Gestion des modals (modes et catégories)
     ├── save-game-manager.js  # Gestion de la sauvegarde des parties
@@ -61,8 +66,16 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
   - Catégorie avec icône
   - Barre de stats : progression, série, essais (points visuels), lettres essayées
   - Barre Time Attack (visible uniquement en mode Time Attack) : timer, score, highscore
-- Clavier virtuel AZERTY 3 lignes avec décalage (mobile)
-- Support clavier physique (desktop)
+- **Clavier virtuel professionnel** (mobile) :
+  - Layout AZERTY 3 lignes avec décalage visuel authentique
+  - Appui long sur E,A,U,I,O,C pour accents français (É,È,Ê / À,Â / etc.)
+  - Popup d'accents avec glisser-relâcher comme sur mobile
+  - États visuels des accents (vert/rouge selon déjà essayés)
+  - Ligne de chiffres optionnelle selon difficulté
+- **Support clavier physique complet** (desktop) :
+  - Lettres A-Z toujours acceptées
+  - Accents français (À,Â,É,È,Ê,Ï,Î,Ô,Ù,Û,Ç) si option activée
+  - Chiffres 0-9 si option activée
 - Layout responsive optimisé (grille sur mobile, 3 colonnes sur desktop)
 
 ### Vue Statistiques (`#statsView`)
@@ -179,8 +192,17 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 ##### `PenduUI` (ui.js)
 - Gestion des toasts
 - Animations et effets visuels
-- Clavier virtuel
+- Proxy pour le clavier virtuel
 - Mise à jour des affichages
+
+##### `VirtualKeyboard` (virtual-keyboard.js) 
+- Clavier virtuel mobile professionnel autonome
+- Layout AZERTY authentique avec décalages
+- Système d'appui long pour accents français
+- Popup d'accents avec glisser-relâcher
+- États visuels (correct/wrong/selected)
+- Support tactile et souris
+- Gestion des options de difficulté
 
 ### Communication entre modules
 ```javascript
@@ -204,9 +226,12 @@ penduApp.modalManager   // ModalManager instance
 
 ## 🚀 Gestion des versions
 
-### Version actuelle : **3.1.0**
+### Version actuelle : **4.1.1**
 
 ### Historique des versions
+- **4.1.1** : Interface mobile optimisée - Layout 2x2 compact pour cartes stats + Nettoyage des logs de debug + Fix progression automatique
+- **4.1.0** : Clavier virtuel professionnel modulaire + Support clavier physique complet (accents/chiffres)
+- **4.0.0** : Système de difficulté avec options accents et chiffres + 80+ mots avec accents corrects + Clavier virtuel adaptatif
 - **3.1.0** : Ajout de 3 catégories Disney (Films classiques, Pixar, Personnages) + Fix affichage caractères non alphabétiques
 - **3.0.0** : Mode Catégorie + Refonte architecture OOP - Classes ES6, GameEngine/Manager, 3 modes distincts
 - **2.1.0** : Mode Time Attack - Sélection de mode, timer, scores par durée, highscores sauvegardés
@@ -248,12 +273,30 @@ penduApp.modalManager   // ModalManager instance
 
 ## 📝 Notes importantes d'implémentation
 
+### Système de difficulté avec options avancées
+Le jeu propose un système de difficulté modulaire avec deux options indépendantes :
+
+#### Options de difficulté :
+- **Accents requis** : Les lettres accentuées (É, È, À, Ç, etc.) ne sont plus automatiquement révélées et doivent être devinées
+- **Chiffres cachés** : Les chiffres (0-9) ne sont plus automatiquement révélés et doivent être devinés
+- **Caractères spéciaux** : Les tirets, apostrophes, etc. restent toujours affichés automatiquement
+
+#### Interface adaptative :
+- **Modal de sélection** : Checkboxes en haut du modal de choix de mode avec descriptions claires
+- **Clavier virtuel mobile** : Layout AZERTY professionnel avec appuis longs pour accents
+- **Clavier physique desktop** : Support complet des accents et chiffres français
+- **Styles différenciés** : Chaque type de touche a sa propre couleur et comportement
+
+#### Implémentation technique :
+- **Affichage** : `ui.js`, fonction `updateWordDisplay()` gère la logique selon les options
+- **Logique de jeu** : `game-engine.js`, fonction `isWordComplete()` adapte la completion
+- **Clavier virtuel** : `virtual-keyboard.js`, classe `VirtualKeyboard` autonome et professionnelle
+- **Clavier physique** : `game-engine.js`, fonction `handleKeyPress()` étendue pour accents/chiffres
+- **Gestion d'état** : `modal-manager.js` synchronise les changements d'options avec l'affichage
+
 ### Gestion des caractères non alphabétiques
-Le jeu gère automatiquement l'affichage des caractères non alphabétiques (chiffres, tirets, points, etc.) :
-- **Affichage** : Dans `ui.js`, la fonction `updateWordDisplay()` affiche automatiquement tous les caractères non alphabétiques (lignes 296-299)
-- **Logique de jeu** : La fonction `isWordComplete()` dans `game-engine.js` filtre correctement ces caractères pour ne vérifier que les lettres
-- **Exemples** : Les mots comme "RALPH 2.0", "AC/DC", "SPIDER-MAN" affichent automatiquement "2.0", "/", "-" dès le début de la partie
-- **Catégories concernées** : Films Disney, Personnages Disney, L'univers de Pixar, Groupes de Musique, etc.
+- **Exemples** : "RALPH 2.0" (le "2.0" est caché si option chiffres activée), "TÉLÉPHONE" (le "É" est caché si option accents activée)
+- **Catégories concernées** : Toutes les catégories bénéficient des accents français corrects
 
 ## 🐛 Debug et développement
 
@@ -300,7 +343,17 @@ penduApp.gameManager.setMode('category', {categoryId: 'animaux'})
 
 ### Adaptations mobiles
 - Menu hamburger avec overlay
-- Clavier virtuel AZERTY 3 lignes avec décalage visuel
+- **Clavier virtuel professionnel** :
+  - Layout AZERTY authentique avec décalages progressifs
+  - Appui long (500ms) sur E,A,U,I,O,C pour accents
+  - Popup d'accents avec glisser-relâcher
+  - États visuels des accents selon historique
+  - Responsive complet (480px, 360px breakpoints)
+- **Interface menu principal optimisée** :
+  - Layout 2x2 compact pour les cartes de statistiques
+  - Icônes centrées créant une colonne visuelle harmonieuse
+  - Espacement réduit pour éviter le scroll horizontal
+  - 4ème carte ajoutée (Meilleure série) pour équilibrer le design
 - Layout vertical optimisé avec grille pour la vue jeu
 - Toasts adaptés aux petits écrans
 - Scroll activé sur toutes les vues (fix du problème iOS/mobile)
@@ -316,14 +369,24 @@ penduApp.gameManager.setMode('category', {categoryId: 'animaux'})
 - `pendu_categoryProgress` : Progression par catégorie pour le mode Catégorie
 - `pendu_savedGame` : Partie sauvegardée (mode standard uniquement)
 
+### Architecture modulaire du clavier
+- **Séparation claire** : `virtual-keyboard.js` + `virtual-keyboard.css` autonomes
+- **Interface proxy** : `ui.js` fait le pont avec des méthodes simples
+- **Responsabilités** :
+  - `VirtualKeyboard` : Logique, événements, états, rendering
+  - `UI` : Coordination, proxy vers le clavier
+  - `GameEngine` : Support clavier physique étendu
+
 ### Ordre de chargement des scripts
 L'ordre est **critique** à cause des dépendances entre classes :
-1. `base-game-mode.js` (classe abstraite)
-2. `save-game-manager.js` (utilitaire)
-3. `base-game-mode-with-save.js` (extension)
-4. Les modes concrets (`standard-mode.js`, etc.)
-5. `game-modes.js` (factory)
-6. `game-engine.js` et `game-manager.js`
-7. `app.js` (point d'entrée)
+1. `virtual-keyboard.js` (clavier autonome)
+2. `base-game-mode.js` (classe abstraite)
+3. `save-game-manager.js` (utilitaire)
+4. `base-game-mode-with-save.js` (extension)
+5. Les modes concrets (`standard-mode.js`, etc.)
+6. `game-modes.js` (factory)
+7. `game-engine.js` et `game-manager.js`
+8. `ui.js` (utilise VirtualKeyboard)
+9. `app.js` (point d'entrée)
 
 Cette documentation doit faciliter toute future modification en permettant de comprendre rapidement l'architecture et les points d'entrée du code.

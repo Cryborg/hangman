@@ -51,8 +51,8 @@ class TimeAttackGameMode extends BaseGameMode {
             this.app.getUIModule().showToast(`"${word}"`, 'win', 800);
         }
         
-        // Passer au mot suivant rapidement
-        setTimeout(() => {
+        // Passer au mot suivant rapidement (méthode commune)
+        this.scheduleNextWord(() => {
             if (this.isActive && this.gameEngine) {
                 this.gameEngine.startNewGame();
             }
@@ -139,7 +139,6 @@ class TimeAttackGameMode extends BaseGameMode {
         
         if (this.score > currentBest) {
             localStorage.setItem(key, this.score.toString());
-            console.log(`🏆 Nouveau record ${this.selectedDuration}min : ${this.score} mots !`);
         }
     }
     

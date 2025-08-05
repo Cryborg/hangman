@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="styles/responsive.css">
     <link rel="stylesheet" href="styles/modal.css">
     <link rel="stylesheet" href="styles/game-header.css">
+    <link rel="stylesheet" href="styles/virtual-keyboard.css">
     <script src="../../arcade-theme-integration.js"></script>
 </head>
 <body>
@@ -53,26 +54,33 @@
                 </div>
                 
                 <div class="quick-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
+                    <div class="stat-card stat-card-left">
                         <div class="stat-info">
                             <span class="stat-number" id="totalFoundWords">0</span>
                             <span class="stat-label">Mots trouvés</span>
                         </div>
+                        <div class="stat-icon">🎯</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🔥</div>
+                    <div class="stat-card stat-card-right">
                         <div class="stat-info">
                             <span class="stat-number" id="currentStreak">0</span>
                             <span class="stat-label">Série actuelle</span>
                         </div>
+                        <div class="stat-icon">🔥</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🏆</div>
+                    <div class="stat-card stat-card-left">
                         <div class="stat-info">
                             <span class="stat-number" id="totalAchievements">0</span>
                             <span class="stat-label">Succès débloqués</span>
                         </div>
+                        <div class="stat-icon">🏆</div>
+                    </div>
+                    <div class="stat-card stat-card-right">
+                        <div class="stat-info">
+                            <span class="stat-number" id="bestStreak">0</span>
+                            <span class="stat-label">Meilleure série</span>
+                        </div>
+                        <div class="stat-icon">⭐</div>
                     </div>
                 </div>
                 
@@ -80,6 +88,30 @@
                 <div class="modal" id="gameModeModal">
                     <div class="modal-content">
                         <h3>🎯 Choisissez votre mode de jeu</h3>
+                        
+                        <!-- Options de difficulté -->
+                        <div class="difficulty-options">
+                            <h4>🔥 Options de difficulté</h4>
+                            <div class="difficulty-checkboxes">
+                                <label class="difficulty-checkbox">
+                                    <input type="checkbox" id="accentDifficulty">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">
+                                        <strong>Accents requis</strong>
+                                        <small>Les lettres accentuées françaises (É, È, À, Ç...) ne sont plus automatiquement révélées</small>
+                                    </span>
+                                </label>
+                                
+                                <label class="difficulty-checkbox">
+                                    <input type="checkbox" id="numberDifficulty">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">
+                                        <strong>Chiffres cachés</strong>
+                                        <small>Les chiffres (0-9) ne sont plus automatiquement révélés</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                         
                         <div class="game-modes">
                             <div class="mode-card" data-mode="standard">
@@ -172,20 +204,6 @@
                                 <span id="streakDisplay">0</span>
                             </div>
                             
-                            <!-- Essais restants (visuels) -->
-                            <div class="stat-group" data-tooltip="Essais restants">
-                                <span class="stat-icon">❤️</span>
-                                <span class="tries-dots" id="triesDotsDisplay">
-                                    <span class="dot filled"></span>
-                                    <span class="dot filled"></span>
-                                    <span class="dot filled"></span>
-                                    <span class="dot filled"></span>
-                                    <span class="dot filled"></span>
-                                    <span class="dot filled"></span>
-                                </span>
-                                <span class="tries-text hidden" id="triesLeft">6</span>
-                            </div>
-                            
                             <!-- Lettres essayées -->
                             <div class="stat-group" data-tooltip="Lettres essayées">
                                 <span class="stat-icon">🔤</span>
@@ -243,10 +261,6 @@
             
             <div class="keyboard" id="keyboard"></div>
             
-            <div class="game-controls">
-                <button id="newGameBtn" class="btn">Suivant</button>
-            </div>
-            
             <div id="gameMessage" class="game-message"></div>
         </div>
     </div>
@@ -286,6 +300,8 @@
     </div>
     
     <!-- JavaScript modulaire -->
+    <script src="js/word-utils.js"></script>
+    <script src="js/virtual-keyboard.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
     <!-- Modes de jeu modulaires (ordre de dépendance CRITIQUE) -->

@@ -15,13 +15,60 @@
     }
     
     .quick-stats {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
         margin-bottom: var(--spacing-xl);
+        max-width: 100%;
+        overflow: hidden;
     }
     
-    .stat-card {
-        padding: var(--spacing-lg);
+    /* Style des cartes sur mobile */
+    .quick-stats .stat-card {
+        padding: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        min-width: 0;
+        max-width: 100%;
+    }
+    
+    /* Cartes de gauche : icône à droite (order inversé) */
+    .quick-stats .stat-card-left .stat-info {
+        order: 1;
+    }
+    
+    .quick-stats .stat-card-left .stat-icon {
+        order: 2;
+    }
+    
+    /* Cartes de droite : icône à gauche (order inversé) */
+    .quick-stats .stat-card-right .stat-info {
+        order: 2;
+    }
+    
+    .quick-stats .stat-card-right .stat-icon {
+        order: 1;
+    }
+    
+    /* Alignement du texte */
+    .quick-stats .stat-card-left .stat-info {
+        text-align: left;
+    }
+    
+    .quick-stats .stat-card-right .stat-info {
+        text-align: right;
+    }
+    
+    .stat-card .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    
+    .stat-info {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
     }
     
     .stat-number {
@@ -65,12 +112,11 @@
     /* Vue jeu spécifique : layout en 3 zones empilées */
     #gameView .container {
         display: grid;
-        grid-template-rows: auto 1fr auto auto;
+        grid-template-rows: auto 1fr auto;
         grid-template-areas: 
             "header"
             "game"
-            "keyboard"
-            "controls";
+            "keyboard";
         gap: 0.4rem;
     }
     
@@ -246,18 +292,6 @@
         min-height: 42px;
     }
     
-    .game-controls {
-        grid-area: controls;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: var(--spacing-sm);
-        padding: 0.6rem var(--spacing-sm);
-        margin-bottom: env(safe-area-inset-bottom, 0);
-        flex-shrink: 0;
-        flex-wrap: wrap;
-    }
     
     .btn {
         padding: 0.6rem 1rem;
@@ -446,13 +480,6 @@
         margin: 0 0.25rem;
     }
     
-    /* Contrôles visibles et centrés */
-    .game-controls {
-        margin-top: var(--spacing-lg);
-        margin-bottom: var(--spacing-md);
-        justify-content: center;
-        gap: var(--spacing-xl);
-    }
     
     .btn {
         padding: 0.9rem var(--spacing-xl);

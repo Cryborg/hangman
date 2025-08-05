@@ -67,4 +67,25 @@ class BaseGameMode {
     getGameEngine() {
         return this.gameEngine;
     }
+    
+    /**
+     * Méthode commune pour gérer le passage automatique au mot suivant
+     * @param {Function} nextWordCallback - Fonction à appeler pour passer au mot suivant
+     * @param {number} delay - Délai en millisecondes avant le passage (défaut: 3000)
+     */
+    scheduleNextWord(nextWordCallback, delay = 3000) {
+        if (typeof nextWordCallback !== 'function') {
+            console.warn('⚠️ scheduleNextWord: callback invalide');
+            return;
+        }
+        
+        // Programmer le passage au mot suivant
+        setTimeout(() => {
+            try {
+                nextWordCallback();
+            } catch (error) {
+                console.error('❌ Erreur lors du passage au mot suivant:', error);
+            }
+        }, delay);
+    }
 }

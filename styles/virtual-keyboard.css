@@ -1,0 +1,267 @@
+/* ===== VIRTUAL-KEYBOARD.CSS - STYLES POUR LE CLAVIER VIRTUEL MOBILE ===== */
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+
+.keyboard {
+    display: none; /* Sera affiché par le JS sur mobile */
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Afficher le clavier sur mobile uniquement */
+@media (max-width: 768px) {
+    .keyboard:not(:empty) {
+        display: flex;
+    }
+}
+
+/* ===== LIGNES DU CLAVIER ===== */
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+/* Ligne des chiffres - pas de décalage */
+.keyboard-row-numbers {
+    justify-content: center;
+}
+
+/* Lignes AZERTY avec décalages progressifs */
+.keyboard-row-azerty.keyboard-row-1 {
+    /* Première ligne AZERTY - pas de décalage */
+    justify-content: center;
+}
+
+.keyboard-row-azerty.keyboard-row-2 {
+    /* Deuxième ligne AZERTY - petit décalage */
+    padding-left: 25px;
+}
+
+.keyboard-row-azerty.keyboard-row-3 {
+    /* Troisième ligne AZERTY - gros décalage */
+    padding-left: 50px;
+}
+
+/* ===== BOUTONS DU CLAVIER ===== */
+
+.keyboard button {
+    background: rgba(233, 69, 96, 0.2);
+    color: #fff;
+    border: 1px solid rgba(233, 69, 96, 0.5);
+    padding: 0.8rem;
+    font-size: 1.2rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: inherit;
+}
+
+.keyboard button:hover:not(:disabled) {
+    background: rgba(233, 69, 96, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
+}
+
+.keyboard button:active:not(:disabled) {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.keyboard button:disabled {
+    cursor: not-allowed;
+}
+
+/* Boutons disabled sans état spécial (gris) */
+.keyboard button:disabled:not(.correct):not(.wrong) {
+    background: rgba(0, 0, 0, 0.5);
+    color: #666;
+    transform: scale(0.95);
+}
+
+/* ===== ÉTATS DES BOUTONS ===== */
+
+.keyboard button.correct {
+    background: #2ed573 !important;
+    border-color: #27ae60;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(46, 213, 115, 0.4);
+}
+
+.keyboard button.wrong {
+    background: #e74c3c !important;
+    border-color: #c0392b;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+/* ===== TYPES DE TOUCHES ===== */
+
+/* Touches de chiffres */
+.keyboard button.key-number {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    color: #3498db;
+    font-weight: bold;
+}
+
+.keyboard button.key-number:hover:not(:disabled) {
+    background: rgba(52, 152, 219, 0.4);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Touches de lettres standard */
+.keyboard button.key-letter {
+    /* Styles par défaut déjà définis ci-dessus */
+}
+
+/* ===== TOUCHES AVEC ACCENTS ===== */
+
+/* Boutons avec accents disponibles */
+.keyboard button.has-accents {
+    position: relative;
+}
+
+.keyboard button .accent-indicator {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 8px;
+    color: var(--primary-color);
+    opacity: 0.8;
+    transition: color var(--transition-fast);
+}
+
+/* ===== POPUP D'ACCENTS ===== */
+
+.accent-popup {
+    background: var(--bg-secondary);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm);
+    display: flex;
+    gap: var(--spacing-xs);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    transition: all 0.2s ease;
+    pointer-events: none; /* Empêche les clics directs */
+}
+
+.accent-popup.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ===== BOUTONS D'ACCENTS DANS LE POPUP ===== */
+
+.accent-popup .accent-option {
+    background: rgba(243, 156, 18, 0.2);
+    color: var(--text-primary);
+    border: 1px solid var(--primary-color);
+    padding: 0.6rem 0.8rem;
+    font-size: 1.1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+    min-width: 40px;
+    pointer-events: auto; /* Réactive les événements pour les boutons */
+}
+
+.accent-popup .accent-option:hover,
+.accent-popup .accent-option:active,
+.accent-popup .accent-option.selected {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
+
+/* États des accents déjà essayés */
+.accent-popup .accent-option.correct {
+    background: #2ed573 !important;
+    color: white !important;
+    border-color: #27ae60;
+    box-shadow: 0 2px 8px rgba(46, 213, 115, 0.4);
+}
+
+.accent-popup .accent-option.wrong {
+    background: #e74c3c !important;
+    color: white !important;
+    border-color: #c0392b;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+/* La sélection override les états correct/wrong */
+.accent-popup .accent-option.selected {
+    background: var(--primary-color) !important;
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.5) !important;
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes keyboardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.keyboard {
+    animation: keyboardSlideIn 0.3s ease-out;
+}
+
+/* ===== RESPONSIVE SPÉCIFIQUE AU CLAVIER ===== */
+
+@media (max-width: 480px) {
+    .keyboard button {
+        padding: 0.6rem;
+        font-size: 1rem;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 15px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 30px;
+    }
+    
+    .accent-popup .accent-option {
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
+        min-width: 35px;
+    }
+}
+
+@media (max-width: 360px) {
+    .keyboard button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 10px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 20px;
+    }
+}

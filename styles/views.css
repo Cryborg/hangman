@@ -139,14 +139,6 @@
     align-items: center;
 }
 
-/* Contrôles du jeu */
-.game-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-md);
-    gap: var(--spacing-md);
-}
 
 /* ===== VUE STATISTIQUES ===== */
 

@@ -48,6 +48,15 @@ class ModalManager {
             this.hideGameModeModal();
         });
         
+        // Événements pour les options de difficulté
+        document.getElementById('accentDifficulty')?.addEventListener('change', () => {
+            this.onDifficultyOptionChange();
+        });
+        
+        document.getElementById('numberDifficulty')?.addEventListener('change', () => {
+            this.onDifficultyOptionChange();
+        });
+        
         document.querySelector('.close-category-modal-btn')?.addEventListener('click', () => {
             this.hideCategoryModal();
             this.showGameModeModal();
@@ -71,6 +80,9 @@ class ModalManager {
         if (this.gameModeModal) {
             this.gameModeModal.classList.add('active');
             this.updateTimeAttackHighscore();
+            
+            // Charger les options de difficulté sauvegardées
+            this.loadDifficultyOptions();
         }
     }
     
@@ -229,6 +241,62 @@ class ModalManager {
     
     getSelectedCategory() {
         return this.selectedCategory;
+    }
+    
+    // ===== GESTION DES OPTIONS DE DIFFICULTÉ ===== //
+    
+    onDifficultyOptionChange() {
+        // Sauvegarder les options dans localStorage
+        this.saveDifficultyOptions();
+        
+        // Recréer le clavier virtuel si le jeu est en cours (pour mobile)
+        if (this.app.getUIModule() && window.innerWidth <= 768) {
+            this.app.getUIModule().clearVirtualKeyboard();
+            this.app.getUIModule().createVirtualKeyboard();
+        }
+        
+        // Mettre à jour l'affichage du mot si un jeu est en cours
+        if (this.app.gameManager && this.app.gameManager.engine && this.app.gameManager.engine.gameActive) {
+            this.app.gameManager.engine.updateDisplay();
+        }
+        
+        console.log('🔥 Options de difficulté mises à jour');
+    }
+    
+    getDifficultyOptions() {
+        return {
+            accents: document.getElementById('accentDifficulty')?.checked || false,
+            numbers: document.getElementById('numberDifficulty')?.checked || false
+        };
+    }
+    
+    saveDifficultyOptions() {
+        const options = this.getDifficultyOptions();
+        localStorage.setItem('pendu_difficulty_options', JSON.stringify(options));
+        console.log('💾 Options de difficulté sauvegardées:', options);
+    }
+    
+    loadDifficultyOptions() {
+        try {
+            const saved = localStorage.getItem('pendu_difficulty_options');
+            if (saved) {
+                const options = JSON.parse(saved);
+                
+                // Appliquer les options aux checkboxes
+                const accentCheckbox = document.getElementById('accentDifficulty');
+                const numberCheckbox = document.getElementById('numberDifficulty');
+                
+                if (accentCheckbox) accentCheckbox.checked = options.accents || false;
+                if (numberCheckbox) numberCheckbox.checked = options.numbers || false;
+                
+                console.log('📂 Options de difficulté chargées:', options);
+                return options;
+            }
+        } catch (error) {
+            console.warn('⚠️ Erreur lors du chargement des options de difficulté:', error);
+        }
+        
+        return { accents: false, numbers: false };
     }
     
     // ===== MÉTHODES DE COMPATIBILITÉ ===== //

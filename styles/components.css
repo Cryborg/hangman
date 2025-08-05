@@ -120,8 +120,9 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
-.stat-icon {
-    font-size: 3rem;
+/* Icônes des cartes de stats du menu principal */
+.stat-card .stat-icon {
+    font-size: 6rem;
     margin-bottom: var(--spacing-md);
 }
 
@@ -309,71 +310,7 @@
 }
 
 /* ===== CLAVIER MOBILE ===== */
-
-.keyboard {
-    display: none; /* Sera affiché par le JS sur mobile */
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Afficher le clavier sur mobile uniquement */
-@media (max-width: 768px) {
-    .keyboard:not(:empty) {
-        display: grid;
-    }
-}
-
-.keyboard button {
-    background: rgba(233, 69, 96, 0.2);
-    color: #fff;
-    border: 1px solid rgba(233, 69, 96, 0.5);
-    padding: 0.8rem;
-    font-size: 1.2rem;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    font-family: inherit;
-}
-
-.keyboard button:hover:not(:disabled) {
-    background: rgba(233, 69, 96, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
-}
-
-.keyboard button:active:not(:disabled) {
-    transform: scale(0.95);
-    transition: transform 0.1s ease;
-}
-
-.keyboard button:disabled {
-    cursor: not-allowed;
-}
-
-/* Boutons disabled sans état spécial (gris) - avec scale seulement pour ceux-ci */
-.keyboard button:disabled:not(.correct):not(.wrong) {
-    background: rgba(0, 0, 0, 0.5);
-    color: #666;
-    transform: scale(0.95); /* Scale seulement pour les boutons gris */
-}
-
-.keyboard button.correct {
-    background: #2ed573 !important; /* Force la couleur même si disabled */
-    border-color: #27ae60;
-    color: #fff !important;
-    box-shadow: 0 2px 8px rgba(46, 213, 115, 0.4);
-}
-
-.keyboard button.wrong {
-    background: #e74c3c !important; /* Force la couleur même si disabled */
-    border-color: #c0392b;
-    color: #fff !important;
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
-}
+/* Styles déplacés dans virtual-keyboard.css pour une meilleure organisation */
 
 /* ===== AFFICHAGE DU MOT ===== */
 
@@ -430,7 +367,7 @@
     content: '·';
     font-size: 1.5rem;
     color: var(--primary-color);
-    opacity: 0.5;
+    opacity: 0.1; /* Quasi invisible */
     position: absolute;
     bottom: -0.3em;
 }

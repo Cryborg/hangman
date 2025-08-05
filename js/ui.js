@@ -6,6 +6,9 @@ class PenduUI {
         this.activeToasts = [];
         this.toastQueue = [];
         this.maxToasts = 3;
+        
+        // Initialiser le clavier virtuel
+        this.initializeVirtualKeyboard();
     }
     
     // ===== GESTION DES TOASTS ===== //
@@ -147,124 +150,45 @@ class PenduUI {
             part.classList.add('visible');
         });
         
-        // Réinitialiser les points visuels
-        const dots = document.querySelectorAll('#triesDotsDisplay .dot');
-        dots.forEach(dot => {
-            dot.classList.add('filled');
-        });
     }
     
     // ===== GESTION DU CLAVIER VIRTUEL ===== //
+    // Code déplacé dans virtual-keyboard.js pour une meilleure organisation
+    
+    initializeVirtualKeyboard() {
+        // Créer l'instance du clavier virtuel
+        this.virtualKeyboard = new VirtualKeyboard(this.app, 'keyboard');
+    }
     
     createVirtualKeyboard() {
-        const keyboard = document.getElementById('keyboard');
-        if (!keyboard) return;
-        
-        // Créer le clavier virtuel uniquement sur mobile/tablette (même seuil que le CSS)
-        if (window.innerWidth > 768) {
-            this.clearVirtualKeyboard(); // Nettoyer proprement
-            return;
+        if (this.virtualKeyboard) {
+            const options = this.virtualKeyboard.getDifficultyOptions();
+            this.virtualKeyboard.create(options);
         }
-        
-        // Ne créer le clavier que s'il n'existe pas déjà
-        if (keyboard.children.length > 0) {
-            return; // Le clavier existe déjà, ne pas le recréer
-        }
-        
-        // Disposition AZERTY sur 3 lignes
-        const azertyRows = [
-            'AZERTYUIOP',
-            'QSDFGHJKLM',
-            'WXCVBN'
-        ];
-        
-        // Utiliser la délégation d'événements pour éviter les multiple listeners
-        const handleKeyboardClick = (e) => {
-            const button = e.target.closest('button[data-letter]');
-            if (!button || button.disabled) return;
-            
-            e.preventDefault();
-            const letter = button.getAttribute('data-letter');
-            if (this.app.getGameManager()) {
-                this.app.getGameManager().guessLetter(letter);
-            }
-        };
-        
-        // Supprimer l'ancien listener s'il existe
-        keyboard.removeEventListener('click', this._keyboardClickHandler);
-        // Ajouter le nouveau listener avec délégation
-        this._keyboardClickHandler = handleKeyboardClick;
-        keyboard.addEventListener('click', handleKeyboardClick);
-        
-        // Créer les boutons
-        azertyRows.forEach(row => {
-            row.split('').forEach(letter => {
-                const button = document.createElement('button');
-                button.textContent = letter;
-                button.setAttribute('data-letter', letter);
-                keyboard.appendChild(button);
-            });
-        });
     }
     
     clearVirtualKeyboard() {
-        const keyboard = document.getElementById('keyboard');
-        if (!keyboard) return;
-        
-        // Nettoyer les event listeners
-        if (this._keyboardClickHandler) {
-            keyboard.removeEventListener('click', this._keyboardClickHandler);
-            this._keyboardClickHandler = null;
+        if (this.virtualKeyboard) {
+            this.virtualKeyboard.clear();
         }
-        
-        // Vider le contenu
-        keyboard.innerHTML = '';
     }
     
     updateKeyboardButton(letter, state) {
-        const button = document.querySelector(`[data-letter="${letter}"]`);
-        if (!button) return;
-        
-        button.classList.remove('correct', 'wrong');
-        
-        switch (state) {
-            case 'correct':
-                button.classList.add('correct');
-                button.disabled = true;  // Désactiver les lettres correctes
-                break;
-            case 'wrong':
-                button.classList.add('wrong');
-                button.disabled = true;  // Désactiver les lettres incorrectes
-                break;
-            case 'disabled':
-                button.disabled = true;
-                break;
+        if (this.virtualKeyboard) {
+            this.virtualKeyboard.updateButton(letter, state);
         }
-        
-        // Note: Animation pulse supprimée pour éviter les décalages visuels
     }
     
     updateKeyboard(guessedLetters, wrongLetters) {
-        // Méthode pour mettre à jour tout le clavier d'un coup
-        if (!guessedLetters || !wrongLetters) return;
-        
-        // Marquer les lettres correctes
-        guessedLetters.forEach(letter => {
-            this.updateKeyboardButton(letter, 'correct');
-        });
-        
-        // Marquer les lettres incorrectes  
-        wrongLetters.forEach(letter => {
-            this.updateKeyboardButton(letter, 'wrong');
-        });
+        if (this.virtualKeyboard) {
+            this.virtualKeyboard.updateAllButtons(guessedLetters, wrongLetters);
+        }
     }
     
     resetKeyboard() {
-        const buttons = document.querySelectorAll('#keyboard button');
-        buttons.forEach(button => {
-            button.classList.remove('correct', 'wrong');
-            button.disabled = false;
-        });
+        if (this.virtualKeyboard) {
+            this.virtualKeyboard.reset();
+        }
     }
     
     // ===== GESTION DE L'AFFICHAGE DU MOT ===== //
@@ -275,6 +199,10 @@ class PenduUI {
         
         wordDisplay.innerHTML = '';
         
+        // Récupérer les options de difficulté
+        const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
+        const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+        
         const words = word.split(' ');
         
         words.forEach((currentWord, wordIndex) => {
@@ -284,19 +212,14 @@ class PenduUI {
             currentWord.split('').forEach(letter => {
                 const span = document.createElement('span');
                 
-                // Si c'est une lettre alphabétique
-                if (/[A-Za-z]/.test(letter)) {
-                    if (guessedLetters.includes(letter.toUpperCase())) {
-                        span.textContent = letter;
-                        span.classList.add('revealed');
-                    } else {
-                        span.textContent = '';
-                    }
-                } else {
-                    // Si c'est un caractère non alphabétique (chiffre, tiret, point, etc.)
-                    // on l'affiche directement
+                // Utiliser l'utilitaire dédié
+                const shouldShow = WordUtils.shouldShowCharacter(letter, guessedLetters, accentDifficulty, numberDifficulty);
+                
+                if (shouldShow) {
                     span.textContent = letter;
                     span.classList.add('revealed');
+                } else {
+                    span.textContent = '';
                 }
                 
                 wordGroup.appendChild(span);
@@ -342,32 +265,8 @@ class PenduUI {
     // ===== GESTION DES STATISTIQUES EN TEMPS RÉEL ===== //
     
     updateGameStats(triesLeft, wrongLetters, currentStreak = null) {
-        const triesLeftDisplay = document.getElementById('triesLeft');
-        const triesDotsDisplay = document.getElementById('triesDotsDisplay');
         const wrongLettersDisplay = document.getElementById('wrongLetters');
         const streakDisplay = document.getElementById('streakDisplay');
-        
-        // Mise à jour des points visuels pour les essais
-        if (triesDotsDisplay) {
-            const dots = triesDotsDisplay.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                if (index < triesLeft) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                }
-            });
-            
-            // Animation si peu d'essais restants
-            if (triesLeft <= 2 && triesLeft > 0) {
-                this.pulseElement(triesDotsDisplay.parentNode, 1000);
-            }
-        }
-        
-        // Garder la valeur textuelle cachée pour compatibilité
-        if (triesLeftDisplay) {
-            triesLeftDisplay.textContent = triesLeft;
-        }
         
         if (wrongLettersDisplay) {
             if (wrongLetters.length === 0) {
@@ -481,6 +380,5 @@ class PenduUI {
         this.activeToasts = [];
         this.toastQueue = [];
         
-        console.log('🧹 UI nettoyée');
     }
 }
