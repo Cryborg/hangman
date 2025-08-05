@@ -1,13 +1,16 @@
-# Jeu du Pendu - Documentation Architecture v2.0.0
+# Jeu du Pendu - Documentation Architecture v3.0.0
 
 ## Vue d'ensemble
-Jeu du pendu moderne avec système de navigation, statistiques avancées, achievements et architecture modulaire.
+Jeu du pendu moderne avec système de navigation, statistiques avancées, achievements, architecture modulaire et trois modes de jeu distincts.
 
 ## 🎯 Fonctionnalités principales
 - **Navigation multi-vues** : Menu principal, jeu, statistiques
 - **Menu hamburger responsive** : Navigation adaptée mobile/desktop
 - **Système de progression** : Streak counter, achievements, stats détaillées
-- **Mode Time Attack** : Chrono 1-5min, highscores par durée, sélection de mode
+- **3 modes de jeu** :
+  - **Mode Standard** : Jeu classique avec progression sauvegardée
+  - **Mode Time Attack** : Chrono 1-5min, highscores par durée
+  - **Mode Catégorie** : Deviner tous les mots d'une catégorie sans limite d'erreurs
 - **Architecture modulaire** : CSS et JS organisés en modules spécialisés
 - **17 catégories** : 650+ mots répartis en catégories variées
 - **Sauvegarde persistante** : Progression conservée entre sessions
@@ -19,20 +22,30 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 ├── index.html                 # Page principale avec 3 vues
 ├── version.js                 # Gestion de version et cache busting
 ├── categories.json            # Base de données des catégories avec mots et icônes
+├── CLAUDE.md                  # Cette documentation
+├── IDEAS.md                   # Idées et améliorations futures
 ├── styles/                    # CSS modulaire
 │   ├── base.css              # Reset, variables, animations globales
-│   ├── layout.css            # Header, navigation, système de vues
+│   ├── layout.css            # Header, navigation, système de vues (avec fix scroll mobile)
 │   ├── components.css        # Boutons, cartes, toast, hangman, clavier
 │   ├── views.css             # Styles spécifiques aux vues (menu/jeu/stats)
-│   ├── modal.css             # Modal de sélection, Time Attack UI
-│   └── responsive.css        # Media queries (mobile/desktop)
-├── js/                       # JavaScript modulaire
-│   ├── app.js               # Point d'entrée, navigation, coordination
-│   ├── game.js              # Logique du jeu du pendu (Standard + Time Attack)
-│   ├── stats.js             # Statistiques et système d'achievements
-│   ├── timeattack.js        # Mode Time Attack, timer, highscores
-│   └── ui.js                # Interactions UI, toasts, animations
-└── CLAUDE.md                # Cette documentation
+│   ├── modal.css             # Modal de sélection des modes et catégories
+│   ├── game-header.css       # Header unifié du jeu avec stats en temps réel
+│   └── responsive.css        # Media queries (mobile/desktop) avec fix scroll
+└── js/                        # JavaScript modulaire avec architecture orientée objet
+    ├── app.js                # Point d'entrée, navigation, coordination
+    ├── ui.js                 # Interactions UI, toasts, animations
+    ├── stats.js              # Statistiques et système d'achievements
+    ├── modal-manager.js      # Gestion des modals (modes et catégories)
+    ├── save-game-manager.js  # Gestion de la sauvegarde des parties
+    ├── game-engine.js        # Moteur de jeu principal (mots, catégories, logique)
+    ├── game-manager.js       # Gestionnaire de partie (coordination modes)
+    ├── game-modes.js         # Factory des modes de jeu
+    ├── base-game-mode.js     # Classe abstraite de base pour tous les modes
+    ├── base-game-mode-with-save.js  # Extension avec sauvegarde
+    ├── standard-mode.js      # Mode standard avec progression
+    ├── timeattack-mode.js    # Mode Time Attack avec chrono
+    └── category-mode.js      # Mode Catégorie (tous les mots d'une catégorie)
 ```
 
 ## 🎮 Système de vues
@@ -44,9 +57,13 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 
 ### Vue Jeu (`#gameView`)
 - Interface de jeu complète avec hangman SVG
-- Header avec catégorie, progression, **série actuelle**
-- Clavier virtuel AZERTY (mobile)
+- Header unifié avec design minimaliste :
+  - Catégorie avec icône
+  - Barre de stats : progression, série, essais (points visuels), lettres essayées
+  - Barre Time Attack (visible uniquement en mode Time Attack) : timer, score, highscore
+- Clavier virtuel AZERTY 3 lignes avec décalage (mobile)
 - Support clavier physique (desktop)
+- Layout responsive optimisé (grille sur mobile, 3 colonnes sur desktop)
 
 ### Vue Statistiques (`#statsView`)
 - Vue d'ensemble : mots trouvés, meilleure série
@@ -86,7 +103,7 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
   gamesPlayed: 0,       // Parties jouées
   gamesWon: 0,          // Parties gagnées
   perfectGames: 0,      // Parties parfaites (sans erreur)
-  unlockedAchievements: 0 // Nombre d'achievements débloqués
+  unlockedAchievements: 0 // Nombre de succès débloqués
 }
 ```
 
@@ -113,27 +130,53 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 
 ## 🔧 Architecture JavaScript
 
-### Classes principales
+### Architecture orientée objet avec classes ES6
 
-#### `PenduApp` (app.js)
+#### Classes principales
+
+##### `PenduApp` (app.js)
 - Point d'entrée principal
 - Gestion de la navigation entre vues
 - Coordination des modules
 - Menu hamburger responsive
 
-#### `PenduGame` (game.js)
-- Logique complète du jeu
+##### `GameEngine` (game-engine.js)
+- Moteur de jeu principal
 - Gestion des mots et catégories
-- Interface avec les autres modules
-- Clavier physique/virtuel
+- Logique du pendu (lettres, essais, victoire/défaite)
+- Interface avec les modes de jeu
 
-#### `PenduStats` (stats.js)
+##### `GameManager` (game-manager.js)
+- Gestionnaire de partie
+- Coordination entre UI, Engine et Mode
+- Gestion du clavier physique/virtuel
+- Cycle de vie d'une partie
+
+##### `ModalManager` (modal-manager.js)
+- Gestion des modals de sélection
+- Modal des modes de jeu
+- Modal des catégories
+- Gestion des événements
+
+##### Classes de modes de jeu
+- `BaseGameMode` : Classe abstraite de base
+- `BaseGameModeWithSave` : Extension avec sauvegarde
+- `StandardMode` : Mode classique avec progression
+- `TimeAttackMode` : Mode chrono avec highscores
+- `CategoryMode` : Mode complet d'une catégorie
+
+##### `SaveGameManager` (save-game-manager.js)
+- Sauvegarde/restauration des parties
+- Gestion du localStorage
+- Sérialisation des états de jeu
+
+##### `PenduStats` (stats.js)
 - Système de statistiques
 - Gestion des achievements
 - Sauvegarde/chargement des données
 - Conditions de déblocage
 
-#### `PenduUI` (ui.js)
+##### `PenduUI` (ui.js)
 - Gestion des toasts
 - Animations et effets visuels
 - Clavier virtuel
@@ -142,19 +185,29 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 ### Communication entre modules
 ```javascript
 // App centralise tout
-penduApp.getGameModule()
-penduApp.getStatsModule()
-penduApp.getUIModule()
+window.penduApp = new PenduApp();
 
-// Exemple d'événement
-onGameWin() -> statsModule.onGameWin() -> uiModule.showToast()
+// Accès aux modules
+penduApp.gameManager    // GameManager instance
+penduApp.statsModule    // PenduStats instance
+penduApp.uiModule       // PenduUI instance
+penduApp.modalManager   // ModalManager instance
+
+// Flux de données typique
+// 1. User clique sur une lettre
+// 2. GameManager.handleGuess(letter)
+// 3. GameEngine.guessLetter(letter)
+// 4. Mode.onLetterGuessed(result)
+// 5. UI.updateDisplay()
+// 6. Si victoire: Stats.onGameWin()
 ```
 
 ## 🚀 Gestion des versions
 
-### Version actuelle : **2.1.0**
+### Version actuelle : **3.0.0**
 
 ### Historique des versions
+- **3.0.0** : Mode Catégorie + Refonte architecture OOP - Classes ES6, GameEngine/Manager, 3 modes distincts
 - **2.1.0** : Mode Time Attack - Sélection de mode, timer, scores par durée, highscores sauvegardés
 - **2.0.0** : Refonte majeure - Architecture modulaire, navigation multi-vues, système d'achievements complet, streak counter
 - **1.1.0** : Ajout de 11 nouvelles catégories (Dessins Animés, Séries TV, Films Cultes, etc.)
@@ -186,6 +239,12 @@ onGameWin() -> statsModule.onGameWin() -> uiModule.showToast()
 2. CSS : styles dans `styles/views.css`
 3. JS : gérer dans `app.js` méthode `showView()`
 
+### Ajouter un nouveau mode de jeu
+1. Créer une classe qui hérite de `BaseGameMode` ou `BaseGameModeWithSave`
+2. Implémenter les méthodes requises : `start()`, `handleWin()`, `handleLoss()`, etc.
+3. Ajouter le mode dans `game-modes.js`
+4. Ajouter l'UI du mode dans le modal de sélection (`index.html`)
+
 ## 🐛 Debug et développement
 
 ### Console commands utiles
@@ -194,23 +253,33 @@ onGameWin() -> statsModule.onGameWin() -> uiModule.showToast()
 penduApp
 
 // Debug du jeu
-penduApp.getGameModule().revealWord()
-penduApp.getGameModule().getGameState()
+penduApp.gameManager.engine.revealWord()
+penduApp.gameManager.engine.getGameState()
+penduApp.gameManager.currentMode  // Mode actuel
 
 // Stats et achievements
-penduApp.getStatsModule().getStats()
-penduApp.getStatsModule().resetStats() // Attention !
+penduApp.statsModule.getStats()
+penduApp.statsModule.resetStats() // Attention !
+penduApp.statsModule.checkAchievements()
 
 // Tests UI
-penduApp.getUIModule().showToast('Test', 'success')
+penduApp.uiModule.showToast('Test', 'success')
+penduApp.uiModule.updateKeyboard()
+
+// Modes de jeu
+penduApp.gameManager.setMode('standard')
+penduApp.gameManager.setMode('timeattack', {duration: 3})
+penduApp.gameManager.setMode('category', {categoryId: 'animaux'})
 ```
 
 ### Fichiers à modifier selon le besoin
 - **Nouveau contenu** : `categories.json`
-- **Nouvelles fonctionnalités jeu** : `js/game.js`
+- **Nouvelle logique de jeu** : `js/game-engine.js`
+- **Nouveau mode de jeu** : Créer nouveau fichier dans `js/` + ajouter dans `game-modes.js`
 - **Nouvelles stats/achievements** : `js/stats.js`
 - **Nouvelles interfaces** : `js/ui.js` + CSS correspondant
 - **Navigation/coordination** : `js/app.js`
+- **Modals** : `js/modal-manager.js` + `styles/modal.css`
 
 ## 📱 Responsive Design
 
@@ -221,8 +290,30 @@ penduApp.getUIModule().showToast('Test', 'success')
 
 ### Adaptations mobiles
 - Menu hamburger avec overlay
-- Clavier virtuel AZERTY 3 lignes
-- Layout vertical optimisé
+- Clavier virtuel AZERTY 3 lignes avec décalage visuel
+- Layout vertical optimisé avec grille pour la vue jeu
 - Toasts adaptés aux petits écrans
+- Scroll activé sur toutes les vues (fix du problème iOS/mobile)
+
+## 🔧 Problèmes connus et solutions
+
+### Scroll sur mobile
+- **Problème** : Le scroll ne fonctionnait pas sur iOS/Android
+- **Solution** : Ajout de `overflow-y: auto` et `-webkit-overflow-scrolling: touch` dans `layout.css` (.view) et `responsive.css` (.container)
+
+### LocalStorage Keys additionnels
+- `pendu_timeAttackHighscores` : Highscores par durée pour Time Attack
+- `pendu_categoryProgress` : Progression par catégorie pour le mode Catégorie
+- `pendu_savedGame` : Partie sauvegardée (mode standard uniquement)
+
+### Ordre de chargement des scripts
+L'ordre est **critique** à cause des dépendances entre classes :
+1. `base-game-mode.js` (classe abstraite)
+2. `save-game-manager.js` (utilitaire)
+3. `base-game-mode-with-save.js` (extension)
+4. Les modes concrets (`standard-mode.js`, etc.)
+5. `game-modes.js` (factory)
+6. `game-engine.js` et `game-manager.js`
+7. `app.js` (point d'entrée)
 
 Cette documentation doit faciliter toute future modification en permettant de comprendre rapidement l'architecture et les points d'entrée du code.

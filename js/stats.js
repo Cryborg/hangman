@@ -194,7 +194,7 @@ class PenduStats {
         this.checkAchievements();
         this.saveStats();
         
-        // Retourner les nouveaux achievements débloqués
+        // Retourner les nouveaux succès débloqués
         return this.getNewlyUnlockedAchievements();
     }
     
