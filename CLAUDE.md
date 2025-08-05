@@ -203,6 +203,101 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 - Support tactile et souris
 - Gestion des options de difficulté
 
+#### Architecture détaillée des modes de jeu
+
+##### Classes de base
+
+###### `BaseGameMode` (base-game-mode.js)
+Classe abstraite définissant l'interface commune :
+- `startGame()` : Démarre une partie
+- `onWordWin(word, category, errorsCount)` : **DOIT** être implémentée - gère la victoire sur un mot
+- `onWordLoss(word)` : **DOIT** être implémentée - gère la défaite sur un mot  
+- `setupUI()` : Configure l'interface spécifique au mode
+- `cleanup()` : Nettoie les ressources
+- `scheduleNextWord(callback, delay)` : **Méthode commune** - programme le passage au mot suivant
+
+###### `BaseGameModeWithSave` (base-game-mode-with-save.js)
+Extension avec sauvegarde automatique :
+- Hérite de `BaseGameMode`
+- `saveGameState()` : Sauvegarde l'état actuel
+- `loadGameState()` : Restaure un état sauvegardé
+- `clearSave()` : Supprime la sauvegarde
+
+##### Modes concrets
+
+###### `StandardMode` (standard-mode.js)
+Mode classique avec progression :
+- **onWordWin()** :
+  - Met à jour les statistiques via `app.getStatsModule().onGameWin()`
+  - Affiche toast de victoire (2.5s)
+  - Gère les achievements
+  - **Passe automatiquement au mot suivant après 3s** via `scheduleNextWord()`
+- **onWordLoss()** :
+  - Met à jour les statistiques via `app.getStatsModule().onGameLoss()`
+  - Affiche toast d'échec (5s)
+  - **Passe automatiquement au mot suivant après 5s** via `scheduleNextWord()`
+
+###### `TimeAttackMode` (timeattack-mode.js)  
+Mode chrono avec highscores :
+- **onWordWin()** :
+  - Incrémente le score
+  - Toast rapide (800ms)
+  - **Passe au mot suivant après 800ms** via `scheduleNextWord()`
+- **onWordLoss()** :
+  - Toast d'échec (1s)
+  - **Passe au mot suivant après 1s**
+- Timer et gestion du temps
+
+###### `CategoryMode` (category-mode.js)
+Mode complétion d'une catégorie :
+- **onWordWin()** :
+  - Incrémente `wordsFound` et `currentIndex`
+  - Toast avec progression (2s)
+  - **Passe au mot suivant après 2s** via `scheduleNextWord()`
+- **onWordLoss()** :
+  - Incrémente seulement `currentIndex` (pas wordsFound)
+  - Toast d'échec (2s)  
+  - **Passe au mot suivant après 2s** (pas de limite d'erreurs)
+- Progression séquentielle dans la catégorie
+
+##### Flux de données pour la gestion des victoires/défaites
+
+```javascript
+// 1. Utilisateur devine une lettre
+GameManager.handleGuess(letter)
+  ↓
+// 2. GameEngine traite la logique
+GameEngine.guessLetter(letter)  
+  ↓
+// 3. Si mot complet : GameEngine.handleWin()
+GameEngine.isWordComplete() → GameEngine.handleWin()
+  ↓  
+// 4. Délégation au mode actuel
+currentGameMode.onWordWin(word, category, errorsCount)
+  ↓
+// 5. Mode spécifique gère la logique (stats, UI, progression)
+// Standard: 3s → nouveau mot
+// TimeAttack: 800ms → nouveau mot  
+// Category: 2s → mot suivant de la catégorie
+```
+
+##### Méthodes critiques pour le debugage
+
+```javascript
+// Accès global aux modes
+penduApp.gameManager.currentMode              // Mode actuel
+penduApp.gameManager.getCurrentGameMode()     // Idem (ajoutée pour fix)
+penduApp.gameManager.getCurrentModeName()     // Nom du mode ("standard", etc.)
+
+// Forcer nouveau mot (debug)
+penduApp.gameManager.gameEngine.startNewGame()
+
+// Vérifier l'état
+penduApp.gameManager.gameEngine.gameActive    // true si jeu en cours
+penduApp.gameManager.gameEngine.currentWord   // Mot actuel  
+penduApp.gameManager.gameEngine.isWordComplete() // Mot terminé ?
+```
+
 ### Communication entre modules
 ```javascript
 // App centralise tout

@@ -102,6 +102,10 @@ class PenduGameManager {
         return this.currentMode;
     }
     
+    getCurrentGameMode() {
+        return this.currentMode;
+    }
+    
     getCurrentModeName() {
         return this.currentMode ? this.currentMode.getName() : null;
     }
@@ -140,27 +144,72 @@ class PenduGameManager {
     restartWithSameSettings() {
         const settings = this.lastGameSettings;
         
+        // Redémarrage manuel : supprimer la sauvegarde du mode actuel seulement
+        this.clearCurrentModeSave(settings.mode);
+        
         switch (settings.mode) {
             case 'standard':
-                return this.startStandardGame();
+                this.setGameMode('standard');
+                if (this.currentMode) {
+                    this.currentMode.startGame(true); // clearSave = true
+                }
+                return true;
             
             case 'timeattack':
-                return this.startTimeAttackGame(settings.timeAttackDuration);
+                this.setGameMode('timeattack', { timeAttackDuration: settings.timeAttackDuration });
+                if (this.currentMode) {
+                    this.currentMode.startGame(true); // clearSave = true
+                }
+                return true;
             
             case 'category':
                 if (settings.categoryName) {
-                    return this.startCategoryGame(settings.categoryName);
+                    this.setGameMode('category', { categoryName: settings.categoryName });
+                    if (this.currentMode) {
+                        this.currentMode.startGame(true); // clearSave = true
+                    }
+                    return true;
                 }
                 break;
         }
         
         console.warn('⚠️ Impossible de redémarrer avec les derniers paramètres');
-        return this.startStandardGame(); // Fallback
+        // Fallback mode standard avec clearSave = true
+        this.clearCurrentModeSave('standard');
+        this.setGameMode('standard');
+        if (this.currentMode) {
+            this.currentMode.startGame(true);
+        }
+        return true;
+    }
+    
+    // Nouvelle méthode pour supprimer seulement la sauvegarde du mode spécifié
+    clearCurrentModeSave(modeName) {
+        const saveKeys = {
+            'standard': 'pendu_current_game',
+            'category': 'pendu_current_category_game'
+            // timeattack n'a pas de sauvegarde
+        };
+        
+        const saveKey = saveKeys[modeName];
+        if (saveKey) {
+            try {
+                localStorage.removeItem(saveKey);
+                console.log(`🗑️ Sauvegarde du mode ${modeName} supprimée pour redémarrage manuel`);
+            } catch (error) {
+                console.warn(`⚠️ Erreur lors de la suppression de la sauvegarde ${modeName}:`, error.message);
+            }
+        }
     }
     
     // ===== INFORMATIONS ===== //
     
     getAvailableCategories() {
+        return this.gameEngine ? this.gameEngine.getEnabledCategories() : [];
+    }
+    
+    getAllCategories() {
+        // Méthode pour récupérer TOUTES les catégories (pour les paramètres)
         return this.gameEngine ? this.gameEngine.getCategories() : [];
     }
     

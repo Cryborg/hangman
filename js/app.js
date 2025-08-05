@@ -22,6 +22,7 @@ class PenduApp {
         this.statsModule = null;
         this.uiModule = null;
         this.modalManager = null;
+        this.settingsModule = null;
         
         this.init();
     }
@@ -71,6 +72,8 @@ class PenduApp {
         this.navLinks = document.querySelectorAll('.nav-link');
         this.views = document.querySelectorAll('.view');
         this.restartGameLink = document.getElementById('restartGameLink');
+        this.nextWordBtn = document.getElementById('nextWordBtn');
+        this.nextWordSection = document.getElementById('nextWordSection');
         
         // Vérifier que tous les éléments sont présents
         if (!this.hamburgerMenu || !this.navMenu || !this.navLinks.length || !this.views.length) {
@@ -136,6 +139,20 @@ class PenduApp {
             backToMenuFromStatsBtn.addEventListener('click', () => this.showView('menu'));
         }
         
+        const backToMenuFromChangelogBtn = document.getElementById('backToMenuFromChangelogBtn');
+        if (backToMenuFromChangelogBtn) {
+            backToMenuFromChangelogBtn.addEventListener('click', () => this.showView('menu'));
+        }
+        
+        // Bouton "Mot suivant"
+        if (this.nextWordBtn) {
+            this.nextWordBtn.addEventListener('click', () => {
+                if (this.gameManager && this.gameManager.getCurrentGameMode()) {
+                    this.gameManager.getCurrentGameMode().goToNextWord();
+                }
+            });
+        }
+        
         // Fermer le menu en cliquant à l'extérieur
         document.addEventListener('click', (e) => {
             if (this.isMenuOpen && !this.navMenu.contains(e.target) && !this.hamburgerMenu.contains(e.target)) {
@@ -165,6 +182,10 @@ class PenduApp {
         
         if (typeof ModalManager !== 'undefined') {
             this.modalManager = new ModalManager(this);
+        }
+        
+        if (typeof PenduSettings !== 'undefined') {
+            this.settingsModule = new PenduSettings(this);
         }
     }
     
@@ -246,6 +267,11 @@ class PenduApp {
                     this.statsModule.updateStatsDisplay();
                 }
                 break;
+            case 'settings':
+                if (this.settingsModule) {
+                    this.settingsModule.loadSettings();
+                }
+                break;
         }
     }
     
@@ -316,6 +342,20 @@ class PenduApp {
         }, 5000);
     }
     
+    // ===== GESTION DU BOUTON "MOT SUIVANT" ===== //
+    
+    showNextWordButton() {
+        if (this.nextWordSection) {
+            this.nextWordSection.style.display = 'block';
+        }
+    }
+    
+    hideNextWordButton() {
+        if (this.nextWordSection) {
+            this.nextWordSection.style.display = 'none';
+        }
+    }
+    
     // Méthodes utilitaires pour les modules
     getCurrentView() {
         return this.currentView;
@@ -340,6 +380,10 @@ class PenduApp {
     
     getModalManager() {
         return this.modalManager;
+    }
+    
+    getSettingsModule() {
+        return this.settingsModule;
     }
     
     // ===== GESTION DES PARAMÈTRES DE JEU ===== //
@@ -418,15 +462,37 @@ class PenduApp {
         // Gestionnaires d'événements
         document.getElementById('confirmRestartBtn').addEventListener('click', () => {
             document.body.removeChild(toast);
-            // Ouvrir la modal de sélection de mode
-            if (this.modalManager) {
-                this.modalManager.showGameModeModal();
-            }
+            // Redémarrer avec les mêmes paramètres
+            this.restartGameWithSameSettings();
         });
         
         document.getElementById('cancelRestartBtn').addEventListener('click', () => {
             document.body.removeChild(toast);
         });
+    }
+    
+    restartGameWithSameSettings() {
+        // Utiliser la méthode du GameManager pour redémarrer avec les mêmes paramètres
+        if (this.gameManager && this.gameManager.restartWithSameSettings) {
+            const success = this.gameManager.restartWithSameSettings();
+            if (success) {
+                // S'assurer qu'on est sur la vue jeu
+                this.showView('game');
+                console.log(`🔄 Redémarrage avec les paramètres sauvegardés`);
+            } else {
+                console.error('❌ Échec du redémarrage, ouverture de la modal de sélection');
+                // Fallback : ouvrir la modal si le redémarrage échoue
+                if (this.modalManager) {
+                    this.modalManager.showGameModeModal();
+                }
+            }
+        } else {
+            console.error('❌ GameManager non disponible pour le redémarrage');
+            // Fallback : ouvrir la modal
+            if (this.modalManager) {
+                this.modalManager.showGameModeModal();
+            }
+        }
     }
 }
 

@@ -63,6 +63,9 @@ class StandardMode extends BaseGameModeWithSave {
     // ===== MÉTHODES SPÉCIFIQUES AU MODE STANDARD ===== //
     
     startGame(clearSave = true) {
+        // Masquer le bouton "Mot suivant" au début d'une nouvelle partie
+        this.app.hideNextWordButton();
+        
         // Supprimer la sauvegarde seulement si demandé explicitement
         if (clearSave) {
             this.saveManager.clearSave();
@@ -70,7 +73,7 @@ class StandardMode extends BaseGameModeWithSave {
         if (this.gameEngine) {
             this.gameEngine.startNewGame();
         }
-        // La sauvegarde sera créée lors de la première tentative
+        // La sauvegarde sera créée lors de la première tentitative
     }
     
     onWordWin(word, category, errorsCount) {
@@ -109,8 +112,12 @@ class StandardMode extends BaseGameModeWithSave {
             }, 2000);
         }
         
+        // Afficher le bouton "Mot suivant"
+        this.app.showNextWordButton();
+        
         // Passer au mot suivant automatiquement (méthode commune)
         this.scheduleNextWord(() => {
+            this.app.hideNextWordButton();
             if (this.gameEngine) {
                 this.gameEngine.startNewGame();
             }
@@ -130,6 +137,17 @@ class StandardMode extends BaseGameModeWithSave {
             const message = `Perdu ! Le mot était "${word}"`;
             this.app.getUIModule().showToast(message, 'lose', 5000);
         }
+        
+        // Afficher le bouton "Mot suivant"
+        this.app.showNextWordButton();
+        
+        // Passer au mot suivant automatiquement après un échec aussi
+        this.scheduleNextWord(() => {
+            this.app.hideNextWordButton();
+            if (this.gameEngine) {
+                this.gameEngine.startNewGame();
+            }
+        }, 5000); // 5 secondes pour laisser le temps de voir le mot
         
         this.updateDisplay();
     }

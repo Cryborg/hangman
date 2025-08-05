@@ -13,6 +13,8 @@ class CategoryMode extends BaseGameModeWithSave {
         this.wordsFound = 0;
         this.totalWords = 0;
         this.completedWords = new Set();
+        this.failedWords = new Set(); // Mots ratés définitivement éliminés
+        this.isSecondPass = false; // Pour savoir si on refait les mots réussis
     }
     
     // ===== MÉTHODES ABSTRAITES IMPLÉMENTÉES ===== //
@@ -64,6 +66,9 @@ class CategoryMode extends BaseGameModeWithSave {
     // ===== MÉTHODES SPÉCIFIQUES AU MODE CATÉGORIE ===== //
     
     startGame(categoryName = null, clearSave = true) {
+        // Masquer le bouton "Mot suivant" au début
+        this.app.hideNextWordButton();
+        
         if (categoryName) {
             this.selectedCategory = categoryName;
         }
@@ -90,6 +95,8 @@ class CategoryMode extends BaseGameModeWithSave {
         this.currentIndex = 0;
         this.wordsFound = 0;
         this.completedWords.clear();
+        this.failedWords.clear();
+        this.isSecondPass = false;
         
         // Sauvegarder les paramètres
         if (this.app) {
@@ -131,9 +138,17 @@ class CategoryMode extends BaseGameModeWithSave {
     }
     
     startNextWord() {
+        // Si on a terminé tous les mots de la liste actuelle
         if (this.currentIndex >= this.categoryWords.length) {
-            this.completeCategoryChallenge();
-            return;
+            if (!this.isSecondPass && this.completedWords.size > 0) {
+                // Première fois qu'on termine : reprendre les mots réussis
+                this.startSecondPass();
+                return;
+            } else {
+                // Vraiment terminé (soit pas de mots réussis, soit 2ème passage terminé)
+                this.completeCategoryChallenge();
+                return;
+            }
         }
         
         const word = this.categoryWords[this.currentIndex];
@@ -142,26 +157,59 @@ class CategoryMode extends BaseGameModeWithSave {
         }
     }
     
+    startSecondPass() {
+        // Reprendre seulement les mots réussis (pas les ratés)
+        this.categoryWords = Array.from(this.completedWords);
+        this.currentIndex = 0;
+        this.isSecondPass = true;
+        
+        console.log(`🔄 2ème passage : ${this.categoryWords.length} mots à refaire`);
+        
+        if (this.app.getUIModule()) {
+            this.app.getUIModule().showToast(
+                '🔄 Recommençons avec les mots trouvés !', 
+                'info', 
+                3000
+            );
+        }
+        
+        // Démarrer le premier mot du 2ème passage
+        this.startNextWord();
+    }
+    
     onWordWin(word, category, errorsCount) {
-        this.wordsFound++;
-        this.completedWords.add(word);
+        if (!this.isSecondPass) {
+            // Premier passage : compter et ajouter aux mots réussis
+            this.wordsFound++;
+            this.completedWords.add(word);
+        }
         this.currentIndex++;
         
         // Message de progression
         if (this.app.getUIModule()) {
-            const progress = `${this.wordsFound}/${this.totalWords}`;
-            let message = `"${word}" trouvé ! (${progress})`;
+            let progress, message;
+            if (this.isSecondPass) {
+                progress = `Révision ${this.currentIndex}/${this.categoryWords.length}`;
+                message = `"${word}" retrouvé ! (${progress})`;
+            } else {
+                progress = `${this.wordsFound}/${this.totalWords}`;
+                message = `"${word}" trouvé ! (${progress})`;
+            }
             if (errorsCount === 0) {
                 message += ' 🌟';
             }
             this.app.getUIModule().showToast(message, 'win', 2000);
         }
         
+        // Afficher le bouton "Mot suivant"
+        this.app.showNextWordButton();
+        
         // Sauvegarder l'état
         this.saveGameState();
         
         // Passer au mot suivant après un délai (méthode commune)
         this.scheduleNextWord(() => {
+            this.app.hideNextWordButton();
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
@@ -169,23 +217,46 @@ class CategoryMode extends BaseGameModeWithSave {
     
     onWordLoss(word) {
         // En mode catégorie, on passe automatiquement au suivant même en cas d'échec
+        if (!this.isSecondPass) {
+            // Premier passage : marquer comme raté définitivement
+            this.failedWords.add(word);
+        }
         this.currentIndex++;
         
         // Message d'échec
         if (this.app.getUIModule()) {
-            const progress = `${this.wordsFound}/${this.totalWords}`;
-            const message = `"${word}" raté... (${progress})`;
+            let progress, message;
+            if (this.isSecondPass) {
+                progress = `Révision ${this.currentIndex}/${this.categoryWords.length}`;
+                message = `"${word}" raté en révision... (${progress})`;
+            } else {
+                progress = `${this.wordsFound}/${this.totalWords}`;
+                message = `"${word}" raté... (${progress})`;
+            }
             this.app.getUIModule().showToast(message, 'lose', 2000);
         }
+        
+        // Afficher le bouton "Mot suivant"
+        this.app.showNextWordButton();
         
         // Sauvegarder l'état
         this.saveGameState();
         
         // Passer au mot suivant (méthode commune)
         this.scheduleNextWord(() => {
+            this.app.hideNextWordButton();
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
+    }
+    
+    goToNextWord() {
+        // Masquer le bouton immédiatement
+        this.app.hideNextWordButton();
+        
+        // Passer au mot suivant en mode catégorie
+        this.startNextWord();
+        this.updateDisplay();
     }
     
     completeCategoryChallenge() {
@@ -194,7 +265,9 @@ class CategoryMode extends BaseGameModeWithSave {
         let message = `🎊 Catégorie "${this.selectedCategory}" terminée !\n`;
         message += `🎯 Score : ${this.wordsFound}/${this.totalWords} (${percentage}%)`;
         
-        if (percentage === 100) {
+        if (this.isSecondPass) {
+            message = `🏁 Révision de "${this.selectedCategory}" terminée !`;
+        } else if (percentage === 100) {
             message = `🏆 PARFAIT ! Catégorie "${this.selectedCategory}" 100% réussie !`;
         } else if (percentage >= 80) {
             message += `\n🌟 Excellent !`;

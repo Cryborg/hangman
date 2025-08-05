@@ -152,7 +152,11 @@ class PenduGameEngine {
     
     getAvailableWords() {
         const allWords = [];
-        this.categories.forEach(category => {
+        
+        // Filtrer les catégories selon les paramètres utilisateur
+        const enabledCategories = this.getEnabledCategories();
+        
+        enabledCategories.forEach(category => {
             category.mots.forEach(word => {
                 if (!this.sessionWords.has(word)) {
                     allWords.push({ word, category: category.nom });
@@ -160,6 +164,17 @@ class PenduGameEngine {
             });
         });
         return allWords;
+    }
+    
+    getEnabledCategories() {
+        // Récupérer les catégories activées depuis les paramètres
+        const settingsModule = this.app.getSettingsModule();
+        if (settingsModule) {
+            return settingsModule.getSelectedCategories();
+        }
+        
+        // Fallback : toutes les catégories si pas de paramètres
+        return this.categories;
     }
     
     resetGameState() {

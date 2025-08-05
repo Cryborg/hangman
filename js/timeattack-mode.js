@@ -78,6 +78,9 @@ class TimeAttackGameMode extends BaseGameMode {
     }
     
     setupUI() {
+        // Masquer le bouton "Mot suivant" (pas utilisé en Time Attack)
+        this.app.hideNextWordButton();
+        
         // Afficher la carte Time Attack
         const timeAttackCard = document.getElementById('timeAttackCard');
         if (timeAttackCard) {

@@ -11,10 +11,12 @@ class BaseGameModeWithSave extends BaseGameMode {
         this.saveManager = new SaveGameManager(this, saveKey);
     }
     
-    initialize() {
+    initialize(skipSaveCheck = false) {
         console.log(`🎲 Initialisation du mode ${this.name}`);
         this.setupUI();
-        this.saveManager.checkForSavedGame();
+        if (!skipSaveCheck) {
+            this.saveManager.checkForSavedGame();
+        }
     }
     
     /**

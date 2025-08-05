@@ -88,4 +88,17 @@ class BaseGameMode {
             }
         }, delay);
     }
+    
+    /**
+     * Méthode pour passer manuellement au mot suivant (bouton)
+     * À surcharger dans les sous-classes si nécessaire
+     */
+    goToNextWord() {
+        // Masquer le bouton immédiatement
+        this.app.hideNextWordButton();
+        
+        if (this.gameEngine) {
+            this.gameEngine.startNewGame();
+        }
+    }
 }

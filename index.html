@@ -35,6 +35,9 @@
                 <li><a href="#" data-view="menu" class="nav-link active">🏠 Accueil</a></li>
                 <li><a href="#" id="restartGameLink" class="nav-link">🔄 Recommencer</a></li>
                 <li><a href="#" data-view="stats" class="nav-link">📊 Statistiques</a></li>
+                <li class="nav-separator"></li>
+                <li><a href="#" data-view="changelog" class="nav-link">📜 Nouveautés</a></li>
+                <li><a href="#" data-view="settings" class="nav-link">⚙️ Paramètres</a></li>
             </ul>
         </nav>
     </header>
@@ -89,29 +92,6 @@
                     <div class="modal-content">
                         <h3>🎯 Choisissez votre mode de jeu</h3>
                         
-                        <!-- Options de difficulté -->
-                        <div class="difficulty-options">
-                            <h4>🔥 Options de difficulté</h4>
-                            <div class="difficulty-checkboxes">
-                                <label class="difficulty-checkbox">
-                                    <input type="checkbox" id="accentDifficulty">
-                                    <span class="checkmark"></span>
-                                    <span class="label-text">
-                                        <strong>Accents requis</strong>
-                                        <small>Les lettres accentuées françaises (É, È, À, Ç...) ne sont plus automatiquement révélées</small>
-                                    </span>
-                                </label>
-                                
-                                <label class="difficulty-checkbox">
-                                    <input type="checkbox" id="numberDifficulty">
-                                    <span class="checkmark"></span>
-                                    <span class="label-text">
-                                        <strong>Chiffres cachés</strong>
-                                        <small>Les chiffres (0-9) ne sont plus automatiquement révélés</small>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
                         
                         <div class="game-modes">
                             <div class="mode-card" data-mode="standard">
@@ -261,6 +241,11 @@
             
             <div class="keyboard" id="keyboard"></div>
             
+            <!-- Bouton Suivant (caché par défaut, visible selon le mode et l'état du jeu) -->
+            <div class="next-word-section" id="nextWordSection" style="display: none;">
+                <button class="btn btn-primary" id="nextWordBtn">➡️ Mot suivant</button>
+            </div>
+            
             <div id="gameMessage" class="game-message"></div>
         </div>
     </div>
@@ -298,11 +283,151 @@
         </div>
     </div>
     
+    <!-- Vue Changelog -->
+    <div class="view" id="changelogView">
+        <div class="container">
+            <div class="changelog-content">
+                <h2>📜 Historique des Nouveautés</h2>
+                
+                <div class="changelog-intro">
+                    <p>Découvrez toutes les évolutions et nouvelles fonctionnalités ajoutées au jeu du Pendu !</p>
+                </div>
+                
+                <div class="changelog-timeline">
+                    <div class="changelog-day">
+                        <div class="day-header">
+                            <span class="day-date">🗓️ 5 Août 2025</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li>⚙️ <strong>Page Paramètres complète</strong> : gestion centralisée de la difficulté et sélection des catégories actives</li>
+                            <li>🎮 <strong>Bouton "Mot suivant"</strong> : contrôle manuel en modes Standard et Catégorie pour plus de flexibilité</li>
+                            <li>📂 <strong>Sélection des catégories</strong> : choix personnalisé des catégories à inclure dans vos parties</li>
+                            <li>🔄 <strong>Mode Catégorie amélioré</strong> : les mots réussis sont reproposés, les ratés sont éliminés définitivement</li>
+                            <li>🧹 <strong>Migration difficulté</strong> : options déplacées de la modal vers la page Paramètres pour éviter la duplication</li>
+                            <li>📱 <strong>Paramètres responsive</strong> : interface adaptée mobile avec grille et contrôles optimisés</li>
+                            <li>🚀 <strong>Redémarrage intelligent</strong> : supprime uniquement la sauvegarde du mode actuel lors d'un restart</li>
+                            <li>✨ <strong>Refonte complète des succès</strong> : présentation en 2x2 comme les cartes du menu, alternance des icônes</li>
+                            <li>🎯 <strong>Navigation intelligente</strong> : bouton "Recommencer" visible uniquement en jeu</li>
+                            <li>🏠 <strong>Menu → Accueil</strong> : renommage pour plus de clarté</li>
+                            <li>🔤 <strong>Orthographe parfaite</strong> : ajout des accents manquants dans toutes les catégories</li>
+                            <li>⚡ <strong>Code unifié</strong> : achievements utilisent maintenant les classes stat-card</li>
+                            <li>📱 <strong>Interface mobile optimisée</strong> : layout 2x2 compact pour les cartes stats</li>
+                            <li>🎨 <strong>Gestion des caractères spéciaux</strong> : chiffres et accents selon les options de difficulté</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="changelog-day">
+                        <div class="day-header">
+                            <span class="day-date">🗓️ 4 Août 2025</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li>🎮 <strong>3 Modes de jeu complets</strong> : Standard (progression), Time Attack (chrono), Mode Catégorie (complétion)</li>
+                            <li>⏱️ <strong>Mode Time Attack</strong> : chrono 1-5min avec highscores sauvegardés par durée</li>
+                            <li>📚 <strong>Mode Catégorie</strong> : défi de deviner TOUS les mots d'une catégorie sans limite d'erreurs</li>
+                            <li>📱 <strong>Clavier virtuel professionnel</strong> : AZERTY mobile avec appuis longs pour accents français</li>
+                            <li>🔧 <strong>Options de difficulté</strong> : "Accents requis" et "Chiffres cachés" pour corser le défi</li>
+                            <li>🏰 <strong>Univers Harry Potter</strong> : 86 Personnages + 76 Lieux avec noms français complets</li>
+                            <li>💾 <strong>Sauvegarde automatique</strong> : parties Standard conservées entre sessions</li>
+                            <li>🏗️ <strong>Architecture ES6</strong> : refonte complète avec classes modulaires</li>
+                            <li>🎯 <strong>Interface unifiée</strong> : header de jeu minimaliste avec stats temps réel</li>
+                            <li>📊 <strong>Configuration centralisée</strong> : categories.json pour gérer tout le contenu</li>
+                            <li>🎨 <strong>Layout desktop optimisé</strong> : grille 3 colonnes pour une meilleure organisation</li>
+                            <li>🔄 <strong>Système de retry intelligent</strong> : gestion des erreurs et performance optimisée</li>
+                            <li>🎭 <strong>Icônes complètes</strong> : toutes les catégories ont leurs émojis</li>
+                            <li>✨ <strong>Effets visuels améliorés</strong> : animations et transitions plus fluides</li>
+                            <li>🎪 <strong>Interface responsive</strong> : adaptation parfaite mobile/desktop</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="changelog-day">
+                        <div class="day-header">
+                            <span class="day-date">🗓️ Versions antérieures</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li>🎯 <strong>Jeu du Pendu complet</strong> : 20 catégories, 750+ mots, système de stats</li>
+                            <li>🏆 <strong>10 Succès débloquables</strong> : conditions variées (séries, catégories spécialisées, perfectionniste...)</li>
+                            <li>📊 <strong>Statistiques détaillées</strong> : suivi complet avec persistance localStorage</li>
+                            <li>🎨 <strong>Interface moderne</strong> : design glassmorphism avec effets et animations</li>
+                            <li>📱 <strong>Menu hamburger responsive</strong> : navigation adaptée mobile/desktop</li>
+                            <li>🔥 <strong>Système de streak</strong> : compteur de séries avec meilleur score</li>
+                            <li>🎪 <strong>Catégories variées</strong> : Animaux, Disney, Séries TV, Jeux Vidéo, Cuisine...</li>
+                            <li>💾 <strong>Données persistantes</strong> : progression sauvegardée automatiquement</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="changelog-actions">
+                    <button class="btn btn-secondary" id="backToMenuFromChangelogBtn">🏠 Retour au menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vue Paramètres -->
+    <div class="view" id="settingsView">
+        <div class="container">
+            <div class="settings-content">
+                <h2>⚙️ Paramètres</h2>
+                
+                <!-- Section Difficulté -->
+                <div class="settings-section">
+                    <h3>🎯 Niveau de difficulté</h3>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h4>📝 Accents requis</h4>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="accentDifficulty">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="setting-description">
+                                Les lettres accentuées (É, È, À, Ç...) doivent être devinées et ne sont plus révélées automatiquement.
+                            </p>
+                        </div>
+                        
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h4>🔢 Chiffres cachés</h4>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="numberDifficulty">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="setting-description">
+                                Les chiffres (0-9) doivent être devinés et ne sont plus révélés automatiquement.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Catégories -->
+                <div class="settings-section">
+                    <h3>📂 Catégories de mots</h3>
+                    <div class="categories-controls">
+                        <button class="btn btn-small" id="selectAllCategoriesBtn">✅ Tout sélectionner</button>
+                        <button class="btn btn-small" id="deselectAllCategoriesBtn">❌ Tout désélectionner</button>
+                    </div>
+                    <div class="categories-grid" id="settingsCategoriesGrid">
+                        <!-- Les catégories seront générées dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="btn btn-primary" id="saveSettingsBtn">💾 Sauvegarder</button>
+                    <button class="btn btn-secondary" id="resetSettingsBtn">🔄 Réinitialiser</button>
+                    <button class="btn btn-secondary" id="backToMenuFromSettingsBtn">🏠 Retour au menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- JavaScript modulaire -->
     <script src="js/word-utils.js"></script>
     <script src="js/virtual-keyboard.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>
+    <script src="js/settings.js"></script>
     <!-- Modes de jeu modulaires (ordre de dépendance CRITIQUE) -->
     <script src="js/base-game-mode.js"></script>
     <script src="js/save-game-manager.js"></script>

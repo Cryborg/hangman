@@ -365,6 +365,144 @@
         max-width: 300px;
     }
     
+    /* Changelog mobile */
+    .changelog-content h2 {
+        font-size: 2rem;
+    }
+    
+    .changelog-day {
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-lg);
+    }
+    
+    .day-date {
+        font-size: 1.3rem;
+    }
+    
+    .changelog-list li {
+        font-size: 0.9rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .changelog-actions .btn {
+        width: 100%;
+        max-width: 300px;
+        margin: var(--spacing-sm);
+    }
+    
+    /* ===== VUE PARAMÈTRES RESPONSIVE ===== */
+    
+    .settings-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .settings-content h2 {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .settings-section {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .settings-section h3 {
+        font-size: 1.4rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Grid responsive des paramètres de difficulté */
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        max-width: none;
+    }
+    
+    .setting-card {
+        padding: var(--spacing-md);
+    }
+    
+    .setting-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .setting-header h4 {
+        font-size: 1.1rem;
+    }
+    
+    .setting-description {
+        font-size: 0.9rem;
+        margin-top: var(--spacing-xs);
+    }
+    
+    /* Toggle switches plus petits sur mobile */
+    .toggle-switch {
+        width: 50px;
+        height: 26px;
+        align-self: flex-start;
+    }
+    
+    .toggle-slider:before {
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        bottom: 2px;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    
+    /* Contrôles des catégories */
+    .categories-controls {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .btn-small {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* Grille des catégories mobile */
+    .categories-grid {
+        grid-template-columns: 1fr;
+        max-height: 300px;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+    
+    .category-item {
+        padding: var(--spacing-xs);
+    }
+    
+    .category-name {
+        font-size: 0.95rem;
+        gap: var(--spacing-xs);
+    }
+    
+    .category-count {
+        font-size: 0.8rem;
+    }
+    
+    /* Actions des paramètres */
+    .settings-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+    }
+    
+    .settings-actions .btn {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    
     /* Toasts mobile */
     .toast {
         min-width: 280px;

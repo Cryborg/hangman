@@ -100,6 +100,14 @@
     border-bottom: none;
 }
 
+/* Séparateur dans le menu */
+.nav-separator {
+    height: 1px;
+    background: var(--border-primary);
+    margin: var(--spacing-xs) var(--spacing-lg);
+    border: none;
+}
+
 .nav-link {
     display: block;
     padding: var(--spacing-md) var(--spacing-xl);
