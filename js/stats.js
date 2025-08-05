@@ -299,14 +299,17 @@ class PenduStats {
         
         achievementsGrid.innerHTML = '';
         
-        this.achievements.forEach(achievement => {
+        this.achievements.forEach((achievement, index) => {
             const achievementCard = document.createElement('div');
-            achievementCard.className = `achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+            const alternatingClass = index % 2 === 0 ? 'stat-card-left' : 'stat-card-right';
+            achievementCard.className = `stat-card ${alternatingClass} ${achievement.unlocked ? 'unlocked' : 'locked'}`;
             
             achievementCard.innerHTML = `
-                <div class="achievement-icon">${achievement.icon}</div>
-                <div class="achievement-title">${achievement.title}</div>
-                <div class="achievement-description">${achievement.description}</div>
+                <div class="stat-info">
+                    <span class="stat-number">${achievement.unlocked ? '✓' : '✗'}</span>
+                    <span class="stat-label">${achievement.title}</span>
+                </div>
+                <div class="stat-icon">${achievement.icon}</div>
             `;
             
             achievementsGrid.appendChild(achievementCard);

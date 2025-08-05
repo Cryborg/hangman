@@ -228,55 +228,29 @@
 
 /* ===== ACHIEVEMENTS ===== */
 
-.achievement-card {
-    background: var(--bg-secondary);
-    backdrop-filter: blur(10px);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    text-align: center;
-    border: 2px solid;
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
-}
-
-.achievement-card.unlocked {
+/* Styles spécifiques pour les succès débloqués/verrouillés */
+.stat-card.unlocked {
     border-color: var(--primary-color);
-    box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+    box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
 }
 
-.achievement-card.locked {
-    border-color: var(--border-primary);
+.stat-card.unlocked:hover {
+    box-shadow: 0 15px 35px rgba(243, 156, 18, 0.4);
+}
+
+.stat-card.locked {
     opacity: 0.6;
 }
 
-.achievement-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-md);
-}
-
-.achievement-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
-}
-
-.achievement-description {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
-}
-
-.achievement-card.unlocked::after {
-    content: '✓';
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.5rem;
+/* Couleurs selon l'état des achievements */
+.stat-card.unlocked .stat-number {
     color: var(--success-color);
-    font-weight: bold;
 }
+
+.stat-card.locked .stat-number {
+    color: var(--error-color);
+}
+
 
 /* ===== HANGMAN SVG ===== */
 

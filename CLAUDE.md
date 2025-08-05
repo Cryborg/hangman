@@ -137,8 +137,7 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 ### Classes utilitaires importantes
 - `.view` : Conteneur de vue (`.active` pour affichage)
 - `.toast` : Messages flottants (`.toast-win`, `.toast-lose`, etc.)
-- `.achievement-card` : Cartes d'achievements (`.unlocked`/`.locked`)
-- `.stat-card` : Cartes de statistiques
+- `.stat-card` : Cartes de statistiques et achievements (`.unlocked`/`.locked` pour les achievements)
 - `.btn-primary`, `.btn-secondary` : Styles de boutons
 
 ## 🔧 Architecture JavaScript

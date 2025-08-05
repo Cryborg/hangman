@@ -315,7 +315,48 @@
     }
     
     .achievements-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-xl);
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    /* Style des achievements sur mobile - réutilise les classes stat-card */
+    .achievements-grid .stat-card {
+        padding: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        min-width: 0;
+        max-width: 100%;
+    }
+    
+    /* Cartes de gauche : icône à droite (order inversé) */
+    .achievements-grid .stat-card-left .stat-info {
+        order: 1;
+    }
+    
+    .achievements-grid .stat-card-left .stat-icon {
+        order: 2;
+    }
+    
+    /* Cartes de droite : icône à gauche (order inversé) */
+    .achievements-grid .stat-card-right .stat-info {
+        order: 2;
+    }
+    
+    .achievements-grid .stat-card-right .stat-icon {
+        order: 1;
+    }
+    
+    /* Alignement du texte */
+    .achievements-grid .stat-card-left .stat-info {
+        text-align: left;
+    }
+    
+    .achievements-grid .stat-card-right .stat-info {
+        text-align: right;
     }
     
     .stats-actions .btn {

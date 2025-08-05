@@ -70,6 +70,7 @@ class PenduApp {
         this.navMenu = document.getElementById('navMenu');
         this.navLinks = document.querySelectorAll('.nav-link');
         this.views = document.querySelectorAll('.view');
+        this.restartGameLink = document.getElementById('restartGameLink');
         
         // Vérifier que tous les éléments sont présents
         if (!this.hamburgerMenu || !this.navMenu || !this.navLinks.length || !this.views.length) {
@@ -126,7 +127,6 @@ class PenduApp {
         // Boutons de retour au menu
         const backToMenuBtn = document.getElementById('backToMenuBtn');
         const backToMenuFromStatsBtn = document.getElementById('backToMenuFromStatsBtn');
-        const playFromStatsBtn = document.getElementById('playFromStatsBtn');
         
         if (backToMenuBtn) {
             backToMenuBtn.addEventListener('click', () => this.showView('menu'));
@@ -134,10 +134,6 @@ class PenduApp {
         
         if (backToMenuFromStatsBtn) {
             backToMenuFromStatsBtn.addEventListener('click', () => this.showView('menu'));
-        }
-        
-        if (playFromStatsBtn) {
-            playFromStatsBtn.addEventListener('click', () => this.showView('game'));
         }
         
         // Fermer le menu en cliquant à l'extérieur
@@ -211,6 +207,18 @@ class PenduApp {
                 link.classList.remove('active');
             }
         });
+        
+        // Gérer la visibilité du bouton "Recommencer"
+        if (this.restartGameLink) {
+            const parentLi = this.restartGameLink.parentElement;
+            if (activeView === 'game') {
+                // Afficher le bouton seulement en vue jeu
+                parentLi.style.display = '';
+            } else {
+                // Masquer le bouton dans les autres vues
+                parentLi.style.display = 'none';
+            }
+        }
     }
     
     onViewChange(viewName) {
