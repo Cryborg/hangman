@@ -284,11 +284,19 @@ class PenduUI {
             currentWord.split('').forEach(letter => {
                 const span = document.createElement('span');
                 
-                if (guessedLetters.includes(letter.toUpperCase())) {
+                // Si c'est une lettre alphabétique
+                if (/[A-Za-z]/.test(letter)) {
+                    if (guessedLetters.includes(letter.toUpperCase())) {
+                        span.textContent = letter;
+                        span.classList.add('revealed');
+                    } else {
+                        span.textContent = '';
+                    }
+                } else {
+                    // Si c'est un caractère non alphabétique (chiffre, tiret, point, etc.)
+                    // on l'affiche directement
                     span.textContent = letter;
                     span.classList.add('revealed');
-                } else {
-                    span.textContent = '';
                 }
                 
                 wordGroup.appendChild(span);

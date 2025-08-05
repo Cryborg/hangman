@@ -1,4 +1,4 @@
-# Jeu du Pendu - Documentation Architecture v3.0.0
+# Jeu du Pendu - Documentation Architecture v3.1.0
 
 ## Vue d'ensemble
 Jeu du pendu moderne avec système de navigation, statistiques avancées, achievements, architecture modulaire et trois modes de jeu distincts.
@@ -12,7 +12,7 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
   - **Mode Time Attack** : Chrono 1-5min, highscores par durée
   - **Mode Catégorie** : Deviner tous les mots d'une catégorie sans limite d'erreurs
 - **Architecture modulaire** : CSS et JS organisés en modules spécialisés
-- **17 catégories** : 650+ mots répartis en catégories variées
+- **20 catégories** : 750+ mots répartis en catégories variées
 - **Sauvegarde persistante** : Progression conservée entre sessions
 
 ## 📁 Architecture des fichiers
@@ -204,9 +204,10 @@ penduApp.modalManager   // ModalManager instance
 
 ## 🚀 Gestion des versions
 
-### Version actuelle : **3.0.0**
+### Version actuelle : **3.1.0**
 
 ### Historique des versions
+- **3.1.0** : Ajout de 3 catégories Disney (Films classiques, Pixar, Personnages) + Fix affichage caractères non alphabétiques
 - **3.0.0** : Mode Catégorie + Refonte architecture OOP - Classes ES6, GameEngine/Manager, 3 modes distincts
 - **2.1.0** : Mode Time Attack - Sélection de mode, timer, scores par durée, highscores sauvegardés
 - **2.0.0** : Refonte majeure - Architecture modulaire, navigation multi-vues, système d'achievements complet, streak counter
@@ -244,6 +245,15 @@ penduApp.modalManager   // ModalManager instance
 2. Implémenter les méthodes requises : `start()`, `handleWin()`, `handleLoss()`, etc.
 3. Ajouter le mode dans `game-modes.js`
 4. Ajouter l'UI du mode dans le modal de sélection (`index.html`)
+
+## 📝 Notes importantes d'implémentation
+
+### Gestion des caractères non alphabétiques
+Le jeu gère automatiquement l'affichage des caractères non alphabétiques (chiffres, tirets, points, etc.) :
+- **Affichage** : Dans `ui.js`, la fonction `updateWordDisplay()` affiche automatiquement tous les caractères non alphabétiques (lignes 296-299)
+- **Logique de jeu** : La fonction `isWordComplete()` dans `game-engine.js` filtre correctement ces caractères pour ne vérifier que les lettres
+- **Exemples** : Les mots comme "RALPH 2.0", "AC/DC", "SPIDER-MAN" affichent automatiquement "2.0", "/", "-" dès le début de la partie
+- **Catégories concernées** : Films Disney, Personnages Disney, L'univers de Pixar, Groupes de Musique, etc.
 
 ## 🐛 Debug et développement
 
