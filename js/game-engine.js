@@ -101,14 +101,20 @@ class PenduGameEngine {
     
     async loadCategories() {
         try {
-            const response = await fetch('categories.json');
-            const data = await response.json();
-            this.categories = data.categories;
+            console.log('📡 Chargement des catégories depuis l\'API MySQL...');
+            
+            // Utiliser le client API centralisé
+            const categories = await window.HangmanAPI.getCategories();
+            
+            this.categories = categories;
             this.totalWords = this.categories.reduce((total, cat) => total + cat.mots.length, 0);
+            
+            console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots depuis MySQL`);
             return true;
+            
         } catch (error) {
-            console.error('❌ Erreur lors du chargement des mots:', error);
-            this.showErrorMessage();
+            console.error('❌ Erreur lors du chargement des catégories via API:', error);
+            this.showErrorMessage('Impossible de charger les données depuis la base MySQL. Vérifiez votre connexion et la configuration de l\'API.');
             return false;
         }
     }
@@ -451,15 +457,28 @@ class PenduGameEngine {
         }
     }
     
-    showErrorMessage() {
+    showErrorMessage(customMessage = null) {
         const container = document.querySelector('.container');
         if (container) {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';
+            
+            const message = customMessage || 'Impossible de charger les données du jeu depuis l\'API.';
+            
             errorDiv.innerHTML = `
-                <h3>❌ Erreur</h3>
-                <p>Impossible de charger les mots du jeu.</p>
-                <button onclick="location.reload()" class="btn">🔄 Recharger</button>
+                <h3>❌ Erreur de connexion API</h3>
+                <p>${message}</p>
+                <div style="margin-top: 1rem;">
+                    <button onclick="location.reload()" class="btn btn-primary">🔄 Recharger la page</button>
+                </div>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <p><strong>Solutions possibles :</strong></p>
+                    <ul style="text-align: left; margin: 0.5rem 0;">
+                        <li>Vérifiez votre connexion internet</li>
+                        <li>Contactez l'administrateur si le problème persiste</li>
+                        <li>Vérifiez que l'API MySQL est correctement configurée</li>
+                    </ul>
+                </div>
             `;
             container.appendChild(errorDiv);
         }
