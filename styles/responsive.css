@@ -104,7 +104,8 @@
     
     /* Clavier virtuel visible */
     .keyboard {
-        display: grid !important;
+        display: flex !important;
+        flex-direction: column;
     }
     
     /* === LAYOUT (depuis layout.css) === */
@@ -372,6 +373,8 @@
         grid-area: keyboard;
         /* Laisser virtual-keyboard.css gérer le layout interne */
         flex-shrink: 0;
+        display: flex !important;
+        flex-direction: column;
     }
     
     
