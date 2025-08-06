@@ -66,8 +66,8 @@ class CategoryMode extends BaseGameModeWithSave {
     // ===== MÉTHODES SPÉCIFIQUES AU MODE CATÉGORIE ===== //
     
     startGame(categoryName = null, clearSave = true) {
-        // Masquer le bouton "Mot suivant" au début
-        this.app.hideNextWordButton();
+        // Montrer le bouton "Passer" dès le début en mode catégorie
+        this.app.showNextWordButton();
         
         if (categoryName) {
             this.selectedCategory = categoryName;
@@ -209,7 +209,7 @@ class CategoryMode extends BaseGameModeWithSave {
         
         // Passer au mot suivant après un délai (méthode commune)
         this.scheduleNextWord(() => {
-            this.app.hideNextWordButton();
+            // this.app.hideNextWordButton(); // Garder le bouton visible
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
@@ -244,15 +244,18 @@ class CategoryMode extends BaseGameModeWithSave {
         
         // Passer au mot suivant (méthode commune)
         this.scheduleNextWord(() => {
-            this.app.hideNextWordButton();
+            // this.app.hideNextWordButton(); // Garder le bouton visible
             this.startNextWord();
             this.updateDisplay();
         }, 2000);
     }
     
     goToNextWord() {
-        // Masquer le bouton immédiatement
-        this.app.hideNextWordButton();
+        // Ne pas cacher le bouton en mode catégorie, on veut qu'il reste visible
+        // this.app.hideNextWordButton(); // Commenté volontairement
+        
+        // Afficher un toast pour indiquer que le mot a été passé
+        this.app.uiModule.showToast('Mot passé ! (reviendra plus tard)', 'info', 2000);
         
         // Passer au mot suivant en mode catégorie
         this.startNextWord();

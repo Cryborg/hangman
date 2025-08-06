@@ -336,8 +336,9 @@ penduApp.modalManager   // ModalManager instance
 
 ### Règles de versioning
 - **Révision** (X.X.1) : Bug fixes, petites améliorations
-- **Mineure** (X.1.0) : Nouvelles fonctionnalités, nouveau contenu
+- **Mineure** (X.1.0) : Nouvelles fonctionnalités (code/UI/logique)
 - **Majeure** (1.0.0) : Refonte architecture, changements incompatibles
+- **Contenu uniquement** : Ajout de catégories/mots → AUCUN changement de version
 
 ## 🔄 Points d'entrée pour modifications
 

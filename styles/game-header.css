@@ -12,41 +12,7 @@
     width: 100%;
 }
 
-/* Layout desktop : header à côté du hangman */
-@media (min-width: 769px) {
-    .top-section {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: var(--spacing-xl);
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .game-header-unified {
-        flex: 1;
-        max-width: none;
-        margin-bottom: 0;
-        height: fit-content;
-    }
-    
-    .hangman-container {
-        flex-shrink: 0;
-        width: 280px;
-        order: 2; /* Hangman à droite */
-    }
-    
-    /* Ajuster les tailles de police pour desktop */
-    .category-title h2 {
-        font-size: 1.8rem;
-    }
-    
-    .category-icon {
-        font-size: 2.2rem;
-    }
-}
+/* Layout desktop géré dans responsive.css */
 
 /* Titre de la catégorie */
 .category-title {
@@ -195,63 +161,7 @@
     animation: pulse-value 0.3s ease;
 }
 
-/* Responsive mobile */
-@media (max-width: 768px) {
-    .game-header-unified {
-        padding: var(--spacing-xs) var(--spacing-md);
-        border-radius: var(--radius-lg);
-        margin-bottom: var(--spacing-sm);
-        flex-shrink: 0;
-    }
-    
-    /* S'assurer que le layout mobile reste en colonne */
-    .top-section {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center;
-        gap: var(--spacing-md);
-    }
-    
-    .category-title h2 {
-        font-size: 1.3rem;
-        letter-spacing: 1px;
-    }
-    
-    .category-title {
-        margin-bottom: var(--spacing-xs);
-        padding-bottom: var(--spacing-xs);
-    }
-    
-    .category-icon {
-        font-size: 1.8rem;
-    }
-    
-    .game-stats-bar {
-        gap: 8px;
-        padding: 0 var(--spacing-xs);
-    }
-    
-    .stat-group {
-        padding: 4px 8px;
-        gap: 3px;
-    }
-    
-    .stat-icon {
-        font-size: 1rem;
-    }
-    
-    .stat-group span:not(.stat-icon) {
-        font-size: 0.85rem;
-        max-width: 100px;
-    }
-    
-    
-    /* Tooltips désactivés sur mobile (touch) */
-    .stat-group[data-tooltip]::before,
-    .stat-group[data-tooltip]::after {
-        display: none;
-    }
-}
+/* Responsive géré dans responsive.css */
 
 /* Animation spéciale pour la série en feu */
 .stat-group:has(#streakDisplay) {

@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="styles/modal.css">
     <link rel="stylesheet" href="styles/game-header.css">
     <link rel="stylesheet" href="styles/virtual-keyboard.css">
-    <script src="../../arcade-theme-integration.js"></script>
 </head>
 <body>
     <!-- Header avec menu hamburger -->
@@ -38,7 +37,10 @@
                 <li class="nav-separator"></li>
                 <li><a href="#" data-view="changelog" class="nav-link">📜 Nouveautés</a></li>
                 <li><a href="#" data-view="settings" class="nav-link">⚙️ Paramètres</a></li>
+                <li class="nav-separator"></li>
+                <li><a href="../../index.html" class="nav-link">🕹️ Retour à la borne</a></li>
             </ul>
+            <div class="nav-version">v<span id="versionDisplay">4.1.1</span></div>
         </nav>
     </header>
     
@@ -208,6 +210,11 @@
                         </div>
                     </div>
                     
+                    <!-- Bouton Passer en mode mobile (sous le header unifié) -->
+                    <div class="next-word-section mobile-next-word" id="nextWordSectionMobile" style="display: none;">
+                        <button class="btn btn-secondary btn-small" id="nextWordBtnMobile">⏭️ Passer</button>
+                    </div>
+                    
                     <div class="hangman-container">
                         <svg id="hangman" viewBox="0 0 250 300" preserveAspectRatio="xMidYMid meet">
                             <!-- Base -->
@@ -241,9 +248,9 @@
             
             <div class="keyboard" id="keyboard"></div>
             
-            <!-- Bouton Suivant (caché par défaut, visible selon le mode et l'état du jeu) -->
-            <div class="next-word-section" id="nextWordSection" style="display: none;">
-                <button class="btn btn-primary" id="nextWordBtn">➡️ Mot suivant</button>
+            <!-- Bouton Passer version desktop (à la fin) -->
+            <div class="next-word-section desktop-next-word" id="nextWordSection" style="display: none;">
+                <button class="btn btn-secondary" id="nextWordBtn">⏭️ Passer</button>
             </div>
             
             <div id="gameMessage" class="game-message"></div>

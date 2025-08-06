@@ -382,36 +382,4 @@
     margin: var(--spacing-xs) 0;
 }
 
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-    .modal-content {
-        padding: var(--spacing-lg);
-        width: 95%;
-    }
-    
-    .game-modes {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-    }
-    
-    .mode-card {
-        padding: var(--spacing-md);
-    }
-    
-    .mode-icon {
-        font-size: 3rem;
-    }
-    
-    .mode-card h4 {
-        font-size: 1.2rem;
-    }
-    
-    .time-buttons {
-        flex-wrap: wrap;
-    }
-    
-    .time-attack-card .timer {
-        font-size: 1.5rem;
-    }
-}
+/* Responsive géré dans responsive.css */

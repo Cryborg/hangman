@@ -72,8 +72,12 @@ class PenduApp {
         this.navLinks = document.querySelectorAll('.nav-link');
         this.views = document.querySelectorAll('.view');
         this.restartGameLink = document.getElementById('restartGameLink');
+        
+        // Boutons Passer (desktop et mobile)
         this.nextWordBtn = document.getElementById('nextWordBtn');
+        this.nextWordBtnMobile = document.getElementById('nextWordBtnMobile');
         this.nextWordSection = document.getElementById('nextWordSection');
+        this.nextWordSectionMobile = document.getElementById('nextWordSectionMobile');
         
         // Vérifier que tous les éléments sont présents
         if (!this.hamburgerMenu || !this.navMenu || !this.navLinks.length || !this.views.length) {
@@ -144,13 +148,19 @@ class PenduApp {
             backToMenuFromChangelogBtn.addEventListener('click', () => this.showView('menu'));
         }
         
-        // Bouton "Mot suivant"
+        // Boutons "Passer" (desktop et mobile)
+        const handleNextWord = () => {
+            if (this.gameManager && this.gameManager.getCurrentGameMode()) {
+                this.gameManager.getCurrentGameMode().goToNextWord();
+            }
+        };
+        
         if (this.nextWordBtn) {
-            this.nextWordBtn.addEventListener('click', () => {
-                if (this.gameManager && this.gameManager.getCurrentGameMode()) {
-                    this.gameManager.getCurrentGameMode().goToNextWord();
-                }
-            });
+            this.nextWordBtn.addEventListener('click', handleNextWord);
+        }
+        
+        if (this.nextWordBtnMobile) {
+            this.nextWordBtnMobile.addEventListener('click', handleNextWord);
         }
         
         // Fermer le menu en cliquant à l'extérieur
@@ -345,14 +355,22 @@ class PenduApp {
     // ===== GESTION DU BOUTON "MOT SUIVANT" ===== //
     
     showNextWordButton() {
+        // Les boutons sont automatiquement gérés par les classes CSS selon le type d'appareil
+        // Il suffit de les rendre visible avec display: block (overridé par les règles CSS)
         if (this.nextWordSection) {
             this.nextWordSection.style.display = 'block';
+        }
+        if (this.nextWordSectionMobile) {
+            this.nextWordSectionMobile.style.display = 'block';
         }
     }
     
     hideNextWordButton() {
         if (this.nextWordSection) {
             this.nextWordSection.style.display = 'none';
+        }
+        if (this.nextWordSectionMobile) {
+            this.nextWordSectionMobile.style.display = 'none';
         }
     }
     
@@ -494,6 +512,7 @@ class PenduApp {
             }
         }
     }
+
 }
 
 // Initialiser l'application
@@ -503,7 +522,7 @@ let penduApp;
 document.addEventListener('DOMContentLoaded', function() {
     const versionDisplay = document.getElementById('versionDisplay');
     if (versionDisplay && typeof PENDU_VERSION !== 'undefined') {
-        versionDisplay.textContent = `v${PENDU_VERSION}`;
+        versionDisplay.textContent = PENDU_VERSION;
     }
     
     // Créer l'instance de l'app

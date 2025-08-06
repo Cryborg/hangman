@@ -3,6 +3,7 @@
     {
       "nom": "Animaux",
       "icone": "🐾",
+      "tags": ["nature", "famille", "enfant"],
       "mots": [
         "CHIEN",
         "CHEVAL",
@@ -34,6 +35,7 @@
     },
     {
       "nom": "Fruits et Légumes",
+      "tags": ["nature", "quotidien", "enfant"],
       "mots": [
         "POMME",
         "BANANE",
@@ -67,6 +69,7 @@
     },
     {
       "nom": "Métiers",
+      "tags": ["quotidien", "education", "famille"],
       "mots": [
         "MÉDECIN",
         "PROFESSEUR",
@@ -103,6 +106,7 @@
     },
     {
       "nom": "Objets du Quotidien",
+      "tags": ["quotidien", "famille"],
       "mots": [
         "TÉLÉPHONE",
         "ORDINATEUR",
@@ -136,6 +140,7 @@
     },
     {
       "nom": "Sports",
+      "tags": ["sport", "famille"],
       "mots": [
         "FOOTBALL",
         "TENNIS",
@@ -166,6 +171,7 @@
     },
     {
       "nom": "Pays",
+      "tags": ["geographie", "education", "famille"],
       "mots": [
         "FRANCE",
         "ESPAGNE",
@@ -200,6 +206,7 @@
     },
     {
       "nom": "Couleurs",
+      "tags": ["education", "enfant"],
       "mots": [
         "ROUGE",
         "JAUNE",
@@ -227,6 +234,7 @@
     },
     {
       "nom": "Véhicules",
+      "tags": ["quotidien", "enfant"],
       "mots": [
         "VOITURE",
         "TRAIN",
@@ -256,6 +264,7 @@
     },
     {
       "nom": "Chanteurs et Chanteuses",
+      "tags": ["culture", "adulte"],
       "mots": [
         "MADONNA",
         "MICHAEL JACKSON",
@@ -291,6 +300,7 @@
     },
     {
       "nom": "Groupes de Musique",
+      "tags": ["culture", "retro", "adulte"],
       "mots": [
         "THE BEATLES",
         "QUEEN",
@@ -325,6 +335,7 @@
     },
     {
       "nom": "Acteurs et Actrices",
+      "tags": ["culture", "adulte"],
       "mots": [
         "TOM CRUISE",
         "LEONARDO DICAPRIO",
@@ -370,6 +381,7 @@
     },
     {
       "nom": "Dessins Animés 80s",
+      "tags": ["retro", "culture", "famille"],
       "mots": [
         "GOLDORAK",
         "ALBATOR",
@@ -402,6 +414,7 @@
     },
     {
       "nom": "Séries TV",
+      "tags": ["retro", "culture", "adulte"],
       "mots": [
         "MAGNUM",
         "KOJAK",
@@ -434,6 +447,7 @@
     },
     {
       "nom": "Films Cultes",
+      "tags": ["retro", "culture", "famille"],
       "mots": [
         "RETOUR VERS LE FUTUR",
         "GREMLINS",
@@ -466,6 +480,7 @@
     },
     {
       "nom": "Jeux de Société",
+      "tags": ["quotidien", "famille"],
       "mots": [
         "MONOPOLY",
         "SCRABBLE",
@@ -498,6 +513,7 @@
     },
     {
       "nom": "Jeux Vidéo",
+      "tags": ["retro", "culture", "famille"],
       "mots": [
         "PACMAN",
         "TETRIS",
@@ -530,6 +546,7 @@
     },
     {
       "nom": "Instruments de Musique",
+      "tags": ["culture", "education", "famille"],
       "mots": [
         "GUITARE",
         "GUITARE BASSE",
@@ -560,6 +577,7 @@
     },
     {
       "nom": "Fleurs",
+      "tags": ["nature", "famille"],
       "mots": [
         "TULIPE",
         "MARGUERITE",
@@ -590,6 +608,7 @@
     },
     {
       "nom": "Monuments",
+      "tags": ["geographie", "culture", "education"],
       "mots": [
         "TOUR DE PISE",
         "TOUR EIFFEL",
@@ -614,14 +633,15 @@
         "BURJ KHALIFA",
         "GOLDEN GATE",
         "PONT DU GARD",
-        "VERSAILLES",
-        "LOUVRE",
+        "CHÂTEAU DE VERSAILLES",
+        "PALAIS DU LOUVRE",
         "ARC DE TRIOMPHE"
       ],
       "icone": "🗿"
     },
     {
       "nom": "Villes",
+      "tags": ["geographie", "education", "famille"],
       "mots": [
         "PARIS",
         "LONDRES",
@@ -653,6 +673,7 @@
     },
     {
       "nom": "Pièces de la Maison",
+      "tags": ["quotidien", "famille"],
       "mots": [
         "CUISINE",
         "SALON",
@@ -684,6 +705,7 @@
     },
     {
       "nom": "Films classiques Disney",
+      "tags": ["disney", "culture", "enfant"],
       "mots": [
         "BLANCHE-NEIGE",
         "PINOCCHIO",
@@ -746,6 +768,7 @@
     },
     {
       "nom": "L'univers de Pixar",
+      "tags": ["pixar", "culture", "enfant"],
       "mots": [
         "TOY STORY",
         "MONSTRES ET CIE",
@@ -812,6 +835,7 @@
     },
     {
       "nom": "Personnages Disney",
+      "tags": ["disney", "pixar", "culture", "enfant"],
       "mots": [
         "MICKEY MOUSE",
         "MINNIE MOUSE",
@@ -874,6 +898,7 @@
     },
     {
       "nom": "Appareils Électroménager",
+      "tags": ["quotidien", "adulte"],
       "mots": [
         "LAVE LINGE",
         "LAVE VAISSELLE",
@@ -906,6 +931,7 @@
     },
     {
       "nom": "Personnages Harry Potter",
+      "tags": ["harry-potter", "fantastique", "enfant"],
       "mots": [
         "HARRY POTTER",
         "HERMIONE GRANGER",
@@ -993,6 +1019,7 @@
     },
     {
       "nom": "Lieux Harry Potter",
+      "tags": ["harry-potter", "fantastique", "enfant"],
       "mots": [
         "POUDLARD",
         "CHEMIN DE TRAVERSE",
@@ -1056,6 +1083,299 @@
         "PRISON D'AZKABAN"
       ],
       "icone": "🏰"
+    },
+    {
+      "nom": "Animaux préhistoriques",
+      "tags": ["nature", "education", "enfant"],
+      "mots": [
+        "TYRANNOSAURE REX",
+        "TIGRE À DENTS DE SABRE",
+        "TRICÉRATOPS",
+        "VÉLOCIRAPTOR",
+        "STÉGOSAURE",
+        "DIPLODOCUS",
+        "BRACHIOSAURE",
+        "PTÉRODACTYLE",
+        "MAMMOUTH LAINEUX",
+        "MASTODONTE",
+        "ALLOSAURE",
+        "SPINOSAURE",
+        "CARNOTAURE",
+        "GIGANTOSAURE",
+        "COMPSOGNATHUS",
+        "ANKYLOSAURE",
+        "IGUANODON",
+        "PARASAUROLOPHUS",
+        "DEINONYCHUS",
+        "UTAHRAPTOR",
+        "QUETZALCOATLUS",
+        "MOSASAURE",
+        "PLÉSIOSAURE",
+        "ICHTYOSAURE",
+        "ARCHÉOPTÉRYX",
+        "DIMÉTRODON",
+        "MEGALODON",
+        "CAVE OURS",
+        "RHINOCÉROS LAINEUX",
+        "GLYPTODON",
+        "MÉGATHÉRIUM",
+        "TERROR BIRD",
+        "DOEDICURUS",
+        "MACRAUCHENIA",
+        "SMILODON"
+      ],
+      "icone": "🦕"
+    },
+    {
+      "nom": "Héros de dessins animés",
+      "tags": ["comics", "culture", "enfant"],
+      "mots": [
+        "SPIDERMAN",
+        "BATMAN",
+        "SUPERMAN",
+        "WONDER WOMAN",
+        "HULK",
+        "IRON MAN",
+        "CAPTAIN AMERICA",
+        "FLASH",
+        "AQUAMAN",
+        "GREEN LANTERN",
+        "THOR",
+        "CAPTAIN MARVEL",
+        "BLACK PANTHER",
+        "WOLVERINE",
+        "X-MEN",
+        "FANTASTIC FOUR",
+        "DAREDEVIL",
+        "SPIDER-GIRL",
+        "ROBIN",
+        "BATGIRL",
+        "SUPERGIRL",
+        "GREEN ARROW",
+        "HAWKEYE",
+        "BLACK WIDOW",
+        "DOCTOR STRANGE",
+        "ANT-MAN",
+        "WASP",
+        "VISION",
+        "SCARLET WITCH",
+        "FALCON",
+        "WAR MACHINE",
+        "WINTER SOLDIER",
+        "STAR-LORD",
+        "GAMORA",
+        "GROOT",
+        "ROCKET RACCOON",
+        "DRAX"
+      ],
+      "icone": "🦸"
+    },
+    {
+      "nom": "Objets scolaires",
+      "tags": ["education", "quotidien", "enfant"],
+      "mots": [
+        "CRAYON",
+        "STYLO",
+        "FEUTRE",
+        "RÈGLE",
+        "ÉQUERRE",
+        "COMPAS",
+        "GOMME",
+        "TAILLE-CRAYON",
+        "CAHIER",
+        "CARNET",
+        "CLASSEUR",
+        "CHEMISE",
+        "INTERCALAIRE",
+        "FEUILLE",
+        "PAPIER",
+        "CARTABLE",
+        "SAC À DOS",
+        "TROUSSE",
+        "POCHETTE",
+        "CALCULATRICE",
+        "RAPPORTEUR",
+        "SURLIGNEUR",
+        "CORRECTEUR",
+        "COLLE",
+        "CISEAUX",
+        "AGRAFEUSE",
+        "PERFORATRICE",
+        "TABLEAU",
+        "TABLEAU BLANC",
+        "CRAIE",
+        "MARQUEUR",
+        "BROSSE",
+        "ÉPONGE",
+        "PUPITRE",
+        "BUREAU",
+        "CHAISE",
+        "CARTABLE À ROULETTES",
+        "AGENDA",
+        "EMPLOI DU TEMPS",
+        "LIVRE",
+        "MANUEL",
+        "DICTIONNAIRE",
+        "ATLAS",
+        "GLOBE"
+      ],
+      "icone": "📚"
+    },
+    {
+      "nom": "Parties du corps",
+      "tags": ["education", "quotidien", "enfant"],
+      "mots": [
+        "TÊTE",
+        "COU",
+        "ÉPAULE",
+        "BRAS",
+        "COUDE",
+        "POIGNET",
+        "MAIN",
+        "DOIGT",
+        "POUCE",
+        "ONGLE",
+        "POITRINE",
+        "VENTRE",
+        "DOS",
+        "HANCHE",
+        "FESSE",
+        "CUISSE",
+        "GENOU",
+        "MOLLET",
+        "CHEVILLE",
+        "PIED",
+        "ORTEIL",
+        "TALON",
+        "ŒIL",
+        "SOURCIL",
+        "PAUPIÈRE",
+        "CILS",
+        "NEZ",
+        "NARINE",
+        "BOUCHE",
+        "LÈVRE",
+        "DENT",
+        "LANGUE",
+        "MENTON",
+        "JOUE",
+        "FRONT",
+        "TEMPE",
+        "OREILLE",
+        "CHEVEUX",
+        "BARBE",
+        "MOUSTACHE"
+      ],
+      "icone": "👤"
+    },
+    {
+      "nom": "Jouets",
+      "tags": ["quotidien", "enfant"],
+      "mots": [
+        "POUPÉE",
+        "PELUCHE",
+        "NOUNOURS",
+        "BALLON",
+        "BALLE",
+        "TROTTINETTE",
+        "VÉLO",
+        "DRAISIENNES",
+        "PUZZLE",
+        "LÉGO",
+        "PLAYMOBIL",
+        "KAPLA",
+        "CUBES",
+        "TRAIN",
+        "VOITURE",
+        "CAMION",
+        "AVION",
+        "HÉLICOPTÈRE",
+        "BATEAU",
+        "POUPÉE BARBIE",
+        "ACTION MAN",
+        "FIGURINE",
+        "DÎNETTE",
+        "CUISINE",
+        "DÉGUISEMENT",
+        "MASQUE",
+        "ÉPÉE",
+        "SABRE",
+        "PISTOLET",
+        "ARC",
+        "FLÈCHE",
+        "CORDE À SAUTER",
+        "CERCEAU",
+        "YO-YO",
+        "TOUPIE",
+        "BILLES",
+        "CARTES",
+        "DOMINOS",
+        "MIKADO",
+        "PÂTE À MODELER",
+        "CRAYON DE COULEUR",
+        "FEUTRE",
+        "COLORIAGE",
+        "CAHIER DE DESSIN",
+        "TABLEAU MAGIQUE",
+        "MAGNÉTOS",
+        "ROBOT",
+        "TÉLÉGOMMANDÉE"
+      ],
+      "icone": "🧸"
+    },
+    {
+      "nom": "Nourriture préférée des enfants",
+      "tags": ["quotidien", "enfant"],
+      "mots": [
+        "PIZZA",
+        "HAMBURGER",
+        "HOT-DOG",
+        "PÂTES",
+        "SPAGHETTI",
+        "MACARONI",
+        "LASAGNE",
+        "RAVIOLI",
+        "FRITES",
+        "NUGGETS",
+        "POISSON PANÉ",
+        "JAMBON",
+        "SAUCISSE",
+        "MERGUEZ",
+        "STEAK HACHÉ",
+        "CROQUE-MONSIEUR",
+        "SANDWICH",
+        "TARTINE",
+        "CÉRÉALES",
+        "CORN FLAKES",
+        "CHOCOLAT",
+        "NUTELLA",
+        "CONFITURE",
+        "MIEL",
+        "YAOURT",
+        "FROMAGE",
+        "GLACE",
+        "SORBET",
+        "ESQUIMAU",
+        "CORNETTO",
+        "MAGNUM",
+        "GÂTEAU",
+        "BISCUIT",
+        "COOKIE",
+        "MADELEINE",
+        "CROISSANT",
+        "PAIN AU CHOCOLAT",
+        "CHAUSSON AUX POMMES",
+        "BONBON",
+        "SUCETTE",
+        "CHEWING-GUM",
+        "CHOCOLAT CHAUD",
+        "SIROP",
+        "JUS DE FRUIT",
+        "COCA-COLA",
+        "LIMONADE",
+        "GRENADINE"
+      ],
+      "icone": "🍕"
     }
   ]
 }

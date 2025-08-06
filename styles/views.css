@@ -45,27 +45,7 @@
 
 /* ===== VUE JEU ===== */
 
-/* Container de la vue jeu - centrage vertical uniquement sur desktop */
-@media (min-width: 769px) {
-    #gameView .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        min-height: calc(100vh - 80px);
-    }
-    
-    /* Hauteur stable pour la zone d'affichage du mot sur desktop aussi */
-    .game-info {
-        min-height: 120px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .word-display {
-        min-height: 3.5rem;
-    }
-}
+/* Responsive géré dans responsive.css */
 
 .game-area {
     display: flex;
@@ -75,13 +55,26 @@
     gap: var(--spacing-xl);
 }
 
-/* Bouton Mot Suivant */
-.next-word-section {
+/* Bouton Passer - Version mobile sous la catégorie */
+.mobile-next-word {
+    text-align: center;
+    margin: var(--spacing-sm) 0;
+    padding: 0;
+}
+
+.mobile-next-word .btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+    min-width: 120px;
+}
+
+/* Bouton Passer - Version desktop en bas */
+.desktop-next-word {
     text-align: center;
     margin: var(--spacing-lg) 0;
 }
 
-.next-word-section .btn {
+.desktop-next-word .btn {
     font-size: 1.1rem;
     padding: 0.8rem 1.5rem;
     min-width: 160px;

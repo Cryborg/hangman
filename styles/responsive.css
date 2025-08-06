@@ -1,8 +1,8 @@
 /* ===== RESPONSIVE - MEDIA QUERIES ===== */
 
-/* ===== MOBILE (max-width: 768px) ===== */
+/* ===== MOBILE ET TABLETTES (width ≤ 1024px) ===== */
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     /* Base */
     body {
         padding: 0;
@@ -91,6 +91,118 @@
         font-size: 0.9rem;
         width: 100%;
         max-width: 300px;
+    }
+    
+    /* Boutons Passer en mode mobile/tablette */
+    .mobile-next-word {
+        display: block !important;
+    }
+    
+    .desktop-next-word {
+        display: none !important;
+    }
+    
+    /* Clavier virtuel visible */
+    .keyboard {
+        display: grid !important;
+    }
+    
+    /* === LAYOUT (depuis layout.css) === */
+    .header-content {
+        padding: var(--spacing-md);
+    }
+    
+    .header-content h1 {
+        font-size: 1.2rem;
+    }
+    
+    .container {
+        padding: var(--spacing-md);
+    }
+    
+    
+    /* === VIRTUAL KEYBOARD === */
+    .keyboard:not(:empty) {
+        display: flex;
+    }
+    
+    
+    /* === GAME HEADER (depuis game-header.css) === */
+    .game-header-unified {
+        padding: var(--spacing-xs) var(--spacing-md);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--spacing-sm);
+        flex-shrink: 0;
+    }
+    
+    .category-title h2 {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+    
+    .category-title {
+        margin-bottom: var(--spacing-xs);
+        padding-bottom: var(--spacing-xs);
+    }
+    
+    .category-icon {
+        font-size: 1.8rem;
+    }
+    
+    .game-stats-bar {
+        gap: 8px;
+        padding: 0 var(--spacing-xs);
+    }
+    
+    .stat-group {
+        padding: 4px 8px;
+        gap: 3px;
+    }
+    
+    .stat-icon {
+        font-size: 1rem;
+    }
+    
+    .stat-group span:not(.stat-icon) {
+        font-size: 0.85rem;
+        max-width: 100px;
+    }
+    
+    /* Tooltips désactivés sur mobile (touch) */
+    .stat-group[data-tooltip]::before,
+    .stat-group[data-tooltip]::after {
+        display: none;
+    }
+    
+    /* === MODALS === */
+    .modal-content {
+        padding: var(--spacing-lg);
+        width: 95%;
+    }
+    
+    .game-modes {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .mode-card {
+        padding: var(--spacing-md);
+    }
+    
+    .mode-icon {
+        font-size: 3rem;
+    }
+    
+    .mode-card h4 {
+        font-size: 1.2rem;
+    }
+    
+    .time-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .time-attack-card .timer {
+        font-size: 1.5rem;
     }
     
     /* Vue jeu mobile */
@@ -258,38 +370,8 @@
     
     .keyboard {
         grid-area: keyboard;
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 0.3rem;
-        margin: 0 var(--spacing-sm);
-        padding: 0;
+        /* Laisser virtual-keyboard.css gérer le layout interne */
         flex-shrink: 0;
-    }
-    
-    /* Décalage d'une demi-touche pour imiter un vrai clavier AZERTY */
-    .keyboard button:nth-child(n+11):nth-child(-n+20) {
-        transform: translateX(calc(50% + 0.15rem));
-    }
-    
-    .keyboard button:nth-child(n+21) {
-        transform: translateX(calc(100% + 0.3rem));
-    }
-    
-    /* Animation active avec préservation du décalage AZERTY */
-    .keyboard button:nth-child(n+11):nth-child(-n+20):active:not(:disabled) {
-        transform: translateX(calc(50% + 0.15rem)) scale(0.95);
-    }
-    
-    .keyboard button:nth-child(n+21):active:not(:disabled) {
-        transform: translateX(calc(100% + 0.3rem)) scale(0.95);
-    }
-    
-    .keyboard button {
-        padding: 0.7rem 0.2rem;
-        font-size: 1rem;
-        border-radius: var(--radius-sm);
-        min-height: 42px;
     }
     
     
@@ -523,15 +605,24 @@
     }
 }
 
-/* ===== DESKTOP (min-width: 769px) ===== */
+/* ===== DESKTOP (width > 1024px) ===== */
 
-@media (min-width: 769px) {
-    /* Masquer le clavier mobile */
+@media (min-width: 1025px) {
+    /* Masquer le clavier virtuel sur desktop */
     .keyboard {
         display: none !important;
     }
     
-    /* Container mieux adapté */
+    /* Boutons Passer en mode desktop */
+    .mobile-next-word {
+        display: none !important;
+    }
+    
+    .desktop-next-word {
+        display: block !important;
+    }
+
+    /* Desktop layout - garde les styles d'origine */
     .container {
         max-width: 1200px;
         width: 95%;
@@ -673,6 +764,59 @@
     }
     
     /* Les cartes du header sont gérées par la grille principale */
+    
+    /* === GAME HEADER DESKTOP (depuis game-header.css) === */
+    .top-section {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: var(--spacing-xl);
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .game-header-unified {
+        flex: 1;
+        max-width: none;
+        margin-bottom: 0;
+        height: fit-content;
+    }
+    
+    .hangman-container {
+        flex-shrink: 0;
+        width: 280px;
+        order: 2; /* Hangman à droite */
+    }
+    
+    .category-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .category-icon {
+        font-size: 2.2rem;
+    }
+    
+    /* === VUE JEU DESKTOP (depuis views.css) === */
+    #gameView .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: calc(100vh - 80px);
+    }
+    
+    /* Hauteur stable pour la zone d'affichage du mot sur desktop aussi */
+    .game-info {
+        min-height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .word-display {
+        min-height: 3.5rem;
+    }
 }
 
 /* ===== TRÈS LARGE ÉCRAN (min-width: 1200px) ===== */
@@ -692,5 +836,49 @@
     
     .big-stat-number {
         font-size: 5rem;
+    }
+}
+
+/* ===== CLAVIER VIRTUEL - TRÈS PETITS ÉCRANS (max-width: 480px) ===== */
+
+@media (max-width: 480px) {
+    .keyboard button {
+        padding: 0.6rem;
+        font-size: 1rem;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 15px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 30px;
+    }
+    
+    .accent-popup .accent-option {
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
+        min-width: 35px;
+    }
+}
+
+/* ===== CLAVIER VIRTUEL - ÉCRANS EXTRA-PETITS (max-width: 360px) ===== */
+
+@media (max-width: 360px) {
+    .keyboard button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 10px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 20px;
     }
 }
