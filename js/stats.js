@@ -254,7 +254,7 @@ class PenduStats {
         
         // Vérifier si une catégorie est complète
         return categories.some(category => {
-            return category.mots.every(word => wordsSet.has(word));
+            return category.words.every(word => wordsSet.has(word));
         });
     }
     

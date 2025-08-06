@@ -31,13 +31,13 @@ try {
         $params = [];
     } else {
         // Requête simple 
-        $baseQuery = "SELECT c.id, c.nom, c.icone, c.slug, c.description, c.ordre,
-                             GROUP_CONCAT(t.nom ORDER BY t.ordre ASC SEPARATOR ',') as tags";
+        $baseQuery = "SELECT c.id, c.name, c.icon, c.slug, c.description, c.display_order,
+                             GROUP_CONCAT(t.name ORDER BY t.display_order ASC SEPARATOR ',') as tags";
         $fromJoin = " FROM hangman_categories c 
                      LEFT JOIN hangman_category_tag ct ON c.id = ct.category_id  
                      LEFT JOIN hangman_tags t ON ct.tag_id = t.id AND t.active = 1";
         $whereConditions = ["c.active = 1"];
-        $groupBy = " GROUP BY c.id, c.nom, c.icone, c.slug, c.description, c.ordre";
+        $groupBy = " GROUP BY c.id, c.name, c.icon, c.slug, c.description, c.display_order";
         $params = [];
     }
     
@@ -59,7 +59,7 @@ try {
             $tagPlaceholders[] = ":tag$index";
             $params["tag$index"] = $tag;
         }
-        $tagCondition = ($includeStats ? "tags" : "t.nom") . " IN (" . implode(',', $tagPlaceholders) . ")";
+        $tagCondition = ($includeStats ? "tags" : "t.name") . " IN (" . implode(',', $tagPlaceholders) . ")";
         $whereConditions[] = $tagCondition;
     }
     
@@ -69,13 +69,13 @@ try {
         if (!empty($whereConditions)) {
             $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
-        $sql .= " ORDER BY ordre ASC, nom ASC";
+        $sql .= " ORDER BY display_order ASC, name ASC";
     } else {
         $sql = $baseQuery . $fromJoin;
         if (!empty($whereConditions)) {
             $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
-        $sql .= $groupBy . " ORDER BY c.ordre ASC, c.nom ASC";
+        $sql .= $groupBy . " ORDER BY c.display_order ASC, c.name ASC";
     }
     
     // Limiter les résultats si on ne recherche qu'une catégorie
@@ -104,17 +104,17 @@ try {
         
         // Récupérer les mots de la catégorie si demandé
         if ($includeWords) {
-            $wordsQuery = "SELECT mot FROM hangman_words WHERE category_id = :category_id AND active = 1 ORDER BY popularite DESC, mot ASC";
+            $wordsQuery = "SELECT word FROM hangman_words WHERE category_id = :category_id AND active = 1 ORDER BY popularity DESC, word ASC";
             $wordsStmt = $db->prepare($wordsQuery);
             $wordsStmt->execute(['category_id' => $category['id']]);
             $words = $wordsStmt->fetchAll(PDO::FETCH_COLUMN);
             
-            $category['mots'] = $words;
+            $category['words'] = $words;
         }
         
         // Convertir les valeurs numériques
         $category['id'] = (int) $category['id'];
-        $category['ordre'] = (int) $category['ordre'];
+        $category['display_order'] = (int) $category['display_order'];
         
         // Convertir les statistiques en entiers si présentes
         if ($includeStats) {
@@ -131,7 +131,7 @@ try {
     
     if ($includeStats) {
         $meta['includes_statistics'] = true;
-        $meta['total_words'] = array_sum(array_column($categories, 'total_mots'));
+        $meta['total_words'] = array_sum(array_column($categories, 'total_words'));
     }
     
     if ($tagFilter) {

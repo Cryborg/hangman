@@ -40,6 +40,13 @@ class PenduApp {
     
     async initializeApp() {
         try {
+            // Vérifier le mode maintenance d'abord
+            const maintenanceStatus = await this.checkMaintenanceMode();
+            if (maintenanceStatus) {
+                this.showMaintenanceScreen(maintenanceStatus);
+                return;
+            }
+            
             // Initialiser les références DOM
             this.initializeDOMReferences();
             
@@ -92,11 +99,11 @@ class PenduApp {
         // Liens de navigation
         this.navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
                 const view = link.getAttribute('data-view');
                 
                 // Navigation normale pour les liens avec data-view
                 if (view) {
+                    e.preventDefault(); // Seulement empêcher le comportement par défaut pour les liens internes
                     this.showView(view);
                 }
                 
@@ -292,7 +299,7 @@ class PenduApp {
         const categories = this.gameManager.getAvailableCategories();
         if (categories.length === 0) return;
         
-        const totalWords = categories.reduce((total, cat) => total + cat.mots.length, 0);
+        const totalWords = categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
         const categoryCount = categories.length;
         
         welcomeDescription.textContent = `Testez vos connaissances avec ${totalWords} mots répartis en ${categoryCount} catégories`;
@@ -511,6 +518,100 @@ class PenduApp {
                 this.modalManager.showGameModeModal();
             }
         }
+    }
+    
+    // ===== GESTION DU MODE MAINTENANCE ===== //
+    
+    /**
+     * Convertit une durée en minutes en format lisible
+     */
+    formatMaintenanceDuration(minutes) {
+        if (minutes < 60) {
+            return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+        }
+        
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        
+        if (remainingMinutes === 0) {
+            return `${hours} heure${hours > 1 ? 's' : ''}`;
+        }
+        
+        return `${hours}h${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}`;
+    }
+    
+    /**
+     * Vérifie si le mode maintenance est activé
+     */
+    async checkMaintenanceMode() {
+        try {
+            const response = await fetch('api/index.php');
+            const data = await response.json();
+            
+            if (data.maintenance) {
+                return {
+                    message: data.message || 'Le jeu est temporairement en maintenance.',
+                    retryAfter: data.retry_after || 3600,
+                    durationMinutes: data.duration_minutes || Math.floor((data.retry_after || 3600) / 60)
+                };
+            }
+            
+            return null;
+            
+        } catch (error) {
+            console.warn('Impossible de vérifier le mode maintenance:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Affiche l'écran de maintenance
+     */
+    showMaintenanceScreen(maintenanceInfo) {
+        document.body.innerHTML = `
+            <div style="
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                color: white;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                text-align: center;
+                padding: 20px;
+            ">
+                <div style="max-width: 500px;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">🔧</div>
+                    <h1 style="font-size: 2.5em; margin-bottom: 20px; color: #f39c12;">Maintenance</h1>
+                    <p style="font-size: 1.2em; line-height: 1.6; margin-bottom: 30px; color: #ecf0f1;">
+                        ${maintenanceInfo.message}
+                    </p>
+                    <div style="
+                        background: rgba(255, 255, 255, 0.1);
+                        padding: 20px;
+                        border-radius: 10px;
+                        margin-bottom: 30px;
+                    ">
+                        <p style="margin: 0; opacity: 0.8;">
+                            ⏰ Temps estimé : ${this.formatMaintenanceDuration(maintenanceInfo.durationMinutes)}
+                        </p>
+                    </div>
+                    <button onclick="location.reload()" style="
+                        background: #f39c12;
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 25px;
+                        font-size: 1.1em;
+                        cursor: pointer;
+                        transition: background 0.3s;
+                    " onmouseover="this.style.background='#e67e22'" onmouseout="this.style.background='#f39c12'">
+                        🔄 Réessayer
+                    </button>
+                </div>
+            </div>
+        `;
     }
 
 }

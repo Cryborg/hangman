@@ -14,8 +14,15 @@ class EnvLoader {
     
     public function __construct($envFile = null) {
         if ($envFile === null) {
-            // Chercher le .env à la racine du projet (un niveau au-dessus de /api)
-            $this->envFile = dirname(__DIR__) . '/.env';
+            // Prioriser .env.local s'il existe (pour tests locaux)
+            $localEnv = dirname(__DIR__) . '/.env.local';
+            $defaultEnv = dirname(__DIR__) . '/.env';
+            
+            if (file_exists($localEnv)) {
+                $this->envFile = $localEnv;
+            } else {
+                $this->envFile = $defaultEnv;
+            }
         } else {
             $this->envFile = $envFile;
         }

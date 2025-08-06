@@ -122,7 +122,6 @@ class HangmanSetup {
             } else {
                 $this->printWarning("⚠️  Aucune table détectée. N'oubliez pas d'exécuter les scripts SQL.");
                 $this->printInfo("   1. mysql < database/schema.sql");
-                $this->printInfo("   2. mysql < database/migration.sql");
             }
             
         } catch (PDOException $e) {

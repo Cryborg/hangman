@@ -51,8 +51,8 @@ try {
     }
     
     // Construction de la requête SQL
-    $sql = "SELECT w.id, w.mot, w.difficulte, w.longueur, w.contient_accents, w.contient_chiffres, 
-                   w.contient_special, w.popularite, c.nom as category_nom, c.icone as category_icone
+    $sql = "SELECT w.id, w.word, w.difficulty, w.length, w.has_accents, w.has_numbers, 
+                   w.has_special_chars, w.popularity, c.name as category_name, c.icon as category_icon
             FROM hangman_words w
             INNER JOIN hangman_categories c ON w.category_id = c.id
             WHERE w.category_id = :category_id AND w.active = 1 AND c.active = 1";
@@ -61,12 +61,12 @@ try {
     
     // Filtres conditionnels
     if ($difficulty !== null) {
-        $allowedDifficulties = ['facile', 'moyen', 'difficile'];
+        $allowedDifficulties = ['easy', 'medium', 'hard'];
         if (!in_array($difficulty, $allowedDifficulties)) {
             sendErrorResponse(400, 'Invalid difficulty. Allowed values: ' . implode(', ', $allowedDifficulties));
             exit();
         }
-        $sql .= " AND w.difficulte = :difficulty";
+        $sql .= " AND w.difficulty = :difficulty";
         $params['difficulty'] = $difficulty;
     }
     
@@ -75,7 +75,7 @@ try {
             $minLength = (int) $matches[1];
             $maxLength = (int) $matches[2];
             if ($minLength <= $maxLength && $minLength > 0 && $maxLength <= 100) {
-                $sql .= " AND w.longueur BETWEEN :min_length AND :max_length";
+                $sql .= " AND w.length BETWEEN :min_length AND :max_length";
                 $params['min_length'] = $minLength;
                 $params['max_length'] = $maxLength;
             } else {
@@ -89,12 +89,12 @@ try {
     }
     
     if ($withAccents !== null) {
-        $sql .= " AND w.contient_accents = :with_accents";
+        $sql .= " AND w.has_accents = :with_accents";
         $params['with_accents'] = $withAccents ? 1 : 0;
     }
     
     if ($withNumbers !== null) {
-        $sql .= " AND w.contient_chiffres = :with_numbers";
+        $sql .= " AND w.has_numbers = :with_numbers";
         $params['with_numbers'] = $withNumbers ? 1 : 0;
     }
     
@@ -105,7 +105,7 @@ try {
             $limit = 1; // Par défaut, un seul mot aléatoire
         }
     } else {
-        $sql .= " ORDER BY w.popularite DESC, w.mot ASC";
+        $sql .= " ORDER BY w.popularity DESC, w.word ASC";
     }
     
     if ($limit !== null) {
@@ -135,15 +135,15 @@ try {
     
     // Post-traitement des résultats
     foreach ($words as &$word) {
-        // Convertir les valeurs numériques
+        // Convert numeric values
         $word['id'] = (int) $word['id'];
-        $word['longueur'] = (int) $word['longueur'];
-        $word['popularite'] = (int) $word['popularite'];
+        $word['length'] = (int) $word['length'];
+        $word['popularity'] = (int) $word['popularity'];
         
-        // Convertir les booléens
-        $word['contient_accents'] = (bool) $word['contient_accents'];
-        $word['contient_chiffres'] = (bool) $word['contient_chiffres'];
-        $word['contient_special'] = (bool) $word['contient_special'];
+        // Convert booleans
+        $word['has_accents'] = (bool) $word['has_accents'];
+        $word['has_numbers'] = (bool) $word['has_numbers'];
+        $word['has_special_chars'] = (bool) $word['has_special_chars'];
     }
     
     // Préparer les métadonnées

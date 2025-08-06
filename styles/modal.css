@@ -169,28 +169,6 @@
     line-height: 1.5;
 }
 
-/* Mode features list */
-.mode-features {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 var(--spacing-lg) 0;
-    text-align: left;
-}
-
-.mode-features li {
-    color: var(--text-secondary);
-    padding: var(--spacing-sm) 0;
-    position: relative;
-    padding-left: 1.5rem;
-}
-
-.mode-features li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--success-color);
-    font-weight: bold;
-}
 
 /* Time options */
 .time-options {

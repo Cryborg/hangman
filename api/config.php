@@ -43,18 +43,27 @@ define('CORS_ALLOWED_HEADERS', env('CORS_ALLOWED_HEADERS', 'Content-Type,Authori
 // Mode maintenance
 define('MAINTENANCE_MODE', env('MAINTENANCE_MODE', false));
 define('MAINTENANCE_MESSAGE', env('MAINTENANCE_MESSAGE', 'Le jeu est temporairement en maintenance.'));
+define('MAINTENANCE_DURATION_MINUTES', env('MAINTENANCE_DURATION_MINUTES', 60));
+
+// Administration
+define('ADMIN_ENABLED', env('FEATURE_ADMIN_PANEL', false));
+define('ADMIN_USERNAME', env('ADMIN_USERNAME', 'admin'));
+define('ADMIN_PASSWORD', env('ADMIN_PASSWORD', ''));
+define('ADMIN_SESSION_TIMEOUT', env('ADMIN_SESSION_TIMEOUT', 3600));
 
 
 // Vérifier le mode maintenance
 if (MAINTENANCE_MODE) {
     http_response_code(503);
+    $retryAfterSeconds = MAINTENANCE_DURATION_MINUTES * 60;
     $maintenance = [
         'success' => false,
         'maintenance' => true,
         'message' => MAINTENANCE_MESSAGE,
-        'retry_after' => 3600 // 1 heure
+        'retry_after' => $retryAfterSeconds,
+        'duration_minutes' => MAINTENANCE_DURATION_MINUTES
     ];
-    header('Retry-After: 3600');
+    header('Retry-After: ' . $retryAfterSeconds);
     echo json_encode($maintenance, JSON_UNESCAPED_UNICODE);
     exit();
 }
@@ -85,11 +94,16 @@ class Database {
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET . " COLLATE utf8mb4_unicode_ci",
                 PDO::ATTR_TIMEOUT            => API_TIMEOUT
             ];
             
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+            
+            // Force UTF-8 sur la connexion
+            $this->pdo->exec("SET character_set_client=utf8mb4");
+            $this->pdo->exec("SET character_set_connection=utf8mb4");
+            $this->pdo->exec("SET character_set_results=utf8mb4");
             
         } catch (PDOException $e) {
             $this->sendError(500, 'Database connection failed', $e->getMessage());
@@ -142,6 +156,7 @@ function sendSuccessResponse($data, $meta = []) {
     ];
     
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit();
 }
 
 function sendErrorResponse($code, $message, $details = null) {
@@ -161,6 +176,7 @@ function sendErrorResponse($code, $message, $details = null) {
     }
     
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit();
 }
 
 function validateRequest($requiredParams = []) {

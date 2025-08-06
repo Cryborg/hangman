@@ -1,0 +1,77 @@
+# Docker Compose pour le Jeu du Pendu avec MySQL
+# Version: 1.0.0
+
+services:
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: hangman_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: hangman_root_password
+      MYSQL_DATABASE: hangman_db
+      MYSQL_USER: hangman_user
+      MYSQL_PASSWORD: hangman_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - hangman_network
+
+  # Serveur web PHP
+  web:
+    image: php:8.1-apache
+    container_name: hangman_web
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - mysql
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+      - DB_HOST=mysql
+    networks:
+      - hangman_network
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y libzip-dev zip &&
+        docker-php-ext-install pdo pdo_mysql mysqli &&
+        a2enmod rewrite &&
+        a2enmod headers &&
+        apache2-foreground
+      "
+
+  # PhpMyAdmin pour administrer la base (optionnel)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: hangman_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: hangman_user
+      PMA_PASSWORD: hangman_password
+    depends_on:
+      - mysql
+    networks:
+      - hangman_network
+
+# Volumes persistants
+volumes:
+  mysql_data:
+    driver: local
+
+# Réseau interne
+networks:
+  hangman_network:
+    driver: bridge

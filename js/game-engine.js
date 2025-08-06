@@ -107,7 +107,7 @@ class PenduGameEngine {
             const categories = await window.HangmanAPI.getCategories();
             
             this.categories = categories;
-            this.totalWords = this.categories.reduce((total, cat) => total + cat.mots.length, 0);
+            this.totalWords = this.categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
             
             console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots depuis MySQL`);
             return true;
@@ -163,9 +163,9 @@ class PenduGameEngine {
         const enabledCategories = this.getEnabledCategories();
         
         enabledCategories.forEach(category => {
-            category.mots.forEach(word => {
+            category.words.forEach(word => {
                 if (!this.sessionWords.has(word)) {
-                    allWords.push({ word, category: category.nom });
+                    allWords.push({ word, category: category.name });
                 }
             });
         });
@@ -393,9 +393,9 @@ class PenduGameEngine {
             // Mettre à jour l'icône de la catégorie
             const categoryIcon = document.querySelector('.category-icon');
             if (categoryIcon && this.categories.length > 0) {
-                const category = this.categories.find(cat => cat.nom === this.currentCategory);
-                if (category && category.icone) {
-                    categoryIcon.textContent = category.icone;
+                const category = this.categories.find(cat => cat.name === this.currentCategory);
+                if (category && category.icon) {
+                    categoryIcon.textContent = category.icon;
                 }
             }
         }

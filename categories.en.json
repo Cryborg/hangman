@@ -1,10 +1,10 @@
 {
   "categories": [
     {
-      "nom": "Animaux",
-      "icone": "🐾",
+      "name": "Animaux",
+      "icon": "🐾",
       "tags": ["nature", "famille", "enfant"],
-      "mots": [
+      "words": [
         "CHIEN",
         "CHEVAL",
         "VACHE",
@@ -34,9 +34,9 @@
       ]
     },
     {
-      "nom": "Fruits et Légumes",
+      "name": "Fruits et Légumes",
       "tags": ["nature", "quotidien", "enfant"],
-      "mots": [
+      "words": [
         "POMME",
         "BANANE",
         "ORANGE",
@@ -65,12 +65,12 @@
         "AVOCAT",
         "CITRON"
       ],
-      "icone": "🍎"
+      "icon": "🍎"
     },
     {
-      "nom": "Métiers",
+      "name": "Métiers",
       "tags": ["quotidien", "education", "famille"],
-      "mots": [
+      "words": [
         "MÉDECIN",
         "PROFESSEUR",
         "POLICIER",
@@ -102,12 +102,12 @@
         "VÉTÉRINAIRE",
         "PHARMACIEN"
       ],
-      "icone": "👷"
+      "icon": "👷"
     },
     {
-      "nom": "Objets du Quotidien",
+      "name": "Objets du Quotidien",
       "tags": ["quotidien", "famille"],
-      "mots": [
+      "words": [
         "TÉLÉPHONE",
         "ORDINATEUR",
         "TÉLÉVISION",
@@ -136,12 +136,12 @@
         "MONTRE",
         "PARAPLUIE"
       ],
-      "icone": "🏠"
+      "icon": "🏠"
     },
     {
-      "nom": "Sports",
+      "name": "Sports",
       "tags": ["sport", "famille"],
-      "mots": [
+      "words": [
         "FOOTBALL",
         "TENNIS",
         "BASKETBALL",
@@ -167,12 +167,12 @@
         "VOILE",
         "ESCRIME"
       ],
-      "icone": "⚽"
+      "icon": "⚽"
     },
     {
-      "nom": "Pays",
+      "name": "Pays",
       "tags": ["geographie", "education", "famille"],
-      "mots": [
+      "words": [
         "FRANCE",
         "ESPAGNE",
         "ITALIE",
@@ -202,12 +202,12 @@
         "CHILI",
         "COLOMBIE"
       ],
-      "icone": "🌍"
+      "icon": "🌍"
     },
     {
-      "nom": "Couleurs",
+      "name": "Couleurs",
       "tags": ["education", "enfant"],
-      "mots": [
+      "words": [
         "ROUGE",
         "JAUNE",
         "ORANGE",
@@ -230,12 +230,12 @@
         "SAUMON",
         "LAVANDE"
       ],
-      "icone": "🎨"
+      "icon": "🎨"
     },
     {
-      "nom": "Véhicules",
+      "name": "Véhicules",
       "tags": ["quotidien", "enfant"],
-      "mots": [
+      "words": [
         "VOITURE",
         "TRAIN",
         "AVION",
@@ -260,12 +260,12 @@
         "KAYAK",
         "PLANCHE A VOILE"
       ],
-      "icone": "🚗"
+      "icon": "🚗"
     },
     {
-      "nom": "Chanteurs et Chanteuses",
+      "name": "Chanteurs et Chanteuses",
       "tags": ["culture", "adulte"],
-      "mots": [
+      "words": [
         "MADONNA",
         "MICHAEL JACKSON",
         "ELVIS PRESLEY",
@@ -296,12 +296,12 @@
         "JOHNNY CASH",
         "BOB DYLAN"
       ],
-      "icone": "🎤"
+      "icon": "🎤"
     },
     {
-      "nom": "Groupes de Musique",
+      "name": "Groupes de Musique",
       "tags": ["culture", "retro", "adulte"],
-      "mots": [
+      "words": [
         "THE BEATLES",
         "QUEEN",
         "THE ROLLING STONES",
@@ -331,12 +331,12 @@
         "PEARL JAM",
         "OASIS"
       ],
-      "icone": "🎸"
+      "icon": "🎸"
     },
     {
-      "nom": "Acteurs et Actrices",
+      "name": "Acteurs et Actrices",
       "tags": ["culture", "adulte"],
-      "mots": [
+      "words": [
         "TOM CRUISE",
         "LEONARDO DICAPRIO",
         "BRAD PITT",
@@ -377,12 +377,12 @@
         "SCARLETT JOHANSSON",
         "EMMA STONE"
       ],
-      "icone": "🎭"
+      "icon": "🎭"
     },
     {
-      "nom": "Dessins Animés 80s",
+      "name": "Dessins Animés 80s",
       "tags": ["retro", "culture", "famille"],
-      "mots": [
+      "words": [
         "GOLDORAK",
         "ALBATOR",
         "CANDY",
@@ -410,12 +410,12 @@
         "SPIROU",
         "BOULE ET BILL"
       ],
-      "icone": "📺"
+      "icon": "📺"
     },
     {
-      "nom": "Séries TV",
+      "name": "Séries TV",
       "tags": ["retro", "culture", "adulte"],
-      "mots": [
+      "words": [
         "MAGNUM",
         "KOJAK",
         "COLUMBO",
@@ -443,12 +443,12 @@
         "FRASIER",
         "FAMILY TIES"
       ],
-      "icone": "📺"
+      "icon": "📺"
     },
     {
-      "nom": "Films Cultes",
+      "name": "Films Cultes",
       "tags": ["retro", "culture", "famille"],
-      "mots": [
+      "words": [
         "RETOUR VERS LE FUTUR",
         "GREMLINS",
         "GHOSTBUSTERS",
@@ -476,12 +476,12 @@
         "LETHAL WEAPON",
         "BEVERLY HILLS COP"
       ],
-      "icone": "🎬"
+      "icon": "🎬"
     },
     {
-      "nom": "Jeux de Société",
+      "name": "Jeux de Société",
       "tags": ["quotidien", "famille"],
-      "mots": [
+      "words": [
         "MONOPOLY",
         "SCRABBLE",
         "TRIVIAL PURSUIT",
@@ -509,29 +509,25 @@
         "JEU DE OIE",
         "PETITS CHEVAUX"
       ],
-      "icone": "🎲"
+      "icon": "🎲"
     },
     {
-      "nom": "Jeux Vidéo",
+      "name": "Jeux Vidéo",
       "tags": ["retro", "culture", "famille"],
-      "mots": [
+      "words": [
         "PACMAN",
         "TETRIS",
-        "MARIO",
+        "SUPER MARIO BROS",
+        "MARIO KART 8",
         "SONIC",
         "ZELDA",
-        "PONG",
         "ASTEROIDS",
         "SPACE INVADERS",
         "DONKEY KONG",
-        "GALAGA",
         "CENTIPEDE",
         "FROGGER",
         "MISSILE COMMAND",
         "DEFENDER",
-        "JOUST",
-        "QBERT",
-        "PITFALL",
         "PRINCE OF PERSIA",
         "STREET FIGHTER",
         "MORTAL KOMBAT",
@@ -540,14 +536,14 @@
         "DRAGON QUEST",
         "METROID",
         "CASTLEVANIA",
-        "MEGA MAN"
+        "MINECRAFT"
       ],
-      "icone": "🎮"
+      "icon": "🎮"
     },
     {
-      "nom": "Instruments de Musique",
+      "name": "Instruments de Musique",
       "tags": ["culture", "education", "famille"],
-      "mots": [
+      "words": [
         "GUITARE",
         "GUITARE BASSE",
         "PIANO",
@@ -573,12 +569,12 @@
         "TAMBOURIN",
         "TRIANGLE"
       ],
-      "icone": "🎵"
+      "icon": "🎵"
     },
     {
-      "nom": "Fleurs",
+      "name": "Fleurs",
       "tags": ["nature", "famille"],
-      "mots": [
+      "words": [
         "TULIPE",
         "MARGUERITE",
         "ORCHIDÉE",
@@ -604,12 +600,12 @@
         "CAPUCINE",
         "IMPATIENS"
       ],
-      "icone": "🌸"
+      "icon": "🌸"
     },
     {
-      "nom": "Monuments",
+      "name": "Monuments",
       "tags": ["geographie", "culture", "education"],
-      "mots": [
+      "words": [
         "TOUR DE PISE",
         "TOUR EIFFEL",
         "COLISÉE",
@@ -637,12 +633,12 @@
         "PALAIS DU LOUVRE",
         "ARC DE TRIOMPHE"
       ],
-      "icone": "🗿"
+      "icon": "🗿"
     },
     {
-      "nom": "Villes",
+      "name": "Villes",
       "tags": ["geographie", "education", "famille"],
-      "mots": [
+      "words": [
         "PARIS",
         "LONDRES",
         "NEW YORK",
@@ -669,12 +665,12 @@
         "TORONTO",
         "VANCOUVER"
       ],
-      "icone": "🏙️"
+      "icon": "🏙️"
     },
     {
-      "nom": "Pièces de la Maison",
+      "name": "Pièces de la Maison",
       "tags": ["quotidien", "famille"],
-      "mots": [
+      "words": [
         "CUISINE",
         "SALON",
         "CHAMBRE",
@@ -701,12 +697,12 @@
         "VESTIBULE",
         "BOUDOIR"
       ],
-      "icone": "🏡"
+      "icon": "🏡"
     },
     {
-      "nom": "Films classiques Disney",
+      "name": "Films classiques Disney",
       "tags": ["disney", "culture", "enfant"],
-      "mots": [
+      "words": [
         "BLANCHE-NEIGE",
         "PINOCCHIO",
         "FANTASIA",
@@ -764,12 +760,12 @@
         "AVALONIA L'ÉTRANGE VOYAGE",
         "ASHA ET LA BONNE ÉTOILE"
       ],
-      "icone": "🏰"
+      "icon": "🏰"
     },
     {
-      "nom": "L'univers de Pixar",
+      "name": "L'univers de Pixar",
       "tags": ["pixar", "culture", "enfant"],
-      "mots": [
+      "words": [
         "TOY STORY",
         "MONSTRES ET CIE",
         "MONSTRES ACADEMY",
@@ -831,12 +827,12 @@
         "HECTOR",
         "JOE GARDNER"
       ],
-      "icone": "🎬"
+      "icon": "🎬"
     },
     {
-      "nom": "Personnages Disney",
+      "name": "Personnages Disney",
       "tags": ["disney", "pixar", "culture", "enfant"],
-      "mots": [
+      "words": [
         "MICKEY MOUSE",
         "MINNIE MOUSE",
         "DONALD DUCK",
@@ -894,12 +890,12 @@
         "PUA",
         "HEI HEI"
       ],
-      "icone": "🎭"
+      "icon": "🎭"
     },
     {
-      "nom": "Appareils Électroménager",
+      "name": "Appareils Électroménager",
       "tags": ["quotidien", "adulte"],
-      "mots": [
+      "words": [
         "LAVE LINGE",
         "LAVE VAISSELLE",
         "RÉFRIGÉRATEUR",
@@ -927,12 +923,12 @@
         "FER A REPASSER",
         "STEAMER"
       ],
-      "icone": "🔌"
+      "icon": "🔌"
     },
     {
-      "nom": "Personnages Harry Potter",
+      "name": "Personnages Harry Potter",
       "tags": ["harry-potter", "fantastique", "enfant"],
-      "mots": [
+      "words": [
         "HARRY POTTER",
         "HERMIONE GRANGER",
         "RON WEASLEY",
@@ -1015,12 +1011,12 @@
         "NORBERT DRAGONNEAU",
         "TOUFFU"
       ],
-      "icone": "⚡"
+      "icon": "⚡"
     },
     {
-      "nom": "Lieux Harry Potter",
+      "name": "Lieux Harry Potter",
       "tags": ["harry-potter", "fantastique", "enfant"],
-      "mots": [
+      "words": [
         "POUDLARD",
         "CHEMIN DE TRAVERSE",
         "GRINGOTTS",
@@ -1082,12 +1078,12 @@
         "MANOIR DES MALEFOY",
         "PRISON D'AZKABAN"
       ],
-      "icone": "🏰"
+      "icon": "🏰"
     },
     {
-      "nom": "Animaux préhistoriques",
+      "name": "Animaux préhistoriques",
       "tags": ["nature", "education", "enfant"],
-      "mots": [
+      "words": [
         "TYRANNOSAURE REX",
         "TIGRE À DENTS DE SABRE",
         "TRICÉRATOPS",
@@ -1124,12 +1120,12 @@
         "MACRAUCHENIA",
         "SMILODON"
       ],
-      "icone": "🦕"
+      "icon": "🦕"
     },
     {
-      "nom": "Héros de dessins animés",
+      "name": "Héros de dessins animés",
       "tags": ["comics", "culture", "enfant"],
-      "mots": [
+      "words": [
         "SPIDERMAN",
         "BATMAN",
         "SUPERMAN",
@@ -1168,12 +1164,12 @@
         "ROCKET RACCOON",
         "DRAX"
       ],
-      "icone": "🦸"
+      "icon": "🦸"
     },
     {
-      "nom": "Objets scolaires",
+      "name": "Objets scolaires",
       "tags": ["education", "quotidien", "enfant"],
-      "mots": [
+      "words": [
         "CRAYON",
         "STYLO",
         "FEUTRE",
@@ -1219,12 +1215,12 @@
         "ATLAS",
         "GLOBE"
       ],
-      "icone": "📚"
+      "icon": "📚"
     },
     {
-      "nom": "Parties du corps",
+      "name": "Parties du corps",
       "tags": ["education", "quotidien", "enfant"],
-      "mots": [
+      "words": [
         "TÊTE",
         "COU",
         "ÉPAULE",
@@ -1266,12 +1262,12 @@
         "BARBE",
         "MOUSTACHE"
       ],
-      "icone": "👤"
+      "icon": "👤"
     },
     {
-      "nom": "Jouets",
+      "name": "Jouets",
       "tags": ["quotidien", "enfant"],
-      "mots": [
+      "words": [
         "POUPÉE",
         "PELUCHE",
         "NOUNOURS",
@@ -1321,12 +1317,12 @@
         "ROBOT",
         "TÉLÉGOMMANDÉE"
       ],
-      "icone": "🧸"
+      "icon": "🧸"
     },
     {
-      "nom": "Nourriture préférée des enfants",
+      "name": "Nourriture préférée des enfants",
       "tags": ["quotidien", "enfant"],
-      "mots": [
+      "words": [
         "PIZZA",
         "HAMBURGER",
         "HOT-DOG",
@@ -1375,7 +1371,7 @@
         "LIMONADE",
         "GRENADINE"
       ],
-      "icone": "🍕"
+      "icon": "🍕"
     }
   ]
 }

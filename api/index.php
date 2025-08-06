@@ -169,26 +169,26 @@ $documentation = [
     ],
     'data_structure' => [
         'category' => [
-            'id' => 'integer - ID unique de la catégorie',
-            'nom' => 'string - Nom de la catégorie',
-            'icone' => 'string - Emoji représentant la catégorie',
-            'slug' => 'string - Slug URL-friendly',
-            'description' => 'string|null - Description optionnelle',
-            'ordre' => 'integer - Ordre d\'affichage',
-            'tags' => 'array - Liste des tags associés',
-            'mots' => 'array - Liste des mots (si inclus)'
+            'id' => 'integer - Unique category ID',
+            'name' => 'string - Category name',
+            'icon' => 'string - Emoji representing the category',
+            'slug' => 'string - URL-friendly slug',
+            'description' => 'string|null - Optional description',
+            'display_order' => 'integer - Display order',
+            'tags' => 'array - List of associated tags',
+            'words' => 'array - List of words (if included)'
         ],
         'word' => [
-            'id' => 'integer - ID unique du mot',
-            'mot' => 'string - Le mot à deviner (en majuscules)',
-            'difficulte' => 'string - Niveau de difficulté (facile/moyen/difficile)',
-            'longueur' => 'integer - Nombre de caractères',
-            'contient_accents' => 'boolean - Présence d\'accents',
-            'contient_chiffres' => 'boolean - Présence de chiffres',
-            'contient_special' => 'boolean - Présence de caractères spéciaux',
-            'popularite' => 'integer - Score de popularité',
-            'category_nom' => 'string - Nom de la catégorie',
-            'category_icone' => 'string - Icône de la catégorie'
+            'id' => 'integer - Unique word ID',
+            'word' => 'string - The word to guess (uppercase)',
+            'difficulty' => 'string - Difficulty level (easy/medium/hard)',
+            'length' => 'integer - Number of characters',
+            'has_accents' => 'boolean - Presence of accents',
+            'has_numbers' => 'boolean - Presence of numbers',
+            'has_special_chars' => 'boolean - Presence of special characters',
+            'popularity' => 'integer - Popularity score',
+            'category_name' => 'string - Category name',
+            'category_icon' => 'string - Category icon'
         ]
     ],
     'error_codes' => [

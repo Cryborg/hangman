@@ -20,7 +20,6 @@ MySQL DB → API PHP REST → JavaScript (API Client) → Jeu
 
 ### Base de données
 - `database/schema.sql` - Schéma complet des tables MySQL
-- `database/migration.sql` - Script d'import des données JSON vers MySQL
 
 ### API PHP
 - `api/config.php` - Configuration base de données et utilitaires
@@ -55,11 +54,7 @@ mysql -u hangman_user -p hangman_db < database/schema.sql
 
 ### 3. Import des données
 
-Importez toutes les données depuis le JSON :
 
-```bash
-mysql -u hangman_user -p hangman_db < database/migration.sql
-```
 
 ### 4. Configuration via .env
 

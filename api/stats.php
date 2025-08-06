@@ -92,7 +92,7 @@ try {
     
     if ($includeCategories) {
         $categoriesStatsQuery = "SELECT 
-                                    c.id, c.nom, c.icone, c.slug,
+                                    c.id, c.name, c.icon, c.slug,
                                     COUNT(w.id) as total_mots,
                                     COUNT(CASE WHEN w.difficulte = 'facile' THEN 1 END) as mots_faciles,
                                     COUNT(CASE WHEN w.difficulte = 'moyen' THEN 1 END) as mots_moyens,
@@ -103,8 +103,8 @@ try {
                                 FROM hangman_categories c
                                 LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
                                 WHERE c.active = 1
-                                GROUP BY c.id, c.nom, c.icone, c.slug
-                                ORDER BY c.ordre ASC, c.nom ASC";
+                                GROUP BY c.id, c.name, c.icon, c.slug
+                                ORDER BY c.display_order ASC, c.name ASC";
         
         $categoriesStatsStmt = $db->prepare($categoriesStatsQuery);
         $categoriesStatsStmt->execute();
@@ -129,7 +129,7 @@ try {
     
     if ($includeTags) {
         $tagsStatsQuery = "SELECT 
-                              t.id, t.nom, t.slug, t.couleur,
+                              t.id, t.name, t.slug, t.color,
                               COUNT(DISTINCT c.id) as categories_count,
                               COUNT(w.id) as mots_count
                           FROM hangman_tags t
@@ -137,8 +137,8 @@ try {
                           LEFT JOIN hangman_categories c ON ct.category_id = c.id AND c.active = 1
                           LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
                           WHERE t.active = 1
-                          GROUP BY t.id, t.nom, t.slug, t.couleur
-                          ORDER BY t.ordre ASC, t.nom ASC";
+                          GROUP BY t.id, t.name, t.slug, t.color
+                          ORDER BY t.display_order ASC, t.name ASC";
         
         $tagsStatsStmt = $db->prepare($tagsStatsQuery);
         $tagsStatsStmt->execute();
@@ -157,22 +157,22 @@ try {
     // ===== HISTORIQUE ET TENDANCES (si demandé) =====
     
     if ($includeDifficulty) {
-        // Distribution de longueur des mots
+        // Word length distribution
         $lengthDistributionQuery = "SELECT 
-                                       longueur,
+                                       length,
                                        COUNT(*) as count
                                    FROM hangman_words 
                                    WHERE active = 1
-                                   GROUP BY longueur
-                                   ORDER BY longueur ASC";
+                                   GROUP BY length
+                                   ORDER BY length ASC";
         
         $lengthDistributionStmt = $db->prepare($lengthDistributionQuery);
         $lengthDistributionStmt->execute();
         $lengthDistribution = $lengthDistributionStmt->fetchAll();
         
-        // Post-traitement de la distribution de longueur
+        // Post-process length distribution
         foreach ($lengthDistribution as &$lengthStat) {
-            $lengthStat['longueur'] = (int) $lengthStat['longueur'];
+            $lengthStat['length'] = (int) $lengthStat['length'];
             $lengthStat['count'] = (int) $lengthStat['count'];
         }
         

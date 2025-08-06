@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Jeu du Pendu</title>
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    
+    <!-- CSS thème sombre du jeu principal adapté pour l'admin -->
+    <link rel="stylesheet" href="admin/admin-theme.css">
+</head>
+<body class="admin-body">
+    <!-- Page de connexion -->
+    <div id="loginPage" class="admin-page">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>🔐 Administration</h1>
+                    <p>Jeu du Pendu - Interface de gestion</p>
+                </div>
+                
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" required autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-login" id="loginBtn">
+                        <span class="btn-text">🚀 Se connecter</span>
+                        <span class="btn-loading" style="display: none;">⏳ Connexion...</span>
+                    </button>
+                    
+                    <div class="login-error" id="loginError" style="display: none;"></div>
+                </form>
+                
+                <div class="login-footer">
+                    <a href="index.html" class="back-link">← Retour au jeu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interface d'administration -->
+    <div id="adminPage" class="admin-page" style="display: none;">
+        <!-- Header avec navigation -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <div class="admin-logo">
+                    <h1>🎲 Administration Pendu</h1>
+                </div>
+                
+                
+                <div class="admin-nav">
+                    <button class="nav-btn active" data-section="dashboard">
+                        📊 Tableau de bord
+                    </button>
+                    <button class="nav-btn" data-section="categories">
+                        📁 Catégories
+                    </button>
+                    <button class="nav-btn" data-section="words">
+                        📝 Mots
+                    </button>
+                    <button class="nav-btn" data-section="tags">
+                        🏷️ Tags
+                    </button>
+                    <button class="nav-btn" data-section="data">
+                        💾 Import/Export
+                    </button>
+                </div>
+                
+                <div class="admin-user">
+                    <span id="adminUsername">Admin</span>
+                    <button class="btn btn-secondary btn-small" id="logoutBtn">
+                        🚪 Déconnexion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation mobile -->
+            <div class="admin-nav-mobile">
+                <button class="mobile-nav-btn" id="mobileNavToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <nav class="mobile-nav" id="mobileNav">
+                <a href="#dashboard" class="mobile-nav-link active">📊 Dashboard</a>
+                <a href="#categories" class="mobile-nav-link">📁 Catégories</a>
+                <a href="#words" class="mobile-nav-link">📝 Mots</a>
+                <a href="#tags" class="mobile-nav-link">🏷️ Tags</a>
+                <a href="#data" class="mobile-nav-link">💾 Données</a>
+                <div class="mobile-nav-user">
+                    <button class="btn btn-secondary" id="mobileLogoutBtn">🚪 Déconnexion</button>
+                </div>
+            </nav>
+        </header>
+        
+        <!-- Contenu principal -->
+        <main class="admin-main">
+            <!-- Section Tableau de bord -->
+            <section id="dashboard" class="admin-section active">
+                <div class="section-header">
+                    <h2>📊 Tableau de bord</h2>
+                    <p>Vue d'ensemble de votre base de données</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-icon">📁</div>
+                        <div class="card-content">
+                            <h3 id="totalCategories">-</h3>
+                            <p>Catégories</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-icon">📝</div>
+                        <div class="card-content">
+                            <h3 id="totalWords">-</h3>
+                            <p>Mots</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-icon">🏷️</div>
+                        <div class="card-content">
+                            <h3 id="totalTags">-</h3>
+                            <p>Tags</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-content">
+                            <h3 id="avgWordsPerCategory">-</h3>
+                            <p>Mots/Catégorie</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-charts">
+                    <div class="chart-card">
+                        <h3>📈 Répartition par difficulté</h3>
+                        <div id="difficultyChart" class="chart-container">
+                            <!-- Chart will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>🔠 Caractères spéciaux</h3>
+                        <div id="specialCharsChart" class="chart-container">
+                            <!-- Chart will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section Catégories -->
+            <section id="categories" class="admin-section">
+                <div class="section-header">
+                    <h2>📁 Gestion des Catégories</h2>
+                    <button class="btn btn-primary" id="addCategoryBtn">
+                        ➕ Nouvelle catégorie
+                    </button>
+                </div>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table" id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Icône</th>
+                                <th>Nom</th>
+                                <th>Slug</th>
+                                <th>Mots</th>
+                                <th>Tags</th>
+                                <th>Ordre</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les catégories seront chargées ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Section Mots -->
+            <section id="words" class="admin-section">
+                <div class="section-header">
+                    <h2>📝 Gestion des Mots</h2>
+                    <div class="section-actions">
+                        <select id="wordCategoryFilter" class="form-select">
+                            <option value="">Toutes les catégories</option>
+                        </select>
+                        <button class="btn btn-primary" id="addWordBtn">
+                            ➕ Nouveau mot
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table" id="wordsTable">
+                        <thead>
+                            <tr>
+                                <th>Mot</th>
+                                <th>Catégorie</th>
+                                <th>Difficulté</th>
+                                <th>Longueur</th>
+                                <th>Accents</th>
+                                <th>Chiffres</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les mots seront chargés ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Section Tags -->
+            <section id="tags" class="admin-section">
+                <div class="section-header">
+                    <h2>🏷️ Gestion des Tags</h2>
+                    <button class="btn btn-primary" id="addTagBtn">
+                        ➕ Nouveau tag
+                    </button>
+                </div>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table" id="tagsTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Slug</th>
+                                <th>Couleur</th>
+                                <th>Catégories</th>
+                                <th>Ordre</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les tags seront chargés ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Section Import/Export -->
+            <section id="data" class="admin-section">
+                <div class="section-header">
+                    <h2>💾 Import/Export des données</h2>
+                    <p>Sauvegardez ou importez vos données au format JSON</p>
+                </div>
+                
+                <div class="data-grid">
+                    <div class="data-card">
+                        <h3>📤 Export</h3>
+                        <p>Télécharger toutes vos données au format JSON</p>
+                        <div class="data-actions">
+                            <button class="btn btn-primary" id="exportAllBtn">
+                                💾 Exporter tout
+                            </button>
+                            <button class="btn btn-secondary" id="exportCategoriesOnlyBtn">
+                                📁 Catégories seulement
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="data-card">
+                        <h3>📤 Import</h3>
+                        <p>Importer des données depuis un fichier JSON</p>
+                        <div class="data-actions">
+                            <input type="file" id="importFile" accept=".json" style="display: none;">
+                            <button class="btn btn-primary" id="importBtn">
+                                📂 Choisir un fichier
+                            </button>
+                            <button class="btn btn-success" id="processImportBtn" style="display: none;">
+                                🚀 Importer
+                            </button>
+                        </div>
+                        <div id="importPreview" class="import-preview" style="display: none;"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modals -->
+    <div id="adminModals"></div>
+    
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Chargement...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="admin/icon-selector.js"></script>
+    <script src="admin/admin.js"></script>
+</body>
+</html>

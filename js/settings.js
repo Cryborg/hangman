@@ -103,7 +103,7 @@ class PenduSettings {
         const categories = this.app.getGameManager()?.getAllCategories() || [];
         this.settings.categories = {};
         categories.forEach(category => {
-            this.settings.categories[category.nom] = true;
+            this.settings.categories[category.name] = true;
         });
     }
     
@@ -121,8 +121,8 @@ class PenduSettings {
         
         availableCategories.forEach(category => {
             // Utiliser la préférence sauvegardée si elle existe, sinon activer par défaut
-            merged.categories[category.nom] = saved.categories?.[category.nom] !== undefined 
-                ? saved.categories[category.nom] 
+            merged.categories[category.name] = saved.categories?.[category.name] !== undefined 
+                ? saved.categories[category.name] 
                 : true;
         });
         
@@ -214,21 +214,21 @@ class PenduSettings {
         }
         
         categories.forEach(category => {
-            const isSelected = this.settings.categories[category.nom] !== false;
+            const isSelected = this.settings.categories[category.name] !== false;
             
             const categoryItem = document.createElement('div');
             categoryItem.className = `category-item ${isSelected ? 'selected' : ''}`;
             categoryItem.innerHTML = `
                 <input type="checkbox" 
                        class="category-checkbox" 
-                       data-category="${category.nom}"
+                       data-category="${category.name}"
                        ${isSelected ? 'checked' : ''}>
                 <div class="category-info">
                     <div class="category-name">
-                        <span>${category.icone || '📁'}</span>
-                        <span>${category.nom}</span>
+                        <span>${category.icon || '📁'}</span>
+                        <span>${category.name}</span>
                     </div>
-                    <div class="category-count">${category.mots?.length || 0} mots</div>
+                    <div class="category-count">${category.words?.length || 0} mots</div>
                 </div>
             `;
             
@@ -275,7 +275,7 @@ class PenduSettings {
     
     getSelectedCategories() {
         const categories = this.app.getGameManager()?.getAllCategories() || [];
-        return categories.filter(category => this.settings.categories[category.nom] !== false);
+        return categories.filter(category => this.settings.categories[category.name] !== false);
     }
     
     isCategoryEnabled(categoryName) {

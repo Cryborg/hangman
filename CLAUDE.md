@@ -393,6 +393,56 @@ Le jeu propose un système de difficulté modulaire avec deux options indépenda
 - **Exemples** : "RALPH 2.0" (le "2.0" est caché si option chiffres activée), "TÉLÉPHONE" (le "É" est caché si option accents activée)
 - **Catégories concernées** : Toutes les catégories bénéficient des accents français corrects
 
+## 🐳 Infrastructure Docker
+
+### Configuration
+Le jeu utilise Docker Compose avec 3 services :
+- **MySQL 8.0** : Base de données (port 3306)
+- **PHP 8.1 Apache** : Serveur web (port 8090)
+- **PhpMyAdmin** : Administration DB (port 8081)
+
+### Démarrage rapide
+```bash
+./start.sh  # Lance tout l'environnement Docker
+```
+
+### URLs d'accès
+- Jeu : http://localhost:8090
+- Admin : http://localhost:8090/admin.html
+- PhpMyAdmin : http://localhost:8081
+
+### Configuration environnement
+- **Docker** : Utilise `.env` avec `DB_HOST=mysql`
+- **Local (hors Docker)** : Créer `.env.local` avec `DB_HOST=127.0.0.1`
+- Le système priorise automatiquement `.env.local` s'il existe
+
+### Import de données
+1. Se connecter à l'admin : http://localhost:8090/admin.html
+2. Utiliser la fonction d'import JSON
+3. Format attendu :
+```json
+{
+  "mode": "replace",
+  "data": {
+    "categories": [
+      {
+        "name": "Catégorie",
+        "icon": "🎯",
+        "words": ["MOT1", "MOT2"]
+      }
+    ]
+  }
+}
+```
+
+### Commandes utiles
+```bash
+docker-compose down        # Arrêter les conteneurs
+docker-compose logs -f     # Voir les logs
+docker-compose down -v     # Reset complet avec suppression des volumes
+docker exec -it hangman_mysql mysql -u hangman_user -phangman_password hangman_db  # Accès MySQL
+```
+
 ## 🐛 Debug et développement
 
 ### Console commands utiles

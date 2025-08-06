@@ -125,9 +125,9 @@ class CategoryMode extends BaseGameModeWithSave {
         if (this.gameEngine && this.gameEngine.categories) {
             console.log(`🔍 Recherche de la catégorie: "${this.selectedCategory}"`);
             
-            const category = this.gameEngine.categories.find(cat => cat.nom === this.selectedCategory);
+            const category = this.gameEngine.categories.find(cat => cat.name === this.selectedCategory);
             if (category) {
-                this.categoryWords = [...category.mots];
+                this.categoryWords = [...category.words];
                 this.totalWords = this.categoryWords.length;
             } else {
                 console.error(`❌ Catégorie "${this.selectedCategory}" non trouvée`);

@@ -137,20 +137,20 @@ class ModalManager {
         categories.forEach(category => {
             const categoryItem = document.createElement('div');
             categoryItem.className = 'category-item';
-            categoryItem.dataset.categoryName = category.nom;
+            categoryItem.dataset.categoryName = category.name;
             
             // Utiliser l'icône depuis les données JSON ou une icône par défaut
-            const icon = category.icone || '📂';
+            const icon = category.icon || '📂';
             
             categoryItem.innerHTML = `
                 <span class="category-icon">${icon}</span>
-                <div class="category-name">${category.nom}</div>
-                <div class="category-count">${category.mots.length} mots</div>
+                <div class="category-name">${category.name}</div>
+                <div class="category-count">${category.words?.length || 0} mots</div>
             `;
             
             // Ajouter l'événement de clic
             categoryItem.addEventListener('click', () => {
-                this.selectCategory(category.nom);
+                this.selectCategory(category.name);
             });
             
             this.categoriesGrid.appendChild(categoryItem);
