@@ -250,7 +250,7 @@ class ModalManager {
         this.saveDifficultyOptions();
         
         // Recréer le clavier virtuel si le jeu est en cours (pour mobile)
-        if (this.app.getUIModule() && window.innerWidth <= 768) {
+        if (this.app.getUIModule() && window.innerWidth <= 1024) {
             this.app.getUIModule().clearVirtualKeyboard();
             this.app.getUIModule().createVirtualKeyboard();
         }

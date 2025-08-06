@@ -52,7 +52,7 @@ class VirtualKeyboard {
         if (!this.container) return;
         
         // Créer le clavier virtuel uniquement sur mobile/tablette
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > 1024) {
             this.clear();
             return;
         }
