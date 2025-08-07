@@ -116,9 +116,7 @@ p {
     animation: fadeIn var(--transition-normal) ease;
 }
 
-.slide-in {
-    animation: slideIn var(--transition-normal) ease;
-}
+/* .slide-in supprimé - non utilisé */
 
 .pulse {
     animation: pulse 2s infinite;
@@ -126,20 +124,7 @@ p {
 
 /* Utilitaires */
 .text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+/* .text-left, .text-right, .sr-only supprimés - non utilisés */
 
 .hidden { display: none !important; }
 .visible { display: block !important; }
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}

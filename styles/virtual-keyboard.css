@@ -323,138 +323,108 @@
 
 /* ===== MODE PLEIN ÉCRAN RESPONSIVE ===== */
 
-/* Mobile en plein écran - Clavier 100% responsive avec fixes mobiles */
+/* Mobile en plein écran - Clavier optimisé avec tailles uniformes */
 @media (max-width: 1024px) {
     .fullscreen-mode .keyboard {
-        padding: 1.5%; /* Padding en pourcentage de la largeur */
-        gap: 0.8%; /* Gap en pourcentage */
-        width: 100vw; /* Force la largeur viewport */
-        max-width: 100vw; /* Empêche le débordement */
+        padding: var(--spacing-sm);
+        gap: var(--spacing-xs);
+        max-width: 100vw;
+        width: 100vw;
         margin: 0 auto;
         box-sizing: border-box;
-        /* Fixes spécifiques mobile réel */
+        /* Empêche le débordement */
         overflow-x: hidden;
-        transform: translateZ(0); /* Force accélération GPU */
     }
     
     .fullscreen-mode .keyboard-row {
-        gap: 0.8%; /* Gap uniforme en pourcentage */
+        gap: var(--spacing-xs);
         justify-content: center;
         width: 100%;
-        max-width: 100%;
         display: flex;
-        overflow-x: hidden; /* Empêche le débordement horizontal */
-        flex-wrap: nowrap; /* Empêche le retour à la ligne */
+        flex-wrap: nowrap;
     }
     
     .fullscreen-mode .keyboard button {
-        flex: 1; /* Répartition égale automatique */
-        padding: 2.5% 1%; /* Padding en pourcentage */
-        font-size: 1.1rem; /* Taille fixe similaire au mode normal */
-        min-width: 0; /* Pas de contrainte minimale */
-        height: 8vh; /* Hauteur en fonction de la hauteur d'écran */
-        white-space: nowrap;
-        overflow: hidden;
+        /* Taille uniforme basée sur le viewport */
+        min-width: 8vw;
+        width: 8vw;
+        height: 7vh;
+        padding: var(--spacing-xs);
+        font-size: 1.1rem;
         border-radius: var(--radius-sm);
-        /* Fixes spécifiques pour mobile réel */
-        box-sizing: border-box; /* Inclut padding/border dans la largeur */
-        flex-shrink: 1; /* Permet la compression si nécessaire */
-        max-width: none; /* Pas de limite de largeur */
+        box-sizing: border-box;
+        /* Pas de flex pour éviter les déformations */
+        flex: none;
     }
     
-    /* Décalages AZERTY pour plein écran - décalages en pourcentage */
+    /* Décalages AZERTY pour plein écran - valeurs fixes */
     .fullscreen-mode .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 5%; /* Décalage proportionnel */
+        padding-left: 4vw;
     }
     
     .fullscreen-mode .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 12%; /* Décalage proportionnel plus important */
+        padding-left: 8vw;
     }
 }
 
-/* Très petit écran en plein écran - même logique 100% responsive */
+/* Très petit écran en plein écran - tailles adaptées mais uniformes */
 @media (max-width: 480px) {
     .fullscreen-mode .keyboard {
-        padding: 1.2%; /* Padding légèrement réduit */
-        gap: 0.6%; /* Gap réduit */
+        padding: var(--spacing-xs);
+        gap: 4px;
+        max-width: 100vw;
+        width: 100vw;
     }
     
     .fullscreen-mode .keyboard-row {
-        gap: 0.6%; /* Gap cohérent */
-        width: 100%;
+        gap: 4px;
     }
     
     .fullscreen-mode .keyboard button {
-        flex: 1; /* Toujours répartition égale */
-        padding: 2% 0.8%; /* Padding réduit en pourcentage */
-        font-size: 1rem; /* Taille normale légèrement réduite */
-        min-width: 0; /* Pas de contrainte */
-        height: 7vh; /* Hauteur réduite */
-        /* Aucune contrainte max-width */
+        /* Taille réduite mais uniforme */
+        min-width: 7vw;
+        width: 7vw;
+        height: 6vh;
+        padding: 4px;
+        font-size: 0.9rem;
+        /* Pas de flex */
+        flex: none;
     }
     
-    /* Ajustements AZERTY pour plein écran petits écrans */
+    /* Ajustements AZERTY pour petits écrans */
     .fullscreen-mode .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 4%; /* Décalage légèrement réduit */
+        padding-left: 3vw;
     }
     
     .fullscreen-mode .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 10%; /* Décalage réduit mais proportionnel */
+        padding-left: 6vw;
     }
 }
 
-/* ===== FIXES SPÉCIFIQUES MOBILES RÉELS ===== */
+/* ===== STYLE SPÉCIAL POUR BOUTON "PASSER" ===== */
 
-/* Solution pour le débordement mobile réel vs DevTools */
-@media (max-width: 1024px) {
-    .fullscreen-mode .keyboard {
-        /* Force le calcul de largeur réel */
-        width: calc(100vw - 4px); /* Légère marge pour sécurité */
-        max-width: calc(100vw - 4px);
-        /* Position pour éviter les décalages webkit */
-        position: relative;
-        left: 0;
-        right: 0;
-        /* Marge négative pour compenser le padding parent si nécessaire */
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .fullscreen-mode .keyboard-row {
-        /* Force recalcul sur mobile réel */
-        width: calc(100% - 2px);
-        max-width: 100%;
-        margin: 0 auto;
-    }
-    
-    .fullscreen-mode .keyboard button {
-        /* Assure que les boutons rentrent vraiment */
-        flex-basis: 0;
-        flex-grow: 1;
-        flex-shrink: 1;
-        /* Padding adaptatif plus sûr */
-        padding: min(2.5%, 8px) min(1%, 4px);
-        /* Border-box absolu */
-        box-sizing: border-box !important;
-    }
+/* Bouton "Passer" dans le header - style distinctif */
+.header-btn-next {
+    background: rgba(46, 213, 115, 0.1) !important;
+    border-color: var(--success-color) !important;
+    color: var(--success-color) !important;
 }
 
-/* Fix pour très petits écrans où le problème est plus critique */
-@media (max-width: 480px) {
-    .fullscreen-mode .keyboard {
-        width: calc(100vw - 8px); /* Marge plus importante */
-        max-width: calc(100vw - 8px);
-        padding: 1% 0.5%; /* Padding réduit */
-        gap: 0.5%; /* Gap réduit */
-    }
-    
-    .fullscreen-mode .keyboard-row {
-        gap: 0.5%;
-        width: calc(100% - 4px);
-    }
-    
-    .fullscreen-mode .keyboard button {
-        padding: min(2%, 6px) min(0.8%, 2px);
-        border-width: 1px; /* Border plus fine pour économiser l'espace */
-    }
+.header-btn-next:hover {
+    background: var(--success-color) !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(46, 213, 115, 0.4) !important;
 }
+
+/* ===== NOTES DE CONCEPTION ===== */
+
+/* 
+ * Le clavier en mode plein écran utilise maintenant :
+ * - Des tailles fixes en vw/vh pour l'uniformité
+ * - Pas de flex: 1 qui déforme les boutons
+ * - Des marges sécurisées (95vw au lieu de 100vw)
+ * - Des gaps constants en pixels ou spacing CSS
+ * 
+ * Cela garantit que toutes les touches gardent la même taille
+ * tout en évitant le débordement horizontal.
+ */

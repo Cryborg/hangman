@@ -89,14 +89,7 @@ class PenduUI {
     
     // ===== ANIMATIONS ===== //
     
-    shakeElement(element) {
-        if (!element) return;
-        
-        element.classList.add('shake');
-        setTimeout(() => {
-            element.classList.remove('shake');
-        }, 500);
-    }
+    // shakeElement supprimé - non utilisé
     
     pulseElement(element, duration = 2000) {
         if (!element) return;
@@ -107,14 +100,7 @@ class PenduUI {
         }, duration);
     }
     
-    fadeInElement(element) {
-        if (!element) return;
-        
-        element.classList.add('fade-in');
-        setTimeout(() => {
-            element.classList.remove('fade-in');
-        }, 300);
-    }
+    // fadeInElement supprimé - non utilisé
     
     // ===== GESTION DU HANGMAN ===== //
     
@@ -194,14 +180,13 @@ class PenduUI {
     // ===== GESTION DE L'AFFICHAGE DU MOT ===== //
     
     updateWordDisplay(word, guessedLetters, showSpaces = true) {
-        const wordDisplay = document.getElementById('wordDisplay');
+        const wordDisplay = domManager.getById('wordDisplay');
         if (!wordDisplay) return;
         
         wordDisplay.innerHTML = '';
         
-        // Récupérer les options de difficulté
-        const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
-        const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+        // Récupérer les options de difficulté centralisées
+        const options = difficultyManager.getOptions();
         
         const words = word.split(' ');
         
@@ -212,8 +197,8 @@ class PenduUI {
             currentWord.split('').forEach(letter => {
                 const span = document.createElement('span');
                 
-                // Utiliser l'utilitaire dédié
-                const shouldShow = WordUtils.shouldShowCharacter(letter, guessedLetters, accentDifficulty, numberDifficulty);
+                // Utiliser le gestionnaire de difficulté centralisé
+                const shouldShow = difficultyManager.shouldShowCharacter(letter, guessedLetters);
                 
                 if (shouldShow) {
                     span.textContent = letter;
@@ -241,32 +226,15 @@ class PenduUI {
         const spans = document.querySelectorAll('#wordDisplay span');
         let revealed = false;
         
-        spans.forEach(span => {
-            if (span.textContent === '' && span.parentNode.textContent.toUpperCase().includes(letter)) {
-                // Animation de révélation
-                span.style.transform = 'scale(0)';
-                span.style.transition = 'transform 0.3s ease';
-                
-                setTimeout(() => {
-                    span.textContent = letter.toLowerCase();
-                    span.style.transform = 'scale(1.1)';
-                    
-                    setTimeout(() => {
-                        span.style.transform = 'scale(1)';
-                        revealed = true;
-                    }, 150);
-                }, 100);
-            }
-        });
-        
-        return revealed;
+        // Fonction supprimée - logique intégrée dans updateWordDisplay
+        return false;
     }
     
     // ===== GESTION DES STATISTIQUES EN TEMPS RÉEL ===== //
     
     updateGameStats(triesLeft, wrongLetters, currentStreak = null) {
-        const wrongLettersDisplay = document.getElementById('wrongLetters');
-        const streakDisplay = document.getElementById('streakDisplay');
+        const wrongLettersDisplay = domManager.getById('wrongLetters');
+        const streakDisplay = domManager.getById('streakDisplay');
         
         if (wrongLettersDisplay) {
             if (wrongLetters.length === 0) {
@@ -287,16 +255,13 @@ class PenduUI {
     }
     
     updateProgress(foundWords, totalWords) {
-        const progressDisplay = document.getElementById('wordsProgress');
-        if (progressDisplay) {
-            progressDisplay.textContent = `${foundWords}/${totalWords}`;
-        }
+        domManager.setText('wordsProgress', `${foundWords}/${totalWords}`);
     }
     
     // ===== GESTION DES MESSAGES DE JEU ===== //
     
     showGameMessage(message, type = 'info', duration = 3000) {
-        const gameMessage = document.getElementById('gameMessage');
+        const gameMessage = domManager.getById('gameMessage');
         if (!gameMessage) {
             // Si pas de zone de message dédiée, utiliser un toast
             this.showToast(message, type, duration);
@@ -315,7 +280,7 @@ class PenduUI {
     }
     
     clearGameMessage() {
-        const gameMessage = document.getElementById('gameMessage');
+        const gameMessage = domManager.getById('gameMessage');
         if (gameMessage) {
             gameMessage.textContent = '';
             gameMessage.style.opacity = '0';
@@ -326,7 +291,7 @@ class PenduUI {
     
     celebrateWin() {
         // Effet de confettis ou animation de victoire
-        const wordDisplay = document.getElementById('wordDisplay');
+        const wordDisplay = domManager.getById('wordDisplay');
         if (wordDisplay) {
             wordDisplay.style.animation = 'pulse 0.6s ease-in-out';
             
@@ -336,7 +301,7 @@ class PenduUI {
         }
         
         // Effet sur le streak si applicable
-        const streakDisplay = document.getElementById('streakDisplay');
+        const streakDisplay = domManager.getById('streakDisplay');
         if (streakDisplay) {
             this.pulseElement(streakDisplay.parentNode, 1000);
         }

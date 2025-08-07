@@ -11,11 +11,9 @@ class PenduApp {
             timeAttackDuration: 1 // en minutes
         };
         
-        // Références DOM
-        this.hamburgerMenu = null;
-        this.navMenu = null;
-        this.navLinks = null;
-        this.views = null;
+        // Références DOM - maintenant gérées par DOMManager
+        this.domManager = null;
+        this.difficultyManager = null;
         
         // Modules
         this.gameManager = null; // Nouveau gestionnaire principal
@@ -48,8 +46,8 @@ class PenduApp {
                 return;
             }
             
-            // Initialiser les références DOM
-            this.initializeDOMReferences();
+            // Initialiser les gestionnaires
+            this.initializeManagers();
             
             // Initialiser la navigation
             this.initializeNavigation();
@@ -74,56 +72,44 @@ class PenduApp {
         }
     }
     
-    initializeDOMReferences() {
-        this.hamburgerMenu = document.getElementById('hamburgerMenu');
-        this.navMenu = document.getElementById('navMenu');
-        this.navLinks = document.querySelectorAll('.nav-link');
-        this.views = document.querySelectorAll('.view');
+    initializeManagers() {
+        // Utiliser les gestionnaires globaux
+        this.domManager = window.domManager;
+        this.difficultyManager = window.difficultyManager;
         
-        // Nouveaux boutons du header
-        this.restartGameHeaderBtn = document.getElementById('restartGameHeaderBtn');
-        this.fullscreenHeaderBtn = document.getElementById('fullscreenHeaderBtn');
-        this.nextWordHeaderBtn = document.getElementById('nextWordHeaderBtn');
+        // Charger les paramètres sauvegardés
+        this.difficultyManager.load();
+        this.difficultyManager.setupEventListeners();
         
-        // Boutons Passer (desktop et mobile)
-        this.nextWordBtn = document.getElementById('nextWordBtn');
-        this.nextWordBtnMobile = document.getElementById('nextWordBtnMobile');
-        this.nextWordSection = document.getElementById('nextWordSection');
-        this.nextWordSectionMobile = document.getElementById('nextWordSectionMobile');
-        
-        // Vérifier que tous les éléments sont présents
-        if (!this.hamburgerMenu || !this.navMenu || !this.navLinks.length || !this.views.length) {
-            throw new Error('Éléments DOM manquants');
+        // Vérifier les éléments critiques
+        if (!this.domManager.getById('hamburgerMenu') || !this.domManager.getById('navMenu')) {
+            throw new Error('Éléments DOM critiques manquants');
         }
     }
     
     initializeNavigation() {
         // Menu hamburger
-        this.hamburgerMenu.addEventListener('click', () => this.toggleMenu());
+        this.domManager.addEventListener('hamburgerMenu', 'click', () => this.toggleMenu());
         
         // Boutons du header
-        if (this.restartGameHeaderBtn) {
-            this.restartGameHeaderBtn.addEventListener('click', () => {
-                this.showRestartConfirmation();
-            });
-        }
+        // Boutons du header
+        this.domManager.addEventListener('restartGameHeaderBtn', 'click', () => {
+            this.showRestartConfirmation();
+        });
         
-        if (this.fullscreenHeaderBtn) {
-            this.fullscreenHeaderBtn.addEventListener('click', () => {
-                if (this.fullscreenManager) {
-                    this.fullscreenManager.handleToggle({ preventDefault: () => {} });
-                }
-            });
-        }
+        this.domManager.addEventListener('fullscreenHeaderBtn', 'click', () => {
+            if (this.fullscreenManager) {
+                this.fullscreenManager.handleToggle({ preventDefault: () => {} });
+            }
+        });
         
-        if (this.nextWordHeaderBtn) {
-            this.nextWordHeaderBtn.addEventListener('click', () => {
-                this.handleNextWord();
-            });
-        }
+        this.domManager.addEventListener('nextWordHeaderBtn', 'click', () => {
+            this.handleNextWord();
+        });
         
         // Liens de navigation
-        this.navLinks.forEach(link => {
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const view = link.getAttribute('data-view');
                 
@@ -148,21 +134,16 @@ class PenduApp {
         }
         
         // Boutons du menu principal
-        const startGameBtn = document.getElementById('startGameBtn');
-        const viewStatsBtn = document.getElementById('viewStatsBtn');
+        this.domManager.addEventListener('startGameBtn', 'click', () => {
+            // Ouvrir la modal de sélection du mode
+            if (this.modalManager) {
+                this.modalManager.showGameModeModal();
+            }
+        });
         
-        if (startGameBtn) {
-            startGameBtn.addEventListener('click', () => {
-                // Ouvrir la modal de sélection du mode
-                if (this.modalManager) {
-                    this.modalManager.showGameModeModal();
-                }
-            });
-        }
+        this.domManager.addEventListener('viewStatsBtn', 'click', () => this.showView('stats'));
         
-        if (viewStatsBtn) {
-            viewStatsBtn.addEventListener('click', () => this.showView('stats'));
-        }
+        // Déjà géré ci-dessus
         
         // Boutons de retour au menu
         const backToMenuBtn = document.getElementById('backToMenuBtn');
@@ -233,22 +214,23 @@ class PenduApp {
     
     toggleMenu() {
         this.isMenuOpen = !this.isMenuOpen;
-        this.hamburgerMenu.classList.toggle('active');
-        this.navMenu.classList.toggle('active');
+        this.domManager.toggleClass('hamburgerMenu', 'active');
+        this.domManager.toggleClass('navMenu', 'active');
     }
     
     closeMenu() {
         this.isMenuOpen = false;
-        this.hamburgerMenu.classList.remove('active');
-        this.navMenu.classList.remove('active');
+        this.domManager.removeClass('hamburgerMenu', 'active');
+        this.domManager.removeClass('navMenu', 'active');
     }
     
     showView(viewName) {
         // Cacher toutes les vues
-        this.views.forEach(view => view.classList.remove('active'));
+        const views = document.querySelectorAll('.view');
+        views.forEach(view => view.classList.remove('active'));
         
         // Afficher la vue demandée
-        const targetView = document.getElementById(`${viewName}View`);
+        const targetView = this.domManager.getById(`${viewName}View`);
         if (targetView) {
             targetView.classList.add('active');
             this.currentView = viewName;
@@ -262,7 +244,8 @@ class PenduApp {
     }
     
     updateNavigation(activeView) {
-        this.navLinks.forEach(link => {
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
             const linkView = link.getAttribute('data-view');
             if (linkView === activeView) {
                 link.classList.add('active');
@@ -272,25 +255,21 @@ class PenduApp {
         });
         
         // Gérer la visibilité des boutons conditionnels dans le header
-        if (this.restartGameHeaderBtn) {
-            if (activeView === 'game') {
-                // Afficher le bouton seulement en vue jeu
-                this.restartGameHeaderBtn.style.display = '';
-            } else {
-                // Masquer le bouton dans les autres vues
-                this.restartGameHeaderBtn.style.display = 'none';
-            }
+        if (activeView === 'game') {
+            // Afficher le bouton seulement en vue jeu
+            this.domManager.setVisible('restartGameHeaderBtn', true);
+        } else {
+            // Masquer le bouton dans les autres vues
+            this.domManager.setVisible('restartGameHeaderBtn', false);
         }
         
         // Le bouton "Passer" est géré par les modes de jeu via showNextWordButton/hideNextWordButton
         // Ne pas l'afficher automatiquement dans la vue game
-        if (this.nextWordHeaderBtn) {
-            if (activeView !== 'game') {
-                // Masquer le bouton dans les autres vues
-                this.nextWordHeaderBtn.style.display = 'none';
-            }
-            // Si on est en vue game, laisser les modes de jeu décider via showNextWordButton()
+        if (activeView !== 'game') {
+            // Masquer le bouton dans les autres vues
+            this.domManager.setVisible('nextWordHeaderBtn', false);
         }
+        // Si on est en vue game, laisser les modes de jeu décider via showNextWordButton()
     }
     
     onViewChange(viewName) {
@@ -327,8 +306,7 @@ class PenduApp {
     }
     
     updateWelcomeText() {
-        const welcomeDescription = document.getElementById('welcomeDescription');
-        if (!welcomeDescription || !this.gameManager) return;
+        if (!this.gameManager) return;
         
         const categories = this.gameManager.getAvailableCategories();
         if (categories.length === 0) return;
@@ -336,7 +314,7 @@ class PenduApp {
         const totalWords = categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
         const categoryCount = categories.length;
         
-        welcomeDescription.textContent = `Testez vos connaissances avec ${totalWords} mots répartis en ${categoryCount} catégories`;
+        this.domManager.setText('welcomeDescription', `Testez vos connaissances avec ${totalWords} mots répartis en ${categoryCount} catégories`);
     }
     
     updateMenuStats() {
@@ -344,27 +322,11 @@ class PenduApp {
         
         const stats = this.statsModule.getStats();
         
-        // Mettre à jour les stats rapides du menu
-        const totalFoundWords = document.getElementById('totalFoundWords');
-        const currentStreak = document.getElementById('currentStreak');
-        const totalAchievements = document.getElementById('totalAchievements');
-        const bestStreak = document.getElementById('bestStreak');
-        
-        if (totalFoundWords) {
-            totalFoundWords.textContent = stats.foundWords;
-        }
-        
-        if (currentStreak) {
-            currentStreak.textContent = stats.currentStreak;
-        }
-        
-        if (totalAchievements) {
-            totalAchievements.textContent = stats.unlockedAchievements;
-        }
-        
-        if (bestStreak) {
-            bestStreak.textContent = stats.bestStreak;
-        }
+        // Mettre à jour les stats rapides du menu via DOMManager
+        this.domManager.setText('totalFoundWords', stats.foundWords);
+        this.domManager.setText('currentStreak', stats.currentStreak);
+        this.domManager.setText('totalAchievements', stats.unlockedAchievements);
+        this.domManager.setText('bestStreak', stats.bestStreak);
     }
     
     showErrorMessage(message) {
@@ -403,34 +365,22 @@ class PenduApp {
     
     showNextWordButton() {
         // Afficher le bouton du header
-        if (this.nextWordHeaderBtn) {
-            this.nextWordHeaderBtn.style.display = 'block';
-            console.log('🎯 Bouton Passer affiché dans le header');
-        }
+        this.domManager.setVisible('nextWordHeaderBtn', true);
+        console.log('🎯 Bouton Passer affiché dans le header');
         
         // Masquer les anciens boutons dans la zone de jeu (sécurité)
-        if (this.nextWordSection) {
-            this.nextWordSection.style.display = 'none';
-        }
-        if (this.nextWordSectionMobile) {
-            this.nextWordSectionMobile.style.display = 'none';
-        }
+        this.domManager.setVisible('nextWordSection', false);
+        this.domManager.setVisible('nextWordSectionMobile', false);
     }
     
     hideNextWordButton() {
         // Masquer le bouton du header
-        if (this.nextWordHeaderBtn) {
-            this.nextWordHeaderBtn.style.display = 'none';
-            console.log('🎯 Bouton Passer masqué du header');
-        }
+        this.domManager.setVisible('nextWordHeaderBtn', false);
+        console.log('🎯 Bouton Passer masqué du header');
         
         // Masquer aussi les anciens boutons par sécurité
-        if (this.nextWordSection) {
-            this.nextWordSection.style.display = 'none';
-        }
-        if (this.nextWordSectionMobile) {
-            this.nextWordSectionMobile.style.display = 'none';
-        }
+        this.domManager.setVisible('nextWordSection', false);
+        this.domManager.setVisible('nextWordSectionMobile', false);
     }
     
     // Méthodes utilitaires pour les modules
@@ -461,6 +411,14 @@ class PenduApp {
     
     getSettingsModule() {
         return this.settingsModule;
+    }
+    
+    getDOMManager() {
+        return this.domManager;
+    }
+    
+    getDifficultyManager() {
+        return this.difficultyManager;
     }
     
     // ===== GESTION DES PARAMÈTRES DE JEU ===== //
