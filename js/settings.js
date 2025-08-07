@@ -46,17 +46,27 @@ class PenduSettings {
     }
     
     initializeEventListeners() {
+        // Sauvegarde automatique sur changement de difficulté
+        if (this.accentDifficultyCheckbox) {
+            this.accentDifficultyCheckbox.addEventListener('change', () => this.autoSave());
+        }
+        
+        if (this.numberDifficultyCheckbox) {
+            this.numberDifficultyCheckbox.addEventListener('change', () => this.autoSave());
+        }
+        
         if (this.selectAllBtn) {
-            this.selectAllBtn.addEventListener('click', () => this.selectAllCategories());
+            this.selectAllBtn.addEventListener('click', () => {
+                this.selectAllCategories();
+                this.autoSave();
+            });
         }
         
         if (this.deselectAllBtn) {
-            this.deselectAllBtn.addEventListener('click', () => this.deselectAllCategories());
-        }
-        
-        
-        if (this.saveBtn) {
-            this.saveBtn.addEventListener('click', () => this.saveSettings());
+            this.deselectAllBtn.addEventListener('click', () => {
+                this.deselectAllCategories();
+                this.autoSave();
+            });
         }
         
         if (this.resetBtn) {
@@ -129,7 +139,15 @@ class PenduSettings {
         return merged;
     }
     
-    saveSettings() {
+    autoSave() {
+        // Petite temporisation pour éviter trop d'appels successifs
+        clearTimeout(this.autoSaveTimeout);
+        this.autoSaveTimeout = setTimeout(() => {
+            this.saveSettings(true); // true = sauvegarde automatique
+        }, 300);
+    }
+    
+    saveSettings(isAutoSave = false) {
         // Récupérer les valeurs de l'interface
         this.settings.difficulty.accents = this.accentDifficultyCheckbox?.checked || false;
         this.settings.difficulty.numbers = this.numberDifficultyCheckbox?.checked || false;
@@ -145,7 +163,10 @@ class PenduSettings {
         try {
             localStorage.setItem('pendu_settings', JSON.stringify(this.settings));
             
-            if (this.app.getUIModule()) {
+            // Toast discret pour la sauvegarde automatique
+            if (isAutoSave && this.app.getUIModule()) {
+                this.app.getUIModule().showToast('✅ Sauvegardé', 'success', 1000);
+            } else if (!isAutoSave && this.app.getUIModule()) {
                 this.app.getUIModule().showToast('⚙️ Paramètres sauvegardés !', 'success', 2000);
             }
             
@@ -170,9 +191,8 @@ class PenduSettings {
         // Mettre à jour l'interface
         this.updateUI();
         
-        if (this.app.getUIModule()) {
-            this.app.getUIModule().showToast('🔄 Paramètres réinitialisés', 'info', 2000);
-        }
+        // Sauvegarder automatiquement après réinitialisation
+        this.saveSettings(false); // false = pas une sauvegarde automatique silencieuse
         
         console.log('🔄 Paramètres réinitialisés');
     }
@@ -236,6 +256,7 @@ class PenduSettings {
             const checkbox = categoryItem.querySelector('.category-checkbox');
             checkbox.addEventListener('change', () => {
                 categoryItem.classList.toggle('selected', checkbox.checked);
+                this.autoSave(); // Sauvegarde automatique
             });
             
             // Event listener pour cliquer sur l'item entier

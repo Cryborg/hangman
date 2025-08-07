@@ -111,6 +111,23 @@ class HangmanAPIClient {
     }
     
     /**
+     * Récupère les catégories avec système de niveaux de difficulté
+     * @param {string[]} levels - Niveaux souhaités ['easy', 'medium', 'hard']
+     * @param {string} format - Format de réponse ('levels' ou 'legacy')
+     * @param {boolean} includeStats - Inclure les statistiques
+     */
+    async getCategoriesWithLevels(levels = ['easy', 'medium', 'hard'], format = 'levels', includeStats = false) {
+        const params = {
+            levels: Array.isArray(levels) ? levels.join(',') : levels,
+            format: format,
+            stats: includeStats ? 'true' : 'false'
+        };
+        
+        console.log('🎯 Requête catégories avec niveaux:', params);
+        return this.makeRequest('categories-levels.php', params);
+    }
+    
+    /**
      * Récupère les mots d'une catégorie
      */
     async getWords(categoryIdOrSlug, options = {}) {

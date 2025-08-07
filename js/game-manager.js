@@ -55,6 +55,23 @@ class PenduGameManager {
         console.log('✅ Game Manager initialisé');
     }
     
+    /**
+     * Méthode appelée quand les préférences de niveaux changent
+     */
+    async onLevelPreferencesChanged() {
+        console.log('🎯 Préférences de niveaux modifiées, rechargement des catégories...');
+        
+        if (this.gameEngine) {
+            await this.gameEngine.loadCategories();
+            
+            // Si il y a une partie en cours, on peut choisir de l'arrêter ou la continuer
+            if (this.currentMode && this.gameEngine.gameActive) {
+                console.log('⚠️ Partie en cours détectée lors du changement de niveaux');
+                // Pour l'instant on laisse la partie continuer
+            }
+        }
+    }
+    
     initializeGameModes() {
         // Créer les instances des modes de jeu
         this.gameModes.standard = new StandardMode(this.app, this.gameEngine);

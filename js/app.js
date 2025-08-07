@@ -76,6 +76,7 @@ class PenduApp {
         // Utiliser les gestionnaires globaux
         this.domManager = window.domManager;
         this.difficultyManager = window.difficultyManager;
+        this.levelManager = window.levelManager;
         
         // Charger les paramètres sauvegardés
         this.difficultyManager.load();
@@ -301,6 +302,10 @@ class PenduApp {
                 if (this.settingsModule) {
                     this.settingsModule.loadSettings();
                 }
+                // Créer l'interface des niveaux de difficulté
+                if (this.levelManager) {
+                    this.levelManager.createLevelSettingsUI('levelSettingsContainer');
+                }
                 break;
         }
     }
@@ -419,6 +424,10 @@ class PenduApp {
     
     getDifficultyManager() {
         return this.difficultyManager;
+    }
+    
+    getLevelManager() {
+        return this.levelManager;
     }
     
     // ===== GESTION DES PARAMÈTRES DE JEU ===== //

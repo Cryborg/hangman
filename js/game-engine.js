@@ -45,13 +45,14 @@ class PenduGameEngine {
     }
     
     initializeDOMReferences() {
-        this.wordDisplay = document.getElementById('wordDisplay');
-        this.wrongLettersDisplay = document.getElementById('wrongLetters');
-        this.progressDisplay = document.getElementById('wordsProgress');
-        this.keyboard = document.getElementById('keyboard');
-        this.restartGameBtn = document.getElementById('restartGameBtn');
-        this.categoryDisplay = document.getElementById('categoryName');
-        this.streakDisplay = document.getElementById('streakDisplay');
+        const domManager = this.app.getDOMManager();
+        this.wordDisplay = domManager.getById('wordDisplay');
+        this.wrongLettersDisplay = domManager.getById('wrongLetters');
+        this.progressDisplay = domManager.getById('wordsProgress');
+        this.keyboard = domManager.getById('keyboard');
+        this.restartGameBtn = domManager.getById('restartGameBtn');
+        this.categoryDisplay = domManager.getById('categoryName');
+        this.streakDisplay = domManager.getById('streakDisplay');
         
         // Cache des éléments du hangman pour optimiser les performances
         this.hangmanParts = document.querySelectorAll('#hangman .part');
@@ -101,15 +102,19 @@ class PenduGameEngine {
     
     async loadCategories() {
         try {
-            console.log('📡 Chargement des catégories depuis l\'API MySQL...');
+            console.log('📡 Chargement des catégories avec niveaux depuis l\'API MySQL...');
             
-            // Utiliser le client API centralisé
-            const categories = await window.HangmanAPI.getCategories();
+            // Obtenir les niveaux activés par l'utilisateur
+            const enabledLevels = this.app.getLevelManager().getEnabledLevels();
+            console.log('🎯 Niveaux activés:', enabledLevels);
+            
+            // Utiliser la nouvelle API avec niveaux en format legacy pour compatibilité
+            const categories = await window.HangmanAPI.getCategoriesWithLevels(enabledLevels, 'legacy');
             
             this.categories = categories;
             this.totalWords = this.categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
             
-            console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots depuis MySQL`);
+            console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots (niveaux: ${enabledLevels.join(', ')})`);
             return true;
             
         } catch (error) {

@@ -381,9 +381,14 @@
             <div class="settings-content">
                 <h2>⚙️ Paramètres</h2>
                 
+                <!-- Section Niveaux -->
+                <div class="settings-section" id="levelSettingsContainer">
+                    <!-- Le contenu sera généré dynamiquement par LevelManager -->
+                </div>
+                
                 <!-- Section Difficulté -->
                 <div class="settings-section">
-                    <h3>🎯 Niveau de difficulté</h3>
+                    <h3>🎯 Options de difficulté</h3>
                     <div class="settings-grid">
                         <div class="setting-card">
                             <div class="setting-header">
@@ -426,7 +431,6 @@
                 </div>
                 
                 <div class="settings-actions">
-                    <button class="btn btn-primary" id="saveSettingsBtn">💾 Sauvegarder</button>
                     <button class="btn btn-secondary" id="resetSettingsBtn">🔄 Réinitialiser</button>
                     <button class="btn btn-secondary" id="backToMenuFromSettingsBtn">🏠 Retour au menu</button>
                 </div>
@@ -437,6 +441,7 @@
     <!-- JavaScript modulaire -->
     <script src="js/dom-manager.js"></script>
     <script src="js/difficulty-manager.js"></script>
+    <script src="js/level-manager.js"></script>
     <script src="js/word-utils.js"></script>
     <script src="js/api-client.js"></script>
     <script src="js/virtual-keyboard.js"></script>
