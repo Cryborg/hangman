@@ -282,14 +282,14 @@ class PenduApp {
             }
         }
         
+        // Le bouton "Passer" est géré par les modes de jeu via showNextWordButton/hideNextWordButton
+        // Ne pas l'afficher automatiquement dans la vue game
         if (this.nextWordHeaderBtn) {
-            if (activeView === 'game') {
-                // Afficher le bouton seulement en vue jeu
-                this.nextWordHeaderBtn.style.display = '';
-            } else {
+            if (activeView !== 'game') {
                 // Masquer le bouton dans les autres vues
                 this.nextWordHeaderBtn.style.display = 'none';
             }
+            // Si on est en vue game, laisser les modes de jeu décider via showNextWordButton()
         }
     }
     
@@ -404,10 +404,11 @@ class PenduApp {
     showNextWordButton() {
         // Afficher le bouton du header
         if (this.nextWordHeaderBtn) {
-            this.nextWordHeaderBtn.style.display = '';
+            this.nextWordHeaderBtn.style.display = 'block';
+            console.log('🎯 Bouton Passer affiché dans le header');
         }
         
-        // Masquer les anciens boutons dans la zone de jeu
+        // Masquer les anciens boutons dans la zone de jeu (sécurité)
         if (this.nextWordSection) {
             this.nextWordSection.style.display = 'none';
         }
@@ -420,6 +421,7 @@ class PenduApp {
         // Masquer le bouton du header
         if (this.nextWordHeaderBtn) {
             this.nextWordHeaderBtn.style.display = 'none';
+            console.log('🎯 Bouton Passer masqué du header');
         }
         
         // Masquer aussi les anciens boutons par sécurité
