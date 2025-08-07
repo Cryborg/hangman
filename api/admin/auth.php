@@ -7,6 +7,11 @@
 
 require_once __DIR__ . '/../config.php';
 
+// Debug pour la production
+if (!defined('ADMIN_ENABLED')) {
+    error_log("Auth API - ADMIN_ENABLED not defined. Config.php may not be loaded correctly.");
+}
+
 class AdminAuth {
     private static $sessionKey = 'hangman_admin_session';
     
@@ -172,10 +177,13 @@ class AdminAuth {
 $isAuthRequest = basename($_SERVER['SCRIPT_NAME']) === 'auth.php';
 
 if ($isAuthRequest && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true);
     
     if (!$input) {
-        sendErrorResponse(400, 'Invalid JSON input');
+        error_log("Auth API - Invalid JSON: " . $rawInput);
+        error_log("Auth API - JSON Error: " . json_last_error_msg());
+        sendErrorResponse(400, 'Invalid JSON input: ' . json_last_error_msg());
         exit();
     }
     
