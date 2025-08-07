@@ -111,13 +111,15 @@
     background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xxl);
-    max-width: 900px;
+    max-width: min(900px, 95vw);
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--border-primary);
     animation: slideIn var(--transition-normal);
+    box-sizing: border-box;
 }
 
 .modal-content h3 {
@@ -131,8 +133,8 @@
 /* Game modes grid */
 .game-modes {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
 }
 
@@ -358,6 +360,81 @@
     font-size: 0.85rem;
     color: var(--primary-color);
     margin: var(--spacing-xs) 0;
+}
+
+/* ===== RESPONSIVE MODAL ===== */
+
+/* Mobile et petits écrans */
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95vw;
+        width: 95vw;
+        padding: var(--spacing-lg);
+        margin: var(--spacing-sm);
+    }
+    
+    .modal-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .game-modes {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .mode-card {
+        padding: var(--spacing-lg);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .mode-icon {
+        font-size: 3rem;
+    }
+    
+    .mode-card h4 {
+        font-size: 1.3rem;
+    }
+    
+    .time-buttons {
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+    }
+    
+    .time-btn {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.8rem;
+        min-width: 60px;
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+    .modal-content {
+        max-width: 98vw;
+        width: 98vw;
+        padding: var(--spacing-md);
+        margin: var(--spacing-xs);
+    }
+    
+    .modal-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .mode-card {
+        padding: var(--spacing-md);
+    }
+    
+    .mode-card p {
+        font-size: 0.9rem;
+    }
+    
+    .time-btn {
+        min-width: 50px;
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
 }
 
 /* Responsive géré dans responsive.css */
