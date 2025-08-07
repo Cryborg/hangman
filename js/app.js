@@ -23,6 +23,7 @@ class PenduApp {
         this.uiModule = null;
         this.modalManager = null;
         this.settingsModule = null;
+        this.fullscreenManager = null;
         
         this.init();
     }
@@ -203,6 +204,11 @@ class PenduApp {
         
         if (typeof PenduSettings !== 'undefined') {
             this.settingsModule = new PenduSettings(this);
+        }
+        
+        // Initialiser le gestionnaire de plein écran
+        if (typeof FullscreenManager !== 'undefined') {
+            this.fullscreenManager = new FullscreenManager();
         }
     }
     

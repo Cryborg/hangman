@@ -1,5 +1,56 @@
 /* ===== RESPONSIVE - MEDIA QUERIES ===== */
 
+/* ===== RESPONSIVE PLEIN ÉCRAN ===== */
+
+/* Mobile en plein écran */
+@media (max-width: 1024px) {
+    .fullscreen-mode .word-display {
+        font-size: 2rem;
+    }
+    
+    .fullscreen-mode .hangman-container {
+        padding: var(--spacing-md);
+    }
+    
+    .fullscreen-mode #hangman {
+        max-width: 250px;
+        max-height: 280px;
+    }
+    
+    .fullscreen-mode .app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    
+    .fullscreen-mode .container {
+        padding-top: 80px; /* Compenser le header fixe */
+    }
+}
+
+/* Desktop en plein écran */
+@media (min-width: 1025px) {
+    .fullscreen-mode .word-display {
+        font-size: 4rem;
+        padding: var(--spacing-xl);
+    }
+    
+    .fullscreen-mode .hangman-container {
+        padding: var(--spacing-xxl, 3rem);
+    }
+    
+    .fullscreen-mode #hangman {
+        max-width: 450px;
+        max-height: 500px;
+    }
+    
+    .fullscreen-mode .keyboard {
+        transform: scale(1.1);
+        transform-origin: center;
+    }
+}
+
 /* ===== MOBILE ET TABLETTES (width ≤ 1024px) ===== */
 
 @media (max-width: 1024px) {

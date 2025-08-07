@@ -1,5 +1,55 @@
 /* ===== LAYOUT - HEADER, NAVIGATION, SYSTÈME DE VUES ===== */
 
+/* ===== MODE PLEIN ÉCRAN ===== */
+
+.fullscreen-mode {
+    background: var(--bg-primary) !important;
+    overflow: hidden;
+}
+
+.fullscreen-mode .app-header {
+    z-index: 9999;
+}
+
+.fullscreen-mode .container {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.fullscreen-mode #gameView .container {
+    padding: var(--spacing-lg);
+}
+
+.fullscreen-mode .word-display {
+    font-size: 3.5rem;
+}
+
+.fullscreen-mode .hangman-container {
+    padding: var(--spacing-xl);
+}
+
+.fullscreen-mode #hangman {
+    max-width: 350px;
+    max-height: 400px;
+}
+
+/* Animation d'entrée en plein écran */
+@keyframes fullscreenEnter {
+    from {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.fullscreen-mode .view.active {
+    animation: fullscreenEnter 0.3s ease-out;
+}
+
 /* Header avec menu hamburger */
 .app-header {
     background: var(--bg-secondary);
