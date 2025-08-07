@@ -1,50 +1,5 @@
 /* ===== ADMIN RESPONSIVE - Media queries et adaptations ===== */
 
-/* Dashboard moderne - Responsive */
-@media (max-width: 768px) {
-    .stats-overview {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-    }
-    
-    .analysis-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
-    
-    .top-categories-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .difficulty-pie {
-        flex-direction: column;
-        gap: var(--spacing-lg);
-        align-items: center;
-    }
-    
-    .pie-chart {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .length-label {
-        min-width: 80px;
-        font-size: 0.8rem;
-    }
-    
-    .stat-card {
-        padding: var(--spacing-md);
-    }
-    
-    .stat-card.large .stat-number {
-        font-size: 2.5rem;
-    }
-    
-    .stat-number {
-        font-size: 1.8rem;
-    }
-}
-
 /* ===== LARGE SCREENS (1400px+) ===== */
 @media (min-width: 1400px) {
     .admin-header-content,
@@ -163,6 +118,50 @@
 
 /* ===== TABLET PORTRAIT (768px) ===== */
 @media (max-width: 768px) {
+    /* Stats et grilles adaptées */
+    .stats-overview {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .analysis-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .top-categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .difficulty-pie {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        align-items: center;
+    }
+    
+    .pie-chart {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .length-label {
+        min-width: 80px;
+        font-size: 0.8rem;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-card.large .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    /* Interface et navigation */
     /* Header compact avec logo + déconnexion sur la même ligne */
     .admin-header-content {
         flex-direction: row;
@@ -188,13 +187,11 @@
         display: none; /* Cache le nom d'utilisateur */
     }
     
-    /* Bouton déconnexion plus petit et compact */
-    .admin-user .btn,
-    .admin-user .btn-secondary,
+    /* Bouton déconnexion compact */
     #logoutBtn {
         padding: 4px 8px !important;
         font-size: 0.75rem !important;
-        width: auto !important;  /* Empêche le 100% de largeur */
+        width: auto !important;
         min-width: auto !important;
     }
     
@@ -692,12 +689,3 @@
     }
 }
 
-/* FIX FINAL - Bouton déconnexion toujours compact peu importe la taille écran */
-#logoutBtn {
-    width: auto !important;
-    min-width: auto !important;
-    max-width: 150px !important;
-    padding: 4px 8px !important;
-    font-size: 0.75rem !important;
-    line-height: 1.2 !important;
-}
