@@ -79,7 +79,10 @@ class PenduApp {
         this.navMenu = document.getElementById('navMenu');
         this.navLinks = document.querySelectorAll('.nav-link');
         this.views = document.querySelectorAll('.view');
-        this.restartGameLink = document.getElementById('restartGameLink');
+        
+        // Nouveaux boutons du header
+        this.restartGameHeaderBtn = document.getElementById('restartGameHeaderBtn');
+        this.fullscreenHeaderBtn = document.getElementById('fullscreenHeaderBtn');
         
         // Boutons Passer (desktop et mobile)
         this.nextWordBtn = document.getElementById('nextWordBtn');
@@ -96,6 +99,21 @@ class PenduApp {
     initializeNavigation() {
         // Menu hamburger
         this.hamburgerMenu.addEventListener('click', () => this.toggleMenu());
+        
+        // Boutons du header
+        if (this.restartGameHeaderBtn) {
+            this.restartGameHeaderBtn.addEventListener('click', () => {
+                this.showRestartConfirmation();
+            });
+        }
+        
+        if (this.fullscreenHeaderBtn) {
+            this.fullscreenHeaderBtn.addEventListener('click', () => {
+                if (this.fullscreenManager) {
+                    this.fullscreenManager.handleToggle({ preventDefault: () => {} });
+                }
+            });
+        }
         
         // Liens de navigation
         this.navLinks.forEach(link => {

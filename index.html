@@ -22,7 +22,10 @@
     <!-- Header avec menu hamburger -->
     <header class="app-header">
         <div class="header-content">
-            <h1>🎲 Jeu du Pendu</h1>
+            <div class="header-actions">
+                <button class="header-btn" id="restartGameHeaderBtn" title="Recommencer la partie">🔄</button>
+                <button class="header-btn" id="fullscreenHeaderBtn" title="Plein écran">🖼️</button>
+            </div>
             <button class="hamburger-menu" id="hamburgerMenu">
                 <span></span>
                 <span></span>
@@ -34,12 +37,10 @@
         <nav class="nav-menu" id="navMenu">
             <ul>
                 <li><a href="#" data-view="menu" class="nav-link active">🏠 Accueil</a></li>
-                <li><a href="#" id="restartGameLink" class="nav-link">🔄 Recommencer</a></li>
                 <li><a href="#" data-view="stats" class="nav-link">📊 Statistiques</a></li>
                 <li class="nav-separator"></li>
                 <li><a href="#" data-view="changelog" class="nav-link">📜 Nouveautés</a></li>
                 <li><a href="#" data-view="settings" class="nav-link">⚙️ Paramètres</a></li>
-                <li><a href="#" id="fullscreenToggle" class="nav-link">🖼️ Plein écran</a></li>
                 <li class="nav-separator"></li>
                 <li><a href="admin.html" class="nav-link">🔧 Administration</a></li>
                 <li><a href="../../index.html" class="nav-link">🕹️ Retour à la borne</a></li>

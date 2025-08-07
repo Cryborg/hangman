@@ -27,7 +27,7 @@ class FullscreenManager {
      * Initialise le gestionnaire
      */
     init() {
-        this.button = document.getElementById('fullscreenToggle');
+        this.button = document.getElementById('fullscreenHeaderBtn');
         
         if (!this.button) {
             console.warn('🖼️ Bouton plein écran non trouvé');
@@ -166,10 +166,10 @@ class FullscreenManager {
         if (!this.button) return;
         
         if (this.isFullscreen) {
-            this.button.innerHTML = '🔳 Sortir plein écran';
+            this.button.innerHTML = '🔳';
             this.button.setAttribute('title', 'Sortir du mode plein écran');
         } else {
-            this.button.innerHTML = '🖼️ Plein écran';
+            this.button.innerHTML = '🖼️';
             this.button.setAttribute('title', 'Passer en mode plein écran');
         }
     }

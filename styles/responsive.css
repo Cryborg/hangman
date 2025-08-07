@@ -472,8 +472,15 @@ html, body {
         padding: var(--spacing-md);
     }
     
-    .header-content h1 {
-        font-size: 1.2rem;
+    /* Boutons header plus petits sur mobile */
+    .header-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+    
+    .header-actions {
+        gap: var(--spacing-xs);
     }
     
     .container {
