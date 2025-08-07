@@ -36,6 +36,22 @@ try {
         $category['display_order'] = (int) $category['display_order'];
         $category['active'] = (bool) $category['active'];
         $category['total_words'] = (int) $category['total_words'];
+        
+        // Get tags for this category
+        $categoryTagsQuery = "
+            SELECT t.name, t.slug, t.color 
+            FROM hangman_tags t
+            INNER JOIN hangman_category_tag ct ON t.id = ct.tag_id
+            WHERE ct.category_id = ? AND t.active = 1
+            ORDER BY t.display_order ASC, t.name ASC
+        ";
+        $categoryTagsStmt = $db->prepare($categoryTagsQuery);
+        $categoryTagsStmt->execute([$category['id']]);
+        $categoryTags = $categoryTagsStmt->fetchAll();
+        
+        $category['tags'] = array_map(function($tag) {
+            return $tag['name'];
+        }, $categoryTags);
     }
     
     // Retrieve all words with category info

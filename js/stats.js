@@ -271,10 +271,10 @@ class PenduStats {
     }
     
     updateStatsOverview() {
-        const statsFoundWords = document.getElementById('statsFoundWords');
-        const statsTotalWords = document.getElementById('statsTotalWords');
-        const statsBestStreak = document.getElementById('statsBestStreak');
-        const statsCurrentStreak = document.getElementById('statsCurrentStreak');
+        const statsFoundWords = window.domManager.statsFoundWords;
+        const statsTotalWords = window.domManager.statsTotalWords;
+        const statsBestStreak = window.domManager.statsBestStreak;
+        const statsCurrentStreak = window.domManager.statsCurrentStreak;
         
         if (statsFoundWords) {
             statsFoundWords.textContent = this.stats.foundWords;
@@ -294,7 +294,7 @@ class PenduStats {
     }
     
     updateAchievementsDisplay() {
-        const achievementsGrid = document.getElementById('achievementsGrid');
+        const achievementsGrid = window.domManager.achievementsGrid;
         if (!achievementsGrid) return;
         
         achievementsGrid.innerHTML = '';

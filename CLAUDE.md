@@ -203,6 +203,21 @@ Jeu du pendu moderne avec système de navigation, statistiques avancées, achiev
 - Support tactile et souris
 - Gestion des options de difficulté
 
+##### `DOMManager` (dom-manager.js)
+- Gestionnaire centralisé pour l'accès au DOM
+- **Cache intelligent** : Évite les getElementById répétés
+- **Méthodes principales** :
+  - `getById(id)` : Récupère un élément par ID avec cache
+  - `get(selector)` : Récupère un élément par sélecteur avec cache
+  - `getAll(selector)` : Récupère plusieurs éléments (pas de cache)
+  - `setText(id, text)` : Met à jour le textContent
+  - `setHTML(id, html)` : Met à jour l'innerHTML
+  - `addClass/removeClass/toggleClass(id, className)` : Gestion des classes
+  - `addEventListener(id, event, handler)` : Event listeners avec cleanup automatique
+- **Initialisation** : Pré-charge les éléments les plus couramment utilisés
+- **Performance** : Réduit drastiquement les accès DOM répétitifs
+- **Usage** : `this.domManager.getById('elementId')` au lieu de `document.getElementById('elementId')`
+
 #### Architecture détaillée des modes de jeu
 
 ##### Classes de base
@@ -342,6 +357,11 @@ penduApp.modalManager   // ModalManager instance
 
 ## 🔄 Points d'entrée pour modifications
 
+### 🎯 Bonnes pratiques de développement
+- **Accès DOM** : Toujours utiliser `this.domManager.getById()` au lieu de `document.getElementById()`
+- **Event listeners** : Utiliser `this.domManager.addEventListener()` pour un cleanup automatique
+- **Performance** : Le DOMManager met en cache les éléments, évitant les recherches DOM répétées
+
 ### Ajouter une nouvelle catégorie
 1. Modifier `categories.json` : ajouter dans l'array `categories`
 2. La détection est automatique, aucun code à modifier
@@ -392,6 +412,84 @@ Le jeu propose un système de difficulté modulaire avec deux options indépenda
 ### Gestion des caractères non alphabétiques
 - **Exemples** : "RALPH 2.0" (le "2.0" est caché si option chiffres activée), "TÉLÉPHONE" (le "É" est caché si option accents activée)
 - **Catégories concernées** : Toutes les catégories bénéficient des accents français corrects
+
+## 🔧 Interface d'Administration
+
+### Architecture des Managers
+L'interface d'administration utilise une architecture modulaire avec des managers spécialisés :
+- **AdminApp.js** : Point d'entrée principal et coordination
+- **CategoryManager.js** : Gestion des catégories (CRUD)
+- **WordManager.js** : Gestion des mots (CRUD)  
+- **TagManager.js** : Gestion des tags (CRUD)
+- **UIManager.js** : Gestion des modales, toasts, interfaces
+- **ApiClient.js** : Communication avec l'API REST
+
+### Système de Modales
+**Pattern standard pour toutes les modales :**
+
+```javascript
+// 1. Méthodes standardisées
+showAddModal()      // Création d'une entité
+showEditModal(id)   // Édition d'une entité
+
+// 2. Structure des modales
+showAddModal() {
+    const content = `<form id="addEntityForm">...</form>`;
+    
+    const actions = `
+        <button class="btn btn-secondary" onclick="entityManager.closeAddModal()">
+            Annuler
+        </button>
+        <button class="btn btn-primary" onclick="entityManager.handleAddSubmit()">
+            🚀 Créer
+        </button>
+    `;
+
+    const modalId = this.uiManager.createModal('Titre', content, { actions });
+    
+    // IMPORTANT : Stocker l'ID pour la fermeture
+    document.getElementById('addEntityForm').dataset.modalId = modalId;
+    this.currentAddModalId = modalId;
+}
+
+// 3. Handlers de modales
+closeAddModal() {
+    if (this.currentAddModalId) {
+        this.uiManager.closeModal(this.currentAddModalId);
+        this.currentAddModalId = null;
+    }
+}
+
+handleAddSubmit() {
+    const form = document.getElementById('addEntityForm');
+    if (form) {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        this.createEntity(data).then(() => {
+            this.closeAddModal();
+        });
+    }
+}
+```
+
+### Event Listeners
+**Les boutons d'ajout utilisent des IDs standardisés :**
+- `addCategoryBtn` → `categoryManager.showAddModal()`
+- `addWordBtn` → `wordManager.showAddModal()`  
+- `addTagBtn` → `tagManager.showAddModal()`
+
+**Déclaration dans AdminApp.js :**
+```javascript
+document.getElementById('addTagBtn')?.addEventListener('click', () => {
+    this.tagManager.showAddModal();
+});
+```
+
+### Problèmes courants évités
+1. **IDs de modales dynamiques** : Toujours stocker le vrai `modalId` retourné par `createModal()`
+2. **Nommage cohérent** : Utiliser `showAddModal`/`showEditModal` partout
+3. **Handlers personnalisés** : Éviter les IDs statiques dans `closeModal()`, utiliser des handlers
+4. **Validation PHP** : Toujours vérifier que les variables ne sont pas `null` avant `trim()`, `preg_match()`, etc.
 
 ## 🐳 Infrastructure Docker
 

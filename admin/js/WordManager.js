@@ -4,9 +4,13 @@
  * Principe DRY : Logique des mots centralisée
  */
 class WordManager {
-    constructor(apiClient, uiManager) {
+    constructor(apiClient, uiManager, domManager) {
+        if (!domManager) {
+            throw new Error('WordManager requires a DOMManager instance');
+        }
         this.apiClient = apiClient;
         this.uiManager = uiManager;
+        this.domManager = domManager;
         this.currentCategory = null;
         this.currentWords = [];
         this.currentPage = 1;
@@ -18,12 +22,12 @@ class WordManager {
 
     setupEventListeners() {
         // Bouton retour aux catégories
-        document.getElementById('backToCategoriesBtn')?.addEventListener('click', () => {
+        this.domManager.getById('backToCategoriesBtn')?.addEventListener('click', () => {
             this.showCategoriesView();
         });
 
         // Recherche de mots
-        const searchInput = document.getElementById('wordsSearchInput');
+        const searchInput = this.domManager.getById('wordsSearchInput');
         if (searchInput) {
             searchInput.addEventListener('input', this.uiManager.debounce((e) => {
                 this.searchWords(e.target.value);
@@ -31,29 +35,29 @@ class WordManager {
         }
 
         // Clear search
-        document.getElementById('clearSearchBtn')?.addEventListener('click', () => {
+        this.domManager.getById('clearSearchBtn')?.addEventListener('click', () => {
             this.clearSearch();
         });
 
         // Filtres de difficulté
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        this.domManager.getAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 this.setDifficultyFilter(e.target.dataset.difficulty);
             });
         });
 
         // Pagination
-        document.getElementById('prevPageBtn')?.addEventListener('click', () => {
+        this.domManager.getById('prevPageBtn')?.addEventListener('click', () => {
             this.previousPage();
         });
 
-        document.getElementById('nextPageBtn')?.addEventListener('click', () => {
+        this.domManager.getById('nextPageBtn')?.addEventListener('click', () => {
             this.nextPage();
         });
 
         // Bouton ajout de mot
-        document.getElementById('addWordToCategoryBtn')?.addEventListener('click', () => {
-            this.showAddWordModal();
+        this.domManager.getById('addWordToCategoryBtn')?.addEventListener('click', () => {
+            this.showAddModal();
         });
     }
 
@@ -67,8 +71,8 @@ class WordManager {
             await this.loadCategoryWords(categoryId);
             
             // Changer de vue
-            document.getElementById('categoriesListView').classList.remove('active');
-            document.getElementById('categoryDetailView').classList.add('active');
+            this.domManager.getById('categoriesListView').classList.remove('active');
+            this.domManager.getById('categoryDetailView').classList.add('active');
         } catch (error) {
             this.uiManager.showToast('Erreur', 'Impossible de charger les mots: ' + error.message, 'error');
         } finally {
@@ -172,9 +176,9 @@ class WordManager {
     // =================
     
     updateCategoryHeader(category, stats) {
-        const iconEl = document.getElementById('categoryIcon');
-        const nameEl = document.getElementById('categoryName');
-        const statsEl = document.getElementById('categoryStats');
+        const iconEl = this.domManager.getById('categoryIcon');
+        const nameEl = this.domManager.getById('categoryName');
+        const statsEl = this.domManager.getById('categoryStats');
         
         if (iconEl) iconEl.textContent = category.icon;
         if (nameEl) nameEl.textContent = category.name;
@@ -191,13 +195,13 @@ class WordManager {
         };
 
         Object.entries(elements).forEach(([id, value]) => {
-            const el = document.getElementById(id);
+            const el = this.domManager.getById(id);
             if (el) el.textContent = value;
         });
     }
 
     renderWords(words) {
-        const tbody = document.querySelector('#categoryWordsTable tbody');
+        const tbody = this.domManager.get('#categoryWordsTable tbody');
         if (!tbody) return;
         
         if (words.length === 0) {
@@ -224,7 +228,7 @@ class WordManager {
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn btn-small btn-secondary" onclick="wordManager.showEditWordModal(${word.id})" title="Modifier">
+                        <button class="btn btn-small btn-secondary" onclick="wordManager.showEditModal(${word.id})" title="Modifier">
                             ✏️
                         </button>
                         <button class="btn btn-small btn-danger" onclick="wordManager.deleteWord(${word.id}, '${this.uiManager.escapeHtml(word.word)}')" title="Supprimer">
@@ -249,10 +253,10 @@ class WordManager {
     }
 
     updatePagination(pagination) {
-        const container = document.getElementById('wordsPagination');
-        const prevBtn = document.getElementById('prevPageBtn');
-        const nextBtn = document.getElementById('nextPageBtn');
-        const info = document.getElementById('paginationInfo');
+        const container = this.domManager.getById('wordsPagination');
+        const prevBtn = this.domManager.getById('prevPageBtn');
+        const nextBtn = this.domManager.getById('nextPageBtn');
+        const info = this.domManager.getById('paginationInfo');
         
         if (!container) return;
         
@@ -276,7 +280,7 @@ class WordManager {
     }
 
     clearSearch() {
-        const searchInput = document.getElementById('wordsSearchInput');
+        const searchInput = this.domManager.getById('wordsSearchInput');
         if (searchInput) {
             searchInput.value = '';
             this.searchWords('');
@@ -285,7 +289,7 @@ class WordManager {
 
     setDifficultyFilter(difficulty) {
         // Mettre à jour les boutons visuels
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        this.domManager.getAll('.filter-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
         });
 
@@ -314,8 +318,8 @@ class WordManager {
     // =================
     
     showCategoriesView() {
-        document.getElementById('categoriesListView').classList.add('active');
-        document.getElementById('categoryDetailView').classList.remove('active');
+        this.domManager.getById('categoriesListView').classList.add('active');
+        this.domManager.getById('categoryDetailView').classList.remove('active');
         this.currentCategory = null;
         this.currentWords = [];
         this.resetFilters();
@@ -326,10 +330,10 @@ class WordManager {
         this.currentDifficulty = 'all';
         this.currentPage = 1;
         
-        const searchInput = document.getElementById('wordsSearchInput');
+        const searchInput = this.domManager.getById('wordsSearchInput');
         if (searchInput) searchInput.value = '';
         
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        this.domManager.getAll('.filter-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.difficulty === 'all');
         });
     }
@@ -338,7 +342,7 @@ class WordManager {
     // WORD MODALS
     // =================
     
-    showAddWordModal() {
+    showAddModal() {
         if (!this.currentCategory) {
             this.uiManager.showToast('Erreur', 'Aucune catégorie sélectionnée', 'error');
             return;
@@ -381,12 +385,12 @@ class WordManager {
         const modalId = this.uiManager.createModal('Nouveau mot', content, { actions });
         
         // Stocker l'ID pour la fermeture
-        document.getElementById('addWordForm').dataset.modalId = modalId;
+        this.domManager.getById('addWordForm').dataset.modalId = modalId;
     }
 
     async handleAddWordSubmit() {
         const formData = this.uiManager.getFormData('addWordForm');
-        const modalId = document.getElementById('addWordForm').dataset.modalId;
+        const modalId = this.domManager.getById('addWordForm').dataset.modalId;
         
         if (!formData.word) {
             this.uiManager.showToast('Erreur', 'Le mot est requis', 'error');
@@ -401,7 +405,7 @@ class WordManager {
         }
     }
 
-    showEditWordModal(wordId) {
+    showEditModal(wordId) {
         const word = this.currentWords.find(w => w.id === wordId);
         if (!word) {
             this.uiManager.showToast('Erreur', 'Mot non trouvé', 'error');
@@ -452,12 +456,12 @@ class WordManager {
         const modalId = this.uiManager.createModal('Modifier le mot', content, { actions });
         
         // Stocker l'ID pour la fermeture
-        document.getElementById('editWordForm').dataset.modalId = modalId;
+        this.domManager.getById('editWordForm').dataset.modalId = modalId;
     }
 
     async handleEditWordSubmit() {
         const formData = this.uiManager.getFormData('editWordForm');
-        const modalId = document.getElementById('editWordForm').dataset.modalId;
+        const modalId = this.domManager.getById('editWordForm').dataset.modalId;
         
         if (!formData.word) {
             this.uiManager.showToast('Erreur', 'Le mot est requis', 'error');

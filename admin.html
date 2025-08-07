@@ -104,56 +104,115 @@
             <section id="dashboard" class="admin-section active">
                 <div class="section-header">
                     <h2>📊 Tableau de bord</h2>
-                    <p>Vue d'ensemble de votre base de données</p>
+                    <p>Vue d'ensemble complète de votre base de données</p>
                 </div>
                 
-                <div class="dashboard-grid">
-                    <div class="dashboard-card">
-                        <div class="card-icon">📁</div>
-                        <div class="card-content">
-                            <h3 id="totalCategories">-</h3>
-                            <p>Catégories</p>
+                <!-- Stats principales -->
+                <div class="stats-overview">
+                    <div class="stat-card large">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalWords">-</div>
+                            <div class="stat-label">Mots Total</div>
+                            <div class="stat-subtitle">Dans <span id="totalCategories">-</span> catégories</div>
                         </div>
                     </div>
                     
-                    <div class="dashboard-card">
-                        <div class="card-icon">📝</div>
-                        <div class="card-content">
-                            <h3 id="totalWords">-</h3>
-                            <p>Mots</p>
+                    <div class="stat-card">
+                        <div class="stat-icon">✨</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="accentWordsCount">-</div>
+                            <div class="stat-label">Avec Accents</div>
+                            <div class="stat-percentage" id="accentPercentage">-</div>
                         </div>
                     </div>
                     
-                    <div class="dashboard-card">
-                        <div class="card-icon">🏷️</div>
-                        <div class="card-content">
-                            <h3 id="totalTags">-</h3>
-                            <p>Tags</p>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔢</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="numberWordsCount">-</div>
+                            <div class="stat-label">Avec Chiffres</div>
+                            <div class="stat-percentage" id="numberPercentage">-</div>
                         </div>
                     </div>
                     
-                    <div class="dashboard-card">
-                        <div class="card-icon">🎯</div>
-                        <div class="card-content">
-                            <h3 id="avgWordsPerCategory">-</h3>
-                            <p>Mots/Catégorie</p>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏷️</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalTags">-</div>
+                            <div class="stat-label">Tags</div>
+                            <div class="stat-percentage" id="tagsPercentage">-</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="dashboard-charts">
-                    <div class="chart-card">
-                        <h3>📈 Répartition par difficulté</h3>
-                        <div id="difficultyChart" class="chart-container">
-                            <!-- Chart will be generated here -->
+                <!-- Analyse par longueur et difficulté -->
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>📏 Répartition par longueur</h3>
+                        <div class="length-distribution">
+                            <div class="length-bar" data-length="3-5">
+                                <span class="length-label">3-5 lettres</span>
+                                <div class="progress-bar"><div class="progress-fill" id="length35"></div></div>
+                                <span class="length-count" id="count35">-</span>
+                            </div>
+                            <div class="length-bar" data-length="6-8">
+                                <span class="length-label">6-8 lettres</span>
+                                <div class="progress-bar"><div class="progress-fill" id="length68"></div></div>
+                                <span class="length-count" id="count68">-</span>
+                            </div>
+                            <div class="length-bar" data-length="9-12">
+                                <span class="length-label">9-12 lettres</span>
+                                <div class="progress-bar"><div class="progress-fill" id="length912"></div></div>
+                                <span class="length-count" id="count912">-</span>
+                            </div>
+                            <div class="length-bar" data-length="13+">
+                                <span class="length-label">13+ lettres</span>
+                                <div class="progress-bar"><div class="progress-fill" id="length13plus"></div></div>
+                                <span class="length-count" id="count13plus">-</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="chart-card">
-                        <h3>🔠 Caractères spéciaux</h3>
-                        <div id="specialCharsChart" class="chart-container">
-                            <!-- Chart will be generated here -->
+                    <div class="analysis-card">
+                        <h3>🎯 Répartition par difficulté</h3>
+                        <div class="difficulty-pie" id="difficultyPie">
+                            <div class="pie-chart">
+                                <div class="pie-segment easy" id="easySegment"></div>
+                                <div class="pie-segment medium" id="mediumSegment"></div>
+                                <div class="pie-segment hard" id="hardSegment"></div>
+                            </div>
+                            <div class="difficulty-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color easy"></div>
+                                    <span>Facile: <strong id="easyCount">-</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color medium"></div>
+                                    <span>Moyen: <strong id="mediumCount">-</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color hard"></div>
+                                    <span>Difficile: <strong id="hardCount">-</strong></span>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Top catégories -->
+                <div class="top-categories-section">
+                    <h3>🏆 Top Catégories</h3>
+                    <div class="top-categories-grid" id="topCategories">
+                        <!-- Généré dynamiquement -->
+                    </div>
+                </div>
+                
+                <!-- Problèmes détectés -->
+                <div class="issues-section" id="issuesSection" style="display: none;">
+                    <h3>🔍 Problèmes Détectés</h3>
+                    <div class="issues-list" id="issuesList">
+                        <!-- Généré dynamiquement -->
                     </div>
                 </div>
             </section>
@@ -175,8 +234,8 @@
                                 <tr>
                                     <th>Icône</th>
                                     <th>Nom</th>
-                                    <th>Mots</th>
-                                    <th>Tags</th>
+                                    <th class="hide-mobile">Mots</th>
+                                    <th class="hide-mobile">Tags</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -288,10 +347,8 @@
                         <thead>
                             <tr>
                                 <th>Nom</th>
-                                <th>Slug</th>
-                                <th>Couleur</th>
-                                <th>Catégories</th>
-                                <th>Ordre</th>
+                                <th class="hide-mobile">Slug</th>
+                                <th class="hide-mobile">Couleur</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -354,10 +411,12 @@
     </div>
     
     <!-- Scripts modulaires -->
+    <script src="admin/js/DOMManager.js"></script>
     <script src="admin/js/ApiClient.js"></script>
     <script src="admin/js/UIManager.js"></script>
     <script src="admin/js/CategoryManager.js"></script>
     <script src="admin/js/WordManager.js"></script>
+    <script src="admin/js/TagManager.js"></script>
     <script src="admin/js/AdminApp.js"></script>
     <script src="admin/icon-selector.js"></script>
 </body>

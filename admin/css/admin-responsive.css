@@ -1,5 +1,50 @@
 /* ===== ADMIN RESPONSIVE - Media queries et adaptations ===== */
 
+/* Dashboard moderne - Responsive */
+@media (max-width: 768px) {
+    .stats-overview {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .analysis-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .top-categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .difficulty-pie {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        align-items: center;
+    }
+    
+    .pie-chart {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .length-label {
+        min-width: 80px;
+        font-size: 0.8rem;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-card.large .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+}
+
 /* ===== LARGE SCREENS (1400px+) ===== */
 @media (min-width: 1400px) {
     .admin-header-content,
@@ -74,20 +119,133 @@
     .admin-table {
         min-width: 600px;
     }
+    
+    /* Première colonne (icônes) plus étroite SEULEMENT pour le tableau des catégories */
+    #categoriesTable th:first-child,
+    #categoriesTable td:first-child,
+    #categoryWordsTable th:first-child,
+    #categoryWordsTable td:first-child {
+        width: 50px !important;
+        max-width: 50px !important;
+        text-align: center;
+    }
+    
+    /* Réduire la taille de TOUS les boutons en mobile */
+    .btn {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        min-height: auto !important;
+    }
+    
+    .btn-primary {
+        padding: 10px 16px !important;
+        /* width: 100% sera géré au cas par cas */
+    }
+    
+    /* Boutons d'action dans les tableaux encore plus petits */
+    .admin-table .action-buttons .btn,
+    .action-buttons .btn {
+        padding: 4px 6px !important;
+        font-size: 0.7rem !important;
+        min-width: auto !important;
+        width: auto !important;  /* Empêche le 100% de largeur */
+        line-height: 1.2 !important;
+    }
+    
+    /* Conteneur des boutons d'action plus compact et horizontal */
+    .action-buttons {
+        gap: 4px !important;
+        justify-content: flex-end !important;  /* Aligne à droite */
+        display: flex !important;
+        flex-direction: row !important;  /* Force l'alignement horizontal */
+    }
 }
 
 /* ===== TABLET PORTRAIT (768px) ===== */
 @media (max-width: 768px) {
-    /* Navigation mobile */
-    .admin-nav {
-        display: none;
+    /* Header compact avec logo + déconnexion sur la même ligne */
+    .admin-header-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        align-items: center;
+        padding: var(--spacing-sm) var(--spacing-md);
     }
     
-    .admin-nav-mobile {
-        display: flex;
+    .admin-logo {
+        flex: 1;
+    }
+    
+    .admin-logo h1 {
+        font-size: 1.2rem;
+    }
+    
+    .admin-user {
+        flex: 0 0 auto;
     }
     
     .admin-user span {
+        display: none; /* Cache le nom d'utilisateur */
+    }
+    
+    /* Bouton déconnexion plus petit et compact */
+    .admin-user .btn,
+    .admin-user .btn-secondary,
+    #logoutBtn {
+        padding: 4px 8px !important;
+        font-size: 0.75rem !important;
+        width: auto !important;  /* Empêche le 100% de largeur */
+        min-width: auto !important;
+    }
+    
+    /* Navigation en ligne complète en dessous */
+    .admin-nav {
+        display: flex;
+        gap: 2px;
+        width: 100%;
+        order: 3;
+        margin-top: var(--spacing-xs);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-nav .nav-btn {
+        flex: 1;
+        font-size: 0.7rem;
+        padding: var(--spacing-xs);
+        text-align: center;
+        white-space: nowrap;
+        min-width: 0;
+        background: rgba(60, 60, 60, 0.5);
+        color: var(--text-secondary);
+        border-color: var(--border-primary);
+    }
+    
+    /* Onglet actif très visible */
+    .admin-nav .nav-btn.active {
+        background: var(--primary-color) !important;
+        color: black !important;
+        font-weight: bold;
+        border-color: var(--primary-color) !important;
+    }
+    
+    /* Réduire tous les espaces dans les sections */
+    .section-header {
+        margin-bottom: var(--spacing-md) !important;
+        padding: 0 !important;
+    }
+    
+    .section-actions {
+        margin-bottom: var(--spacing-md) !important;
+    }
+    
+    .section-actions .btn {
+        width: 100%;
+        max-width: none !important;
+    }
+    
+    /* Cache la nav mobile qui n'est pas utilisée */
+    .admin-nav-mobile {
         display: none;
     }
     
@@ -254,18 +412,28 @@
         grid-template-columns: 1fr;
     }
     
-    /* Buttons full width on very small screens */
+    /* Par défaut, les boutons gardent leur taille normale */
     .btn {
-        width: 100%;
+        width: auto;
         justify-content: center;
     }
     
-    .section-actions .btn {
+    /* Seuls les boutons principaux sont en pleine largeur */
+    .btn-primary,
+    .section-actions .btn-primary,
+    .category-actions .btn-primary,
+    #addCategoryBtn,
+    #addWordToCategoryBtn,
+    #addTagBtn,
+    #importBtn,
+    #exportAllBtn {
         width: 100%;
     }
     
-    .category-actions .btn {
-        width: 100%;
+    /* Les boutons d'action restent compacts */
+    .action-buttons .btn {
+        width: auto !important;
+        padding: 4px 6px !important;
     }
     
     /* Filter buttons stack */
@@ -397,43 +565,6 @@
     }
 }
 
-/* ===== PRINT STYLES ===== */
-@media print {
-    .admin-header,
-    .admin-nav-mobile,
-    .mobile-nav,
-    .section-actions,
-    .action-buttons,
-    .data-actions,
-    .loading-overlay,
-    .toast-container {
-        display: none !important;
-    }
-    
-    .admin-main {
-        padding: 0;
-        max-width: none;
-    }
-    
-    .admin-section {
-        display: block !important;
-    }
-    
-    .admin-table-container {
-        border: 1px solid #000;
-        background: white;
-    }
-    
-    .admin-table th,
-    .admin-table td {
-        border: 1px solid #000;
-        color: #000;
-    }
-    
-    .admin-table th {
-        background: #f0f0f0 !important;
-    }
-}
 
 /* ===== DARK MODE SUPPORT ===== */
 @media (prefers-color-scheme: dark) {
@@ -506,4 +637,67 @@
     .stat-card:active {
         transform: scale(0.98);
     }
+    
+    /* Cacher certaines colonnes des tableaux en mobile */
+    .hide-mobile {
+        display: none !important;
+    }
+    
+    /* Optimisations tableaux pour mobile */
+    .admin-table-container {
+        padding: var(--spacing-sm);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-table {
+        min-width: 100%;
+        table-layout: fixed;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    /* Colonnes actions plus compactes */
+    .admin-table td.action-buttons {
+        width: 80px;
+        min-width: 80px;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .action-buttons .btn {
+        min-width: 32px;
+        min-height: 32px;
+        padding: var(--spacing-xs);
+        font-size: 0.9rem;
+    }
+    
+    /* Boutons carrés pour les icônes SAUF le bouton déconnexion */
+    .btn-small:not(#logoutBtn) {
+        min-width: 32px !important;
+        min-height: 32px !important;
+        padding: var(--spacing-xs) !important;
+        aspect-ratio: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* FIX FINAL - Bouton déconnexion toujours compact peu importe la taille écran */
+#logoutBtn {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: 150px !important;
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
 }

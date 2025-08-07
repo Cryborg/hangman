@@ -11,19 +11,24 @@ class AdminApp {
     }
 
     async init() {
-        // Initialiser les managers
+        // Initialiser le DOM Manager en premier
+        this.domManager = new AdminDOMManager();
+        
+        // Initialiser les autres managers
         this.apiClient = new ApiClient();
-        this.uiManager = new UIManager();
+        this.uiManager = new UIManager(this.domManager);
         
         // Managers spécifiques (injection de dépendances)
-        this.categoryManager = new CategoryManager(this.apiClient, this.uiManager);
-        this.wordManager = new WordManager(this.apiClient, this.uiManager);
+        this.categoryManager = new CategoryManager(this.apiClient, this.uiManager, this.domManager);
+        this.wordManager = new WordManager(this.apiClient, this.uiManager, this.domManager);
+        this.tagManager = new TagManager(this.apiClient, this.uiManager, this.domManager);
         
         // Exposer globalement pour compatibility avec HTML onclick
         window.apiClient = this.apiClient;
         window.uiManager = this.uiManager;
         window.categoryManager = this.categoryManager;
         window.wordManager = this.wordManager;
+        window.tagManager = this.tagManager;
         window.adminApp = this;
 
         // Setup des événements
@@ -95,16 +100,16 @@ class AdminApp {
     // =================
     
     showLoginInterface() {
-        document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('adminPage').style.display = 'none';
+        this.domManager.setVisible('loginPage', true);
+        this.domManager.setVisible('adminPage', false);
     }
 
     async showAdminInterface() {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('adminPage').style.display = 'block';
+        this.domManager.setVisible('loginPage', false);
+        this.domManager.setVisible('adminPage', true);
         
         // Mettre à jour le nom d'utilisateur
-        const usernameEls = document.querySelectorAll('#adminUsername');
+        const usernameEls = this.domManager.getAll('#adminUsername');
         usernameEls.forEach(el => {
             if (this.userData?.username) {
                 el.textContent = this.userData.username;
@@ -124,6 +129,12 @@ class AdminApp {
             
             // Charger les catégories (qui charge aussi les mots et stats)
             await this.categoryManager.loadCategories();
+            
+            // Charger les tags
+            await this.tagManager.loadTags();
+            
+            // Mettre à jour les stats du dashboard
+            await this.updateDashboardStats();
             
         } catch (error) {
             this.uiManager.showToast('Erreur', 'Erreur lors du chargement des données: ' + error.message, 'error');
@@ -175,6 +186,10 @@ class AdminApp {
         document.getElementById('addCategoryBtn')?.addEventListener('click', () => {
             this.categoryManager.showAddModal();
         });
+        
+        document.getElementById('addTagBtn')?.addEventListener('click', () => {
+            this.tagManager.showAddModal();
+        });
 
         // Import/Export setup
         this.setupImportExport();
@@ -198,10 +213,201 @@ class AdminApp {
     // DASHBOARD
     // =================
     
-    updateDashboardStats() {
-        // Mettre à jour les statistiques du dashboard
-        // Peut être implémenté plus tard si nécessaire
+    async updateDashboardStats() {
+        try {
+            // Utiliser les données en cache ou récupérer de l'API
+            let data = this.adminData;
+            
+            if (!data) {
+                const result = await this.apiClient.getAdminData();
+                if (result.success && result.data) {
+                    data = result.data;
+                    this.adminData = data; // Cache pour usage futur
+                }
+            }
+            
+            if (data) {
+                const { stats, categories, words } = data;
+                
+                // Analyser les mots
+                const analysis = this.analyzeWords(words);
+                
+                // Mettre à jour les stats principales
+                this.updateMainStats(stats, analysis);
+                
+                // Mettre à jour les analyses
+                this.updateLengthDistribution(analysis.lengthDistribution, words.length);
+                this.updateDifficultyPie(analysis.difficulties);
+                
+                // Top catégories
+                this.updateTopCategories(categories);
+                
+                // Détecter les problèmes
+                this.updateIssuesSection(analysis.issues);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour des stats:', error);
+        }
     }
+
+    analyzeWords(words) {
+        const frenchAccentsPattern = /[ÀÁÂÄÇÉÈÊËÏÎÔÖÙÚÛÜÿ]/i;
+        
+        let analysis = {
+            accents: 0,
+            numbers: 0,
+            corrupted: 0,
+            plain: 0,
+            difficulties: { easy: 0, medium: 0, hard: 0 },
+            lengthDistribution: { '3-5': 0, '6-8': 0, '9-12': 0, '13+': 0 },
+            issues: []
+        };
+
+        words.forEach(word => {
+            // Analyse des caractères
+            if (frenchAccentsPattern.test(word.word)) {
+                analysis.accents++;
+            } else if (word.has_numbers) {
+                analysis.numbers++;
+            } else if (word.has_accents) { // Caractères corrompus
+                analysis.corrupted++;
+            } else {
+                analysis.plain++;
+            }
+            
+            // Analyse de la difficulté
+            if (word.difficulty && analysis.difficulties[word.difficulty] !== undefined) {
+                analysis.difficulties[word.difficulty]++;
+            }
+            
+            // Analyse de la longueur
+            const length = word.length || word.word.length;
+            if (length <= 5) {
+                analysis.lengthDistribution['3-5']++;
+            } else if (length <= 8) {
+                analysis.lengthDistribution['6-8']++;
+            } else if (length <= 12) {
+                analysis.lengthDistribution['9-12']++;
+            } else {
+                analysis.lengthDistribution['13+']++;
+            }
+        });
+
+        // Détecter les problèmes
+        if (analysis.corrupted > 0) {
+            analysis.issues.push({
+                icon: '⚠️',
+                text: `Mots avec caractères corrompus détectés`,
+                count: analysis.corrupted
+            });
+        }
+
+        if (analysis.difficulties.easy === 0 || analysis.difficulties.medium === 0 || analysis.difficulties.hard === 0) {
+            analysis.issues.push({
+                icon: '⚖️',
+                text: `Déséquilibre dans les niveaux de difficulté`,
+                count: 1
+            });
+        }
+
+        return analysis;
+    }
+
+    updateMainStats(stats, analysis) {
+        const total = stats.active_words || 0;
+        
+        document.getElementById('totalWords').textContent = total.toLocaleString('fr-FR');
+        document.getElementById('totalCategories').textContent = stats.active_categories || '-';
+        
+        document.getElementById('accentWordsCount').textContent = analysis.accents;
+        document.getElementById('accentPercentage').textContent = 
+            total > 0 ? `${Math.round((analysis.accents / total) * 100)}%` : '0%';
+            
+        document.getElementById('numberWordsCount').textContent = analysis.numbers;
+        document.getElementById('numberPercentage').textContent = 
+            total > 0 ? `${Math.round((analysis.numbers / total) * 100)}%` : '0%';
+            
+        document.getElementById('totalTags').textContent = stats.active_tags || '-';
+        document.getElementById('tagsPercentage').textContent = 
+            stats.active_categories > 0 ? `${Math.round((stats.active_tags / stats.active_categories) * 100) / 10} par cat.` : '-';
+    }
+
+    updateLengthDistribution(distribution, total) {
+        Object.keys(distribution).forEach(range => {
+            const count = distribution[range];
+            const percentage = total > 0 ? (count / total) * 100 : 0;
+            
+            const fillElement = document.getElementById(`length${range.replace('-', '').replace('+', 'plus')}`);
+            const countElement = document.getElementById(`count${range.replace('-', '').replace('+', 'plus')}`);
+            
+            if (fillElement) fillElement.style.width = `${percentage}%`;
+            if (countElement) countElement.textContent = count;
+        });
+    }
+
+    updateDifficultyPie(difficulties) {
+        const total = Object.values(difficulties).reduce((a, b) => a + b, 0);
+        
+        document.getElementById('easyCount').textContent = difficulties.easy;
+        document.getElementById('mediumCount').textContent = difficulties.medium;
+        document.getElementById('hardCount').textContent = difficulties.hard;
+        
+        if (total > 0) {
+            const easyPercent = (difficulties.easy / total) * 360;
+            const mediumPercent = (difficulties.medium / total) * 360;
+            const hardPercent = (difficulties.hard / total) * 360;
+            
+            const pieChart = document.querySelector('.pie-chart');
+            if (pieChart) {
+                pieChart.style.background = `conic-gradient(
+                    #2ed573 0deg ${easyPercent}deg,
+                    #ff6b35 ${easyPercent}deg ${easyPercent + mediumPercent}deg,
+                    #ff6b6b ${easyPercent + mediumPercent}deg 360deg
+                )`;
+            }
+        }
+    }
+
+    updateTopCategories(categories) {
+        const sortedCategories = categories
+            .sort((a, b) => (b.total_words || 0) - (a.total_words || 0))
+            .slice(0, 8);
+            
+        const container = document.getElementById('topCategories');
+        if (!container) return;
+        
+        container.innerHTML = sortedCategories.map(category => `
+            <div class="category-card" onclick="categoryManager.showCategoryDetail(${category.id})">
+                <div class="category-icon">${category.icon || '📁'}</div>
+                <div class="category-info">
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-count">${category.total_words || 0} mots</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    updateIssuesSection(issues) {
+        const section = document.getElementById('issuesSection');
+        const list = document.getElementById('issuesList');
+        
+        if (!section || !list) return;
+        
+        if (issues.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+        
+        section.style.display = 'block';
+        list.innerHTML = issues.map(issue => `
+            <div class="issue-item">
+                <div class="issue-icon">${issue.icon}</div>
+                <div class="issue-text">${issue.text}</div>
+                <div class="issue-count">${issue.count}</div>
+            </div>
+        `).join('');
+    }
+
 
     // =================
     // IMPORT/EXPORT (backward compatibility)

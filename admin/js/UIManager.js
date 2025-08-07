@@ -4,7 +4,11 @@
  * Principe DRY : Centralise la logique UI réutilisable
  */
 class UIManager {
-    constructor() {
+    constructor(domManager) {
+        if (!domManager) {
+            throw new Error('UIManager requires a DOMManager instance');
+        }
+        this.domManager = domManager;
         this.toastCounter = 0;
         this.setupToastStyles();
     }
@@ -52,7 +56,7 @@ class UIManager {
     }
 
     closeToast(toastId) {
-        const toast = document.getElementById(toastId);
+        const toast = this.domManager.getById(toastId);
         if (toast) {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
@@ -60,7 +64,7 @@ class UIManager {
     }
 
     getOrCreateToastContainer() {
-        let container = document.getElementById('toast-container');
+        let container = this.domManager.getById('toast-container');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
@@ -71,7 +75,8 @@ class UIManager {
     }
 
     setupToastStyles() {
-        if (document.getElementById('toast-styles')) return;
+        const existing = this.domManager.getById('toast-styles', true); // Supprime le warning
+        if (existing) return;
         
         const styles = document.createElement('style');
         styles.id = 'toast-styles';
@@ -160,7 +165,7 @@ class UIManager {
     // =================
     
     showLoading(show = true, message = 'Chargement...') {
-        const overlay = document.getElementById('loadingOverlay');
+        const overlay = this.domManager.getById('loadingOverlay');
         if (!overlay) return;
         
         const messageEl = overlay.querySelector('p');
@@ -168,7 +173,11 @@ class UIManager {
             messageEl.textContent = message;
         }
         
-        overlay.style.display = show ? 'flex' : 'none';
+        if (show) {
+            overlay.classList.add('show');
+        } else {
+            overlay.classList.remove('show');
+        }
     }
 
     // =================
@@ -214,7 +223,7 @@ class UIManager {
     }
 
     closeModal(modalId) {
-        const modal = document.getElementById(modalId);
+        const modal = this.domManager.getById(modalId);
         if (modal) {
             modal.classList.remove('show');
             setTimeout(() => modal.remove(), 300);
@@ -246,7 +255,7 @@ class UIManager {
     // =================
     
     getFormData(formId) {
-        const form = document.getElementById(formId);
+        const form = this.domManager.getById(formId);
         if (!form) return {};
         
         const formData = new FormData(form);
@@ -260,14 +269,14 @@ class UIManager {
     }
 
     clearForm(formId) {
-        const form = document.getElementById(formId);
+        const form = this.domManager.getById(formId);
         if (form) {
             form.reset();
         }
     }
 
     setFormData(formId, data) {
-        const form = document.getElementById(formId);
+        const form = this.domManager.getById(formId);
         if (!form) return;
         
         Object.keys(data).forEach(key => {
@@ -294,7 +303,7 @@ class UIManager {
         });
         
         // Afficher la section demandée
-        const targetSection = document.getElementById(sectionId);
+        const targetSection = this.domManager.getById(sectionId);
         const targetBtn = document.querySelector(`[data-section="${sectionId}"]`);
         
         if (targetSection) {

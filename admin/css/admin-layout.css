@@ -9,8 +9,11 @@
 
 .admin-page {
     min-height: 100vh;
-    display: flex;
     flex-direction: column;
+}
+
+.admin-page.show {
+    display: flex;
 }
 
 /* ===== PAGE DE LOGIN ===== */
@@ -97,7 +100,7 @@
     backdrop-filter: blur(10px);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: var(--z-dropdown);
 }
 
 .admin-header-content {
@@ -153,10 +156,11 @@
 }
 
 .nav-btn.active {
-    background: linear-gradient(135deg, var(--primary-color), #e67e22);
-    color: #fff;
+    background: var(--primary-color);
+    color: var(--bg-primary);
     border-color: var(--primary-color);
     box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+    font-weight: 600;
 }
 
 /* ===== NAVIGATION MOBILE ===== */
@@ -173,6 +177,7 @@
     padding: var(--spacing-sm);
     border-radius: var(--radius-sm);
     transition: all var(--transition-fast);
+    display: flex;
     flex-direction: column;
     gap: 3px;
 }

@@ -7,7 +7,7 @@
  */
 
 require_once '../config.php';
-require_once '../auth.php';
+require_once __DIR__ . '/auth.php';
 
 // Vérifier l'authentification
 AdminAuth::requireAuth();
@@ -101,12 +101,12 @@ function handlePost($db) {
     
     // Générer le slug si absent
     if (empty($slug)) {
-        $slug = generateSlug($nom);
+        $slug = generateSlug($name);
     }
     
     // Valider la couleur hexadécimale
-    if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $couleur)) {
-        $couleur = '#3498db';
+    if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $color)) {
+        $color = '#3498db';
     }
     
     try {
@@ -162,7 +162,7 @@ function handlePost($db) {
         
         $tag['id'] = (int) $tag['id'];
         $tag['categories_count'] = (int) $tag['categories_count'];
-        $tag['ordre'] = (int) $tag['ordre'];
+        $tag['display_order'] = (int) $tag['display_order'];
         
         sendSuccessResponse($tag, [
             'message' => 'Tag créé avec succès',
@@ -324,6 +324,9 @@ function handleDelete($db) {
  * Génération d'un slug à partir d'un nom
  */
 function generateSlug($name) {
+    if ($name === null) {
+        return '';
+    }
     $slug = strtolower(trim($name));
     $slug = preg_replace('/[àáâãäå]/u', 'a', $slug);
     $slug = preg_replace('/[èéêë]/u', 'e', $slug);

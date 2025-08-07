@@ -4,9 +4,13 @@
  * Principe DRY : Logique des catégories centralisée
  */
 class CategoryManager {
-    constructor(apiClient, uiManager) {
+    constructor(apiClient, uiManager, domManager) {
+        if (!domManager) {
+            throw new Error('CategoryManager requires a DOMManager instance');
+        }
         this.apiClient = apiClient;
         this.uiManager = uiManager;
+        this.domManager = domManager;
         this.categories = [];
         this.currentCategory = null;
     }
@@ -23,6 +27,12 @@ class CategoryManager {
             if (result.success) {
                 this.categories = result.data.categories;
                 this.renderCategoriesTable();
+                
+                // Stocker les données globalement pour l'AdminApp
+                if (window.adminApp) {
+                    window.adminApp.adminData = result.data;
+                }
+                
                 return this.categories;
             } else {
                 throw new Error(result.message);
@@ -117,12 +127,12 @@ class CategoryManager {
                         <strong>${this.uiManager.escapeHtml(category.name)}</strong><br>
                         <small style="color: var(--text-secondary);">${this.uiManager.escapeHtml(category.slug)}</small>
                     </td>
-                    <td>
+                    <td class="hide-mobile">
                         <button class="btn btn-primary btn-small" onclick="categoryManager.showCategoryDetail(${category.id})" title="Gérer les mots">
                             ${category.total_words || 0} mot${(category.total_words || 0) > 1 ? 's' : ''} →
                         </button>
                     </td>
-                    <td>
+                    <td class="hide-mobile">
                         <div class="tags-list">
                             ${tagsHtml}
                         </div>
@@ -143,13 +153,11 @@ class CategoryManager {
     }
 
     formatCategoryTags(category) {
-        if (!category.tags) {
+        if (!category.tags || !Array.isArray(category.tags) || category.tags.length === 0) {
             return '<em style="color: var(--text-secondary);">Aucun tag</em>';
         }
         
-        const tags = typeof category.tags === 'string' ? 
-            category.tags.split(',') : 
-            category.tags;
+        const tags = Array.isArray(category.tags) ? category.tags : category.tags.split(',');
             
         return tags.map(tag => 
             `<span class="tag-badge">${this.uiManager.escapeHtml(tag.trim())}</span>`
@@ -174,8 +182,11 @@ class CategoryManager {
     }
 
     showCategoriesView() {
-        document.getElementById('categoriesListView').classList.add('active');
-        document.getElementById('categoryDetailView').classList.remove('active');
+        const categoriesListView = this.domManager.getById('categoriesListView');
+        const categoryDetailView = this.domManager.getById('categoryDetailView');
+        
+        if (categoriesListView) categoriesListView.classList.add('active');
+        if (categoryDetailView) categoryDetailView.classList.remove('active');
         this.currentCategory = null;
     }
 
@@ -214,7 +225,7 @@ class CategoryManager {
         `;
 
         const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('add-category-modal')">
+            <button class="btn btn-secondary" onclick="categoryManager.closeAddModal()">
                 Annuler
             </button>
             <button class="btn btn-primary" onclick="categoryManager.handleAddSubmit()">
@@ -225,7 +236,16 @@ class CategoryManager {
         const modalId = this.uiManager.createModal('Nouvelle catégorie', content, { actions });
         
         // Stocker l'ID pour la fermeture
-        document.getElementById('addCategoryForm').dataset.modalId = modalId;
+        const addCategoryForm = this.domManager.getById('addCategoryForm');
+        if (addCategoryForm) addCategoryForm.dataset.modalId = modalId;
+        this.currentAddModalId = modalId;
+    }
+
+    closeAddModal() {
+        if (this.currentAddModalId) {
+            this.uiManager.closeModal(this.currentAddModalId);
+            this.currentAddModalId = null;
+        }
     }
 
     async handleAddSubmit() {
@@ -239,7 +259,7 @@ class CategoryManager {
 
         try {
             await this.createCategory(formData);
-            this.uiManager.closeModal(modalId);
+            this.closeAddModal();
         } catch (error) {
             // Erreur déjà gérée dans createCategory
         }
@@ -284,7 +304,7 @@ class CategoryManager {
         `;
 
         const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('edit-category-modal')">
+            <button class="btn btn-secondary" onclick="categoryManager.closeEditModal()">
                 Annuler
             </button>
             <button class="btn btn-primary" onclick="categoryManager.handleEditSubmit()">
@@ -295,7 +315,16 @@ class CategoryManager {
         const modalId = this.uiManager.createModal('Modifier la catégorie', content, { actions });
         
         // Stocker l'ID pour la fermeture
-        document.getElementById('editCategoryForm').dataset.modalId = modalId;
+        const editCategoryForm = this.domManager.getById('editCategoryForm');
+        if (editCategoryForm) editCategoryForm.dataset.modalId = modalId;
+        this.currentEditModalId = modalId;
+    }
+
+    closeEditModal() {
+        if (this.currentEditModalId) {
+            this.uiManager.closeModal(this.currentEditModalId);
+            this.currentEditModalId = null;
+        }
     }
 
     async handleEditSubmit() {
@@ -312,7 +341,7 @@ class CategoryManager {
             delete formData.id; // Ne pas envoyer l'ID dans le body
             
             await this.updateCategory(categoryId, formData);
-            this.uiManager.closeModal(modalId);
+            this.closeEditModal();
         } catch (error) {
             // Erreur déjà gérée dans updateCategory
         }

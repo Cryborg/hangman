@@ -35,14 +35,15 @@ class PenduSettings {
     }
     
     initializeDOMReferences() {
-        this.accentDifficultyCheckbox = document.getElementById('accentDifficulty');
-        this.numberDifficultyCheckbox = document.getElementById('numberDifficulty');
-        this.categoriesGrid = document.getElementById('settingsCategoriesGrid');
-        this.selectAllBtn = document.getElementById('selectAllCategoriesBtn');
-        this.deselectAllBtn = document.getElementById('deselectAllCategoriesBtn');
-        this.saveBtn = document.getElementById('saveSettingsBtn');
-        this.resetBtn = document.getElementById('resetSettingsBtn');
-        this.backBtn = document.getElementById('backToMenuFromSettingsBtn');
+        // Utiliser le DOMManager global pour les références DOM
+        this.accentDifficultyCheckbox = window.domManager.accentDifficulty;
+        this.numberDifficultyCheckbox = window.domManager.numberDifficulty;
+        this.categoriesGrid = window.domManager.settingsCategoriesGrid;
+        this.selectAllBtn = window.domManager.getById('selectAllCategoriesBtn');
+        this.deselectAllBtn = window.domManager.getById('deselectAllCategoriesBtn');
+        this.saveBtn = window.domManager.getById('saveSettingsBtn');
+        this.resetBtn = window.domManager.getById('resetSettingsBtn');
+        this.backBtn = window.domManager.getById('backToMenuFromSettingsBtn');
     }
     
     initializeEventListeners() {
