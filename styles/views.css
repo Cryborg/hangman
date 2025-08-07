@@ -58,14 +58,15 @@
 /* Bouton Passer - Version mobile sous la catégorie */
 .mobile-next-word {
     text-align: center;
-    margin: var(--spacing-sm) 0;
+    margin: 2px 0 var(--spacing-xs) 0;
     padding: 0;
 }
 
 .mobile-next-word .btn {
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-    min-width: 120px;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    min-width: 100px;
+    opacity: 0.9;
 }
 
 /* Bouton Passer - Version desktop en bas */
