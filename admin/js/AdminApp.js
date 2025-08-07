@@ -43,9 +43,9 @@ class AdminApp {
         try {
             const result = await this.apiClient.checkAuth();
             
-            if (result.success && result.authenticated) {
+            if (result.success && result.data && result.data.logged_in) {
                 this.isAuthenticated = true;
-                this.userData = result.user;
+                this.userData = result.data.session_info;
                 await this.showAdminInterface();
             } else {
                 this.showLoginInterface();
