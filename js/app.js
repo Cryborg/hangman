@@ -83,6 +83,7 @@ class PenduApp {
         // Nouveaux boutons du header
         this.restartGameHeaderBtn = document.getElementById('restartGameHeaderBtn');
         this.fullscreenHeaderBtn = document.getElementById('fullscreenHeaderBtn');
+        this.nextWordHeaderBtn = document.getElementById('nextWordHeaderBtn');
         
         // Boutons Passer (desktop et mobile)
         this.nextWordBtn = document.getElementById('nextWordBtn');
@@ -112,6 +113,12 @@ class PenduApp {
                 if (this.fullscreenManager) {
                     this.fullscreenManager.handleToggle({ preventDefault: () => {} });
                 }
+            });
+        }
+        
+        if (this.nextWordHeaderBtn) {
+            this.nextWordHeaderBtn.addEventListener('click', () => {
+                this.handleNextWord();
             });
         }
         
@@ -174,19 +181,13 @@ class PenduApp {
             backToMenuFromChangelogBtn.addEventListener('click', () => this.showView('menu'));
         }
         
-        // Boutons "Passer" (desktop et mobile)
-        const handleNextWord = () => {
-            if (this.gameManager && this.gameManager.getCurrentGameMode()) {
-                this.gameManager.getCurrentGameMode().goToNextWord();
-            }
-        };
-        
+        // Boutons "Passer" (desktop et mobile)        
         if (this.nextWordBtn) {
-            this.nextWordBtn.addEventListener('click', handleNextWord);
+            this.nextWordBtn.addEventListener('click', () => this.handleNextWord());
         }
         
         if (this.nextWordBtnMobile) {
-            this.nextWordBtnMobile.addEventListener('click', handleNextWord);
+            this.nextWordBtnMobile.addEventListener('click', () => this.handleNextWord());
         }
         
         // Fermer le menu en cliquant à l'extérieur
@@ -270,7 +271,7 @@ class PenduApp {
             }
         });
         
-        // Gérer la visibilité du bouton "Recommencer" dans le header
+        // Gérer la visibilité des boutons conditionnels dans le header
         if (this.restartGameHeaderBtn) {
             if (activeView === 'game') {
                 // Afficher le bouton seulement en vue jeu
@@ -278,6 +279,16 @@ class PenduApp {
             } else {
                 // Masquer le bouton dans les autres vues
                 this.restartGameHeaderBtn.style.display = 'none';
+            }
+        }
+        
+        if (this.nextWordHeaderBtn) {
+            if (activeView === 'game') {
+                // Afficher le bouton seulement en vue jeu
+                this.nextWordHeaderBtn.style.display = '';
+            } else {
+                // Masquer le bouton dans les autres vues
+                this.nextWordHeaderBtn.style.display = 'none';
             }
         }
     }
@@ -384,18 +395,34 @@ class PenduApp {
     
     // ===== GESTION DU BOUTON "MOT SUIVANT" ===== //
     
+    handleNextWord() {
+        if (this.gameManager && this.gameManager.getCurrentGameMode()) {
+            this.gameManager.getCurrentGameMode().goToNextWord();
+        }
+    }
+    
     showNextWordButton() {
-        // Les boutons sont automatiquement gérés par les classes CSS selon le type d'appareil
-        // Il suffit de les rendre visible avec display: block (overridé par les règles CSS)
+        // Afficher le bouton du header
+        if (this.nextWordHeaderBtn) {
+            this.nextWordHeaderBtn.style.display = '';
+        }
+        
+        // Masquer les anciens boutons dans la zone de jeu
         if (this.nextWordSection) {
-            this.nextWordSection.style.display = 'block';
+            this.nextWordSection.style.display = 'none';
         }
         if (this.nextWordSectionMobile) {
-            this.nextWordSectionMobile.style.display = 'block';
+            this.nextWordSectionMobile.style.display = 'none';
         }
     }
     
     hideNextWordButton() {
+        // Masquer le bouton du header
+        if (this.nextWordHeaderBtn) {
+            this.nextWordHeaderBtn.style.display = 'none';
+        }
+        
+        // Masquer aussi les anciens boutons par sécurité
         if (this.nextWordSection) {
             this.nextWordSection.style.display = 'none';
         }

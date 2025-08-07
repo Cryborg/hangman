@@ -25,6 +25,9 @@
                 <button class="header-btn" id="fullscreenHeaderBtn" title="Plein écran">🖼️</button>
                 <button class="header-btn" id="restartGameHeaderBtn" title="Recommencer la partie">🔄</button>
             </div>
+            <div class="header-center">
+                <button class="header-btn header-btn-center" id="nextWordHeaderBtn" title="Passer au mot suivant" style="display: none;">⏭️ Passer</button>
+            </div>
             <button class="hamburger-menu" id="hamburgerMenu">
                 <span></span>
                 <span></span>
@@ -204,10 +207,7 @@
                         </div>
                     </div>
                     
-                    <!-- Bouton Passer en mode mobile (sous le header unifié) -->
-                    <div class="next-word-section mobile-next-word" id="nextWordSectionMobile" style="display: none;">
-                        <button class="btn btn-secondary btn-small" id="nextWordBtnMobile">⏭️ Passer</button>
-                    </div>
+                    <!-- Anciens boutons Passer supprimés - maintenant dans le header -->
                     
                     <div class="hangman-container">
                         <svg id="hangman" viewBox="0 0 250 300" preserveAspectRatio="xMidYMid meet">
@@ -242,10 +242,7 @@
             
             <div class="keyboard" id="keyboard"></div>
             
-            <!-- Bouton Passer version desktop (à la fin) -->
-            <div class="next-word-section desktop-next-word" id="nextWordSection" style="display: none;">
-                <button class="btn btn-secondary" id="nextWordBtn">⏭️ Passer</button>
-            </div>
+            <!-- Anciens boutons Passer supprimés - maintenant dans le header -->
             
             <div id="gameMessage" class="game-message"></div>
         </div>
