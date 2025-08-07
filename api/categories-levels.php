@@ -117,17 +117,20 @@ try {
                 }
             }
             
-            $result[] = [
-                'id' => (int)$category['id'],
-                'name' => $category['name'],
-                'icon' => $category['icon'],
-                'slug' => $category['slug'],
-                'description' => $category['description'],
-                'tags' => $category['tags'] ? explode(',', $category['tags']) : [],
-                'words' => $allWordsForCategory,
-                'word_count' => count($allWordsForCategory),
-                'levels_included' => $levels
-            ];
+            // Filtrer les catégories sans mots pour les niveaux demandés
+            if (count($allWordsForCategory) > 0) {
+                $result[] = [
+                    'id' => (int)$category['id'],
+                    'name' => $category['name'],
+                    'icon' => $category['icon'],
+                    'slug' => $category['slug'],
+                    'description' => $category['description'],
+                    'tags' => $category['tags'] ? explode(',', $category['tags']) : [],
+                    'words' => $allWordsForCategory,
+                    'word_count' => count($allWordsForCategory),
+                    'levels_included' => $levels
+                ];
+            }
         }
     } else {
         // Nouveau format avec niveaux structurés
@@ -182,7 +185,11 @@ try {
             }
             
             $categoryData['total_words'] = $totalWords;
-            $result['categories'][] = $categoryData;
+            
+            // Filtrer les catégories sans mots pour les niveaux demandés
+            if ($totalWords > 0) {
+                $result['categories'][] = $categoryData;
+            }
         }
     }
     
