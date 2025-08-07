@@ -534,4 +534,30 @@ L'ordre est **critique** à cause des dépendances entre classes :
 8. `ui.js` (utilise VirtualKeyboard)
 9. `app.js` (point d'entrée)
 
+## 📝 Maintenance du Changelog
+
+### Page Nouveautés intégrée
+- **Localisation** : `index.html` section `changelogView` (lignes ~284-362)
+- **Accès** : Menu "📜 Nouveautés" dans l'interface utilisateur
+- **CSS** : Stylée dans `styles/views.css` et `styles/responsive.css`
+
+### Règles de mise à jour
+- **À chaque commit important** : Ajouter une entrée dans le changelog
+- **Date du commit** : Utiliser la vraie date du commit, pas la date de rédaction
+- **Structure** : Suivre le format existant avec icône + description courte
+- **Ordre chronologique** : Les plus récents en haut
+- **Contenu pertinent** : Corrections de bugs majeurs, nouvelles fonctionnalités, améliorations UX
+
+### Format des entrées
+```html
+<li>🔧 <strong>Titre court</strong> : description claire et concise</li>
+```
+
+### Exemples d'entrées importantes à documenter :
+- Corrections de bugs critiques (affichage, données)
+- Nouvelles fonctionnalités utilisateur
+- Améliorations d'interface majeures
+- Changements d'architecture impactant l'usage
+- Migrations de données
+
 Cette documentation doit faciliter toute future modification en permettant de comprendre rapidement l'architecture et les points d'entrée du code.

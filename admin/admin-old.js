@@ -80,10 +80,17 @@ class AdminInterface {
         document.getElementById('importFile')?.addEventListener('change', (e) => this.handleFileSelect(e));
         document.getElementById('processImportBtn')?.addEventListener('click', () => this.processImport());
         
-        // Word category filter
-        document.getElementById('wordCategoryFilter')?.addEventListener('change', (e) => {
-            this.filterWordsByCategory(e.target.value);
-        });
+        // Drag & drop pour l'import
+        this.setupDragAndDrop();
+        
+        // Nouvelle interface catégories/mots
+        this.setupCategoryWordsInterface();
+        
+        // Variables pour la gestion des mots par catégorie
+        this.currentCategory = null;
+        this.currentWords = [];
+        this.currentPage = 1;
+        this.wordsPerPage = 50;
     }
     
     /**
@@ -355,39 +362,56 @@ class AdminInterface {
     }
     
     /**
-     * Update categories table
+     * Update categories table (nouvelle version)
      */
-    updateCategoriesTable() {
+    updateCategoriesTable(categories = null) {
+        const categoriesToShow = categories || this.data.categories;
         const tbody = document.querySelector('#categoriesTable tbody');
         if (!tbody) return;
         
-        tbody.innerHTML = '';
-        
-        this.data.categories.forEach(category => {
-            const wordsCount = this.data.words.filter(word => word.category_id === category.id).length;
-            const tagsHtml = this.getCategoryTags(category.id).map(tag => 
-                `<span class="badge badge-info">${tag.name}</span>`
-            ).join(' ');
+        tbody.innerHTML = categoriesToShow.map(category => {
+            // Calculer le nombre de mots si pas fourni
+            const wordsCount = category.total_words !== undefined ? 
+                category.total_words : 
+                this.data.words ? this.data.words.filter(word => word.category_id === category.id).length : 0;
             
-            tbody.innerHTML += `
+            // Gestion des tags
+            const tagsHtml = category.tags ? 
+                (typeof category.tags === 'string' ? 
+                    category.tags.split(',').map(tag => `<span class="tag-badge">${tag}</span>`).join('') :
+                    this.getCategoryTags(category.id).map(tag => `<span class="tag-badge">${tag.name}</span>`).join('')
+                ) : '<em style="color: var(--text-secondary);">Aucun tag</em>';
+            
+            return `
                 <tr>
-                    <td>${category.icon || '📁'}</td>
-                    <td>${category.name}</td>
-                    <td><code>${category.slug}</code></td>
-                    <td><span class="badge badge-success">${wordsCount}</span></td>
-                    <td>${tagsHtml || '<span class="text-muted">None</span>'}</td>
-                    <td>${category.display_order || 0}</td>
+                    <td style="font-size: 1.5rem; text-align: center;">${category.icon || '📁'}</td>
                     <td>
-                        <button class="btn btn-warning btn-small" onclick="adminApp.editCategory(${category.id})">
-                            ✏️ Edit
+                        <strong>${category.name}</strong><br>
+                        <small style="color: var(--text-secondary);">${category.slug}</small>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-small" onclick="adminApp.showCategoryDetailView(${category.id})" title="Gérer les mots">
+                            ${wordsCount} mot${wordsCount > 1 ? 's' : ''} →
                         </button>
-                        <button class="btn btn-danger btn-small" onclick="adminApp.deleteCategory(${category.id})">
-                            🗑️ Delete
-                        </button>
+                    </td>
+                    <td>
+                        <div class="tags-list">
+                            ${tagsHtml}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-small btn-secondary" onclick="adminApp.editCategory(${category.id})" title="Modifier">
+                                ✏️
+                            </button>
+                            <button class="btn btn-small btn-danger" onclick="adminApp.deleteCategory(${category.id}, '${category.name}')" title="Supprimer">
+                                🗑️
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;
-        });
+        }).join('');
     }
     
     /**
@@ -1169,23 +1193,17 @@ class AdminInterface {
         const file = event.target.files[0];
         if (!file) return;
         
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                this.showImportPreview(data);
-                document.getElementById('processImportBtn').style.display = 'block';
-            } catch (error) {
-                this.showToast('Invalid JSON file', 'error');
-            }
-        };
-        reader.readAsText(file);
+        this.handleFileContent(file);
+        const importCard = document.querySelector('.data-card:last-child');
+        if (importCard) {
+            importCard.classList.add('has-file');
+        }
     }
     
     /**
      * Import data preview
      */
-    showImportPreview(data) {
+    displayImportPreview(data) {
         const preview = document.getElementById('importPreview');
         
         const categoriesCount = data.categories?.length || 0;
@@ -1197,14 +1215,29 @@ class AdminInterface {
         const tagsCount = tags.size;
 
         preview.innerHTML = `
-            <h4>File Preview:</h4>
+            <h4>📄 Aperçu du fichier</h4>
             <ul>
-                <li>📁 ${categoriesCount} category(s)</li>
-                <li>📝 ${wordsCount} word(s)</li>
-                <li>🏷️ ${tagsCount} tag(s)</li>
+                <li>
+                    <span class="preview-stat">📁 ${categoriesCount}</span>
+                    catégorie${categoriesCount > 1 ? 's' : ''}
+                </li>
+                <li>
+                    <span class="preview-stat">📝 ${wordsCount}</span>
+                    mot${wordsCount > 1 ? 's' : ''}
+                </li>
+                <li>
+                    <span class="preview-stat">🏷️ ${tagsCount}</span>
+                    tag${tagsCount > 1 ? 's' : ''}
+                </li>
             </ul>
-            <p><strong>Export Date:</strong> ${data.export_date || 'N/A'}</p>
-            <p class="text-muted">⚠️ Importing will replace existing data</p>
+            ${data.export_date ? `
+                <div class="preview-info">
+                    <strong>📅</strong> Exporté le : ${new Date(data.export_date).toLocaleString('fr-FR')}
+                </div>
+            ` : ''}
+            <div class="preview-warning">
+                <strong>⚠️</strong> L'import remplacera toutes les données existantes
+            </div>
         `;
         
         preview.style.display = 'block';
@@ -1406,6 +1439,290 @@ class AdminInterface {
             </div>
         `;
     }
+
+    /**
+     * Configuration du drag & drop pour l'import de fichiers
+     */
+    setupDragAndDrop() {
+        const importCard = document.querySelector('.data-card:last-child'); // La carte d'import
+        if (!importCard) return;
+
+        // Prévenir les comportements par défaut
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            importCard.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+
+        // Effet visuel quand on survole avec un fichier
+        ['dragenter', 'dragover'].forEach(eventName => {
+            importCard.addEventListener(eventName, () => {
+                importCard.classList.add('file-dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            importCard.addEventListener(eventName, () => {
+                importCard.classList.remove('file-dragover');
+            });
+        });
+
+        // Gérer le drop
+        importCard.addEventListener('drop', (e) => {
+            const files = Array.from(e.dataTransfer.files);
+            const jsonFile = files.find(file => file.type === 'application/json' || file.name.endsWith('.json'));
+            
+            if (jsonFile) {
+                this.handleFileContent(jsonFile);
+                importCard.classList.add('has-file');
+            } else {
+                this.showToast('Erreur', 'Veuillez déposer un fichier JSON valide', 'error');
+            }
+        });
+
+        // Améliorer l'affichage du texte de la carte d'import
+        const importCardParagraph = importCard.querySelector('p');
+        if (importCardParagraph) {
+            importCardParagraph.innerHTML = 'Importer des données depuis un fichier JSON<br><small style="opacity: 0.7;">Glissez-déposez votre fichier ici ou cliquez sur "Choisir un fichier"</small>';
+        }
+    }
+
+    /**
+     * Gérer le contenu d'un fichier (drag&drop ou sélection)
+     */
+    async handleFileContent(file) {
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            this.displayImportPreview(data);
+            document.getElementById('processImportBtn').style.display = 'inline-block';
+        } catch (error) {
+            this.showToast('Erreur', 'Fichier JSON invalide: ' + error.message, 'error');
+        }
+    }
+
+    /**
+     * Configuration de la nouvelle interface catégories/mots
+     */
+    setupCategoryWordsInterface() {
+        // Bouton retour aux catégories
+        document.getElementById('backToCategoriesBtn')?.addEventListener('click', () => {
+            this.showCategoriesView();
+        });
+
+        // Recherche de mots
+        document.getElementById('wordsSearchInput')?.addEventListener('input', (e) => {
+            this.searchWords(e.target.value);
+        });
+
+        // Clear search
+        document.getElementById('clearSearchBtn')?.addEventListener('click', () => {
+            const searchInput = document.getElementById('wordsSearchInput');
+            searchInput.value = '';
+            this.searchWords('');
+        });
+
+        // Filtres de difficulté
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Enlever active de tous les boutons
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                // Ajouter active au bouton cliqué
+                e.target.classList.add('active');
+                this.filterWordsByDifficulty(e.target.dataset.difficulty);
+            });
+        });
+
+        // Pagination
+        document.getElementById('prevPageBtn')?.addEventListener('click', () => {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.loadCategoryWords(this.currentCategory.id);
+            }
+        });
+
+        document.getElementById('nextPageBtn')?.addEventListener('click', () => {
+            this.currentPage++;
+            this.loadCategoryWords(this.currentCategory.id);
+        });
+
+        // Bouton ajout de mot dans la catégorie
+        document.getElementById('addWordToCategoryBtn')?.addEventListener('click', () => {
+            this.showAddWordModal(this.currentCategory.id);
+        });
+    }
+
+    /**
+     * Afficher la vue liste des catégories
+     */
+    showCategoriesView() {
+        document.getElementById('categoriesListView').classList.add('active');
+        document.getElementById('categoryDetailView').classList.remove('active');
+        this.currentCategory = null;
+    }
+
+    /**
+     * Afficher la vue détail d'une catégorie
+     */
+    async showCategoryDetailView(categoryId) {
+        try {
+            this.showLoading(true);
+            await this.loadCategoryWords(categoryId);
+            
+            // Changer de vue avec animation
+            document.getElementById('categoriesListView').classList.remove('active');
+            document.getElementById('categoryDetailView').classList.add('active');
+        } catch (error) {
+            this.showToast('Erreur', 'Impossible de charger la catégorie', 'error');
+        } finally {
+            this.showLoading(false);
+        }
+    }
+
+    /**
+     * Charger les mots d'une catégorie
+     */
+    async loadCategoryWords(categoryId, search = '') {
+        try {
+            const response = await fetch(`api/admin/category-words.php?category_id=${categoryId}&page=${this.currentPage}&limit=${this.wordsPerPage}&search=${encodeURIComponent(search)}`);
+            
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des mots');
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                this.currentCategory = result.data.category;
+                this.currentWords = result.data.words;
+                
+                // Mettre à jour l'interface
+                this.updateCategoryHeader(result.data.category, result.data.stats);
+                this.updateCategoryStats(result.data.stats);
+                this.renderCategoryWords(result.data.words);
+                this.updatePagination(result.data.pagination);
+            } else {
+                throw new Error(result.message || 'Erreur inconnue');
+            }
+        } catch (error) {
+            this.showToast('Erreur', error.message, 'error');
+        }
+    }
+
+    /**
+     * Mettre à jour le header de la catégorie
+     */
+    updateCategoryHeader(category, stats) {
+        document.getElementById('categoryIcon').textContent = category.icon;
+        document.getElementById('categoryName').textContent = category.name;
+        document.getElementById('categoryStats').textContent = `${stats.total_words} mot${stats.total_words > 1 ? 's' : ''}`;
+    }
+
+    /**
+     * Mettre à jour les statistiques rapides
+     */
+    updateCategoryStats(stats) {
+        document.getElementById('totalWordsCount').textContent = stats.total_words;
+        document.getElementById('easyWordsCount').textContent = stats.easy_words;
+        document.getElementById('mediumWordsCount').textContent = stats.medium_words;
+        document.getElementById('hardWordsCount').textContent = stats.hard_words;
+        document.getElementById('accentsWordsCount').textContent = stats.words_with_accents;
+    }
+
+    /**
+     * Rendre la liste des mots
+     */
+    renderCategoryWords(words) {
+        const tbody = document.querySelector('#categoryWordsTable tbody');
+        
+        if (words.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                        Aucun mot trouvé
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = words.map(word => `
+            <tr>
+                <td style="font-weight: 600; font-size: 1.1rem;">${word.word}</td>
+                <td>
+                    <span class="difficulty-badge ${word.difficulty}">${this.getDifficultyLabel(word.difficulty)}</span>
+                </td>
+                <td>
+                    <div class="word-characteristics">
+                        <span class="word-char-badge">${word.length} lettres</span>
+                        ${word.has_accents ? '<span class="word-char-badge accent">Accents</span>' : ''}
+                        ${word.has_numbers ? '<span class="word-char-badge number">Chiffres</span>' : ''}
+                        ${word.has_special_chars ? '<span class="word-char-badge special">Spéciaux</span>' : ''}
+                    </div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-small btn-secondary" onclick="adminApp.editWord(${word.id})" title="Modifier">
+                            ✏️
+                        </button>
+                        <button class="btn btn-small btn-danger" onclick="adminApp.deleteWord(${word.id}, '${word.word}')" title="Supprimer">
+                            🗑️
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    /**
+     * Mettre à jour la pagination
+     */
+    updatePagination(pagination) {
+        const paginationContainer = document.getElementById('wordsPagination');
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+        const paginationInfo = document.getElementById('paginationInfo');
+        
+        if (pagination.total_pages > 1) {
+            paginationContainer.style.display = 'flex';
+            prevBtn.disabled = pagination.current_page <= 1;
+            nextBtn.disabled = !pagination.has_more;
+            paginationInfo.textContent = `Page ${pagination.current_page} sur ${pagination.total_pages}`;
+        } else {
+            paginationContainer.style.display = 'none';
+        }
+    }
+
+    /**
+     * Rechercher des mots
+     */
+    searchWords(query) {
+        this.currentPage = 1;
+        this.loadCategoryWords(this.currentCategory.id, query);
+    }
+
+    /**
+     * Filtrer par difficulté (à implémenter si nécessaire)
+     */
+    filterWordsByDifficulty(difficulty) {
+        // Pour l'instant, on peut juste recharger avec un filtre
+        console.log('Filter by difficulty:', difficulty);
+        // TODO: Ajouter le paramètre difficulty à l'API
+    }
+
+    /**
+     * Obtenir le label de difficulté en français
+     */
+    getDifficultyLabel(difficulty) {
+        const labels = {
+            'easy': 'Facile',
+            'medium': 'Moyen',
+            'hard': 'Difficile'
+        };
+        return labels[difficulty] || difficulty;
+    }
+
 }
 
 // CSS animation for toasts

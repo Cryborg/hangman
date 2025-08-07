@@ -60,10 +60,7 @@
                         📊 Tableau de bord
                     </button>
                     <button class="nav-btn" data-section="categories">
-                        📁 Catégories
-                    </button>
-                    <button class="nav-btn" data-section="words">
-                        📝 Mots
+                        📁 Catégories & Mots
                     </button>
                     <button class="nav-btn" data-section="tags">
                         🏷️ Tags
@@ -92,8 +89,7 @@
             
             <nav class="mobile-nav" id="mobileNav">
                 <a href="#dashboard" class="mobile-nav-link active">📊 Dashboard</a>
-                <a href="#categories" class="mobile-nav-link">📁 Catégories</a>
-                <a href="#words" class="mobile-nav-link">📝 Mots</a>
+                <a href="#categories" class="mobile-nav-link">📁 Catégories & Mots</a>
                 <a href="#tags" class="mobile-nav-link">🏷️ Tags</a>
                 <a href="#data" class="mobile-nav-link">💾 Données</a>
                 <div class="mobile-nav-user">
@@ -165,65 +161,118 @@
             <!-- Section Catégories -->
             <section id="categories" class="admin-section">
                 <div class="section-header">
-                    <h2>📁 Gestion des Catégories</h2>
+                    <h2>📁 Gestion des Catégories & Mots</h2>
                     <button class="btn btn-primary" id="addCategoryBtn">
                         ➕ Nouvelle catégorie
                     </button>
                 </div>
                 
-                <div class="admin-table-container">
-                    <table class="admin-table" id="categoriesTable">
-                        <thead>
-                            <tr>
-                                <th>Icône</th>
-                                <th>Nom</th>
-                                <th>Slug</th>
-                                <th>Mots</th>
-                                <th>Tags</th>
-                                <th>Ordre</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les catégories seront chargées ici -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            
-            <!-- Section Mots -->
-            <section id="words" class="admin-section">
-                <div class="section-header">
-                    <h2>📝 Gestion des Mots</h2>
-                    <div class="section-actions">
-                        <select id="wordCategoryFilter" class="form-select">
-                            <option value="">Toutes les catégories</option>
-                        </select>
-                        <button class="btn btn-primary" id="addWordBtn">
-                            ➕ Nouveau mot
-                        </button>
+                <!-- Vue liste des catégories -->
+                <div id="categoriesListView" class="categories-view active">
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="categoriesTable">
+                            <thead>
+                                <tr>
+                                    <th>Icône</th>
+                                    <th>Nom</th>
+                                    <th>Mots</th>
+                                    <th>Tags</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les catégories seront chargées ici -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
-                <div class="admin-table-container">
-                    <table class="admin-table" id="wordsTable">
-                        <thead>
-                            <tr>
-                                <th>Mot</th>
-                                <th>Catégorie</th>
-                                <th>Difficulté</th>
-                                <th>Longueur</th>
-                                <th>Accents</th>
-                                <th>Chiffres</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les mots seront chargés ici -->
-                        </tbody>
-                    </table>
+                <!-- Vue détail d'une catégorie avec ses mots -->
+                <div id="categoryDetailView" class="category-detail-view">
+                    <!-- Header de la catégorie -->
+                    <div class="category-detail-header">
+                        <button class="btn btn-secondary" id="backToCategoriesBtn">
+                            ← Retour aux catégories
+                        </button>
+                        <div class="category-info">
+                            <span class="category-icon" id="categoryIcon">📁</span>
+                            <h3 id="categoryName">Nom de la catégorie</h3>
+                            <span class="category-stats" id="categoryStats">0 mots</span>
+                        </div>
+                        <div class="category-actions">
+                            <button class="btn btn-primary" id="addWordToCategoryBtn">
+                                ➕ Nouveau mot
+                            </button>
+                            <button class="btn btn-secondary" id="editCategoryBtn">
+                                ✏️ Modifier
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistiques rapides -->
+                    <div class="category-quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalWordsCount">0</div>
+                            <div class="stat-label">Total mots</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="easyWordsCount">0</div>
+                            <div class="stat-label">Facile</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="mediumWordsCount">0</div>
+                            <div class="stat-label">Moyen</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="hardWordsCount">0</div>
+                            <div class="stat-label">Difficile</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="accentsWordsCount">0</div>
+                            <div class="stat-label">Avec accents</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recherche et filtres -->
+                    <div class="words-filters">
+                        <div class="search-box">
+                            <input type="text" id="wordsSearchInput" placeholder="Rechercher un mot..." class="form-input">
+                            <button class="btn btn-secondary" id="clearSearchBtn">✖️</button>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-difficulty="all">Tous</button>
+                            <button class="filter-btn" data-difficulty="easy">Facile</button>
+                            <button class="filter-btn" data-difficulty="medium">Moyen</button>
+                            <button class="filter-btn" data-difficulty="hard">Difficile</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Table des mots -->
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="categoryWordsTable">
+                            <thead>
+                                <tr>
+                                    <th>Mot</th>
+                                    <th>Difficulté</th>
+                                    <th>Caractéristiques</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les mots seront chargés ici -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="wordsPagination" style="display: none;">
+                        <button class="btn btn-secondary" id="prevPageBtn" disabled>← Précédent</button>
+                        <span class="pagination-info" id="paginationInfo">Page 1 sur 1</span>
+                        <button class="btn btn-secondary" id="nextPageBtn" disabled>Suivant →</button>
+                    </div>
                 </div>
             </section>
+            
             
             <!-- Section Tags -->
             <section id="tags" class="admin-section">
@@ -275,7 +324,7 @@
                     </div>
                     
                     <div class="data-card">
-                        <h3>📤 Import</h3>
+                        <h3>📥 Import</h3>
                         <p>Importer des données depuis un fichier JSON</p>
                         <div class="data-actions">
                             <input type="file" id="importFile" accept=".json" style="display: none;">
@@ -304,8 +353,12 @@
         </div>
     </div>
     
-    <!-- Scripts -->
+    <!-- Scripts modulaires -->
+    <script src="admin/js/ApiClient.js"></script>
+    <script src="admin/js/UIManager.js"></script>
+    <script src="admin/js/CategoryManager.js"></script>
+    <script src="admin/js/WordManager.js"></script>
+    <script src="admin/js/AdminApp.js"></script>
     <script src="admin/icon-selector.js"></script>
-    <script src="admin/admin.js"></script>
 </body>
 </html>

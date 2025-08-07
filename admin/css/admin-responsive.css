@@ -1,0 +1,509 @@
+/* ===== ADMIN RESPONSIVE - Media queries et adaptations ===== */
+
+/* ===== LARGE SCREENS (1400px+) ===== */
+@media (min-width: 1400px) {
+    .admin-header-content,
+    .admin-main {
+        max-width: 1600px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .data-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+}
+
+/* ===== MEDIUM SCREENS (1024px - 1399px) ===== */
+@media (max-width: 1399px) {
+    .admin-header-content {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
+
+/* ===== TABLET LANDSCAPE (768px - 1023px) ===== */
+@media (max-width: 1023px) {
+    .admin-header-content {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: stretch;
+    }
+    
+    .admin-logo {
+        text-align: center;
+    }
+    
+    .admin-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .admin-user {
+        justify-content: center;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .section-actions {
+        justify-content: center;
+    }
+    
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .admin-table-container {
+        overflow-x: auto;
+    }
+    
+    .admin-table {
+        min-width: 600px;
+    }
+}
+
+/* ===== TABLET PORTRAIT (768px) ===== */
+@media (max-width: 768px) {
+    /* Navigation mobile */
+    .admin-nav {
+        display: none;
+    }
+    
+    .admin-nav-mobile {
+        display: flex;
+    }
+    
+    .admin-user span {
+        display: none;
+    }
+    
+    /* Layout adjustments */
+    .admin-main {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Category detail header */
+    .category-detail-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .category-info {
+        justify-content: center;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .category-actions {
+        justify-content: center;
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .category-quick-stats .stat-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .category-quick-stats .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .category-quick-stats .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    /* Filters and search */
+    .words-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+    
+    .search-box {
+        min-width: auto;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Pagination */
+    .pagination-container {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    /* Data cards */
+    .data-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .data-actions .btn {
+        min-width: 100%;
+    }
+    
+    /* Tables */
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.85rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    /* Modals */
+    .admin-modal {
+        margin: var(--spacing-sm);
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .admin-modal-header,
+    .admin-modal-content,
+    .admin-modal-actions {
+        padding: var(--spacing-md);
+    }
+    
+    .admin-modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .admin-modal-actions .btn {
+        width: 100%;
+    }
+}
+
+/* ===== MOBILE LANDSCAPE (480px - 767px) ===== */
+@media (max-width: 767px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+    
+    /* Login page */
+    .login-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .login-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    /* Form adjustments */
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+/* ===== MOBILE PORTRAIT (320px - 479px) ===== */
+@media (max-width: 479px) {
+    .admin-main {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+    
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    /* Category stats - single column */
+    .category-quick-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Buttons full width on very small screens */
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .section-actions .btn {
+        width: 100%;
+    }
+    
+    .category-actions .btn {
+        width: 100%;
+    }
+    
+    /* Filter buttons stack */
+    .filter-buttons {
+        flex-direction: column;
+    }
+    
+    .filter-btn {
+        text-align: center;
+    }
+    
+    /* Data cards */
+    .data-card {
+        padding: var(--spacing-md);
+    }
+    
+    .data-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    /* Import preview */
+    .import-preview {
+        padding: var(--spacing-md);
+        font-size: 0.85rem;
+    }
+    
+    .import-preview h4 {
+        font-size: 1rem;
+    }
+    
+    /* Tables - more compact */
+    .admin-table-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs);
+        font-size: 0.8rem;
+    }
+    
+    /* Toast adjustments */
+    .toast-container {
+        top: 0.5rem;
+        right: 0.5rem;
+        left: 0.5rem;
+    }
+    
+    .admin-toast {
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .toast-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .toast-message strong {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== VERY SMALL SCREENS (< 320px) ===== */
+@media (max-width: 319px) {
+    .admin-logo h1 {
+        font-size: 1.4rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .nav-btn {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (orientation: landscape) and (max-height: 500px) {
+    .admin-main {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--spacing-xs);
+    }
+    
+    .category-quick-stats .stat-card {
+        padding: var(--spacing-xs);
+    }
+    
+    .category-quick-stats .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .category-quick-stats .stat-label {
+        font-size: 0.7rem;
+    }
+    
+    .login-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .admin-modal {
+        max-height: 90vh;
+    }
+}
+
+/* ===== HIGH DPI SCREENS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Optimize for retina displays */
+    .admin-table th,
+    .admin-table td {
+        border-bottom-width: 0.5px;
+    }
+    
+    .border-primary {
+        border-width: 0.5px;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .admin-header,
+    .admin-nav-mobile,
+    .mobile-nav,
+    .section-actions,
+    .action-buttons,
+    .data-actions,
+    .loading-overlay,
+    .toast-container {
+        display: none !important;
+    }
+    
+    .admin-main {
+        padding: 0;
+        max-width: none;
+    }
+    
+    .admin-section {
+        display: block !important;
+    }
+    
+    .admin-table-container {
+        border: 1px solid #000;
+        background: white;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        border: 1px solid #000;
+        color: #000;
+    }
+    
+    .admin-table th {
+        background: #f0f0f0 !important;
+    }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+    /* Already using dark theme, but can add adjustments if needed */
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .loading-spinner .spinner {
+        animation: none;
+        border: 3px solid var(--primary-color);
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .data-card:hover,
+    .stat-card:hover {
+        transform: none;
+    }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    :root {
+        --border-primary: rgba(255, 255, 255, 0.6);
+        --text-secondary: #ffffff;
+        --bg-secondary: rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn {
+        border-width: 2px;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        border-width: 2px;
+    }
+}
+
+/* ===== FOCUS MANAGEMENT ===== */
+@media (hover: none) {
+    /* Touch devices - remove hover effects that don't work */
+    .btn:hover,
+    .nav-btn:hover,
+    .admin-table tbody tr:hover,
+    .data-card:hover,
+    .stat-card:hover {
+        transform: none;
+        box-shadow: none;
+        background: initial;
+        border-color: initial;
+        color: initial;
+    }
+    
+    /* Add active states for touch */
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .data-card:active,
+    .stat-card:active {
+        transform: scale(0.98);
+    }
+}

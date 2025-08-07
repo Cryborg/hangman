@@ -112,13 +112,13 @@ function handleExport($db) {
             // Export des tags
             $stmt = $db->query("
                 SELECT * FROM hangman_tags
-                ORDER BY ordre ASC, nom ASC
+                ORDER BY display_order ASC, name ASC
             ");
             $tags = $stmt->fetchAll();
             
             foreach ($tags as &$tag) {
                 $tag['id'] = (int) $tag['id'];
-                $tag['ordre'] = (int) $tag['ordre'];
+                $tag['display_order'] = (int) $tag['display_order'];
                 unset($tag['created_at'], $tag['updated_at']);
             }
             
@@ -213,7 +213,19 @@ function handleImport($db) {
             $db->exec("SET FOREIGN_KEY_CHECKS = 1");
         }
         
-        // Import des tags d'abord (s'il y en a)
+        // Collecter tous les tags utilisés dans les catégories
+        $allTags = [];
+        foreach ($data['categories'] as $categoryData) {
+            if (isset($categoryData['tags']) && is_array($categoryData['tags'])) {
+                foreach ($categoryData['tags'] as $tagName) {
+                    if (!in_array($tagName, $allTags)) {
+                        $allTags[] = $tagName;
+                    }
+                }
+            }
+        }
+
+        // Import des tags d'abord (s'il y en a dans les catégories ou dans data.tags)
         if (isset($data['tags']) && is_array($data['tags'])) {
             foreach ($data['tags'] as $tagData) {
                 try {
@@ -237,6 +249,29 @@ function handleImport($db) {
                 } catch (Exception $e) {
                     $importStats['errors'][] = "Tag '{$tagData['name']}': " . $e->getMessage();
                 }
+            }
+        }
+
+        // Créer automatiquement les tags manquants trouvés dans les catégories
+        foreach ($allTags as $tagName) {
+            try {
+                $stmt = $db->prepare("
+                    INSERT IGNORE INTO hangman_tags (name, slug, color, display_order) 
+                    VALUES (?, ?, ?, ?)
+                ");
+                
+                $stmt->execute([
+                    $tagName,
+                    generateSlug($tagName),
+                    '#f39c12', // Couleur par défaut
+                    0
+                ]);
+                
+                if ($db->lastInsertId()) {
+                    $importStats['tags_imported']++;
+                }
+            } catch (Exception $e) {
+                $importStats['errors'][] = "Auto-création tag '{$tagName}': " . $e->getMessage();
             }
         }
         
@@ -308,13 +343,14 @@ function handleImport($db) {
                     // Supprimer les anciennes associations
                     $db->prepare("DELETE FROM hangman_category_tag WHERE category_id = ?")->execute([$categoryId]);
                     
-                    foreach ($categoryData['tags'] as $tagSlug) {
-                        $tagStmt = $db->prepare("SELECT id FROM hangman_tags WHERE slug = ?");
-                        $tagStmt->execute([$tagSlug]);
+                    foreach ($categoryData['tags'] as $tagName) {
+                        // Chercher d'abord par nom, puis par slug
+                        $tagStmt = $db->prepare("SELECT id FROM hangman_tags WHERE name = ? OR slug = ?");
+                        $tagStmt->execute([$tagName, generateSlug($tagName)]);
                         $tagId = $tagStmt->fetchColumn();
                         
                         if ($tagId) {
-                            $db->prepare("INSERT INTO hangman_category_tag (category_id, tag_id) VALUES (?, ?)")
+                            $db->prepare("INSERT IGNORE INTO hangman_category_tag (category_id, tag_id) VALUES (?, ?)")
                                ->execute([$categoryId, $tagId]);
                         }
                     }

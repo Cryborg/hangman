@@ -1,0 +1,32 @@
+/* ===== ADMIN CSS - Point d'entrée principal ===== */
+
+/* 
+ * CSS modulaire pour l'interface d'administration
+ * Principe DRY : Éviter la duplication
+ * Principe KISS : Garder simple et organisé
+ * Principe SOLID : Séparation des responsabilités
+ */
+
+/* Base - Variables, reset, utilitaires */
+@import url('./admin-base.css');
+
+/* Components - Boutons, formulaires, modals, etc. */
+@import url('./admin-components.css');
+
+/* Layout - Structure, navigation, header */
+@import url('./admin-layout.css');
+
+/* Pages - Styles spécifiques aux sections */
+@import url('./admin-pages.css');
+
+/* Responsive - Media queries */
+@import url('./admin-responsive.css');
+
+/* 
+ * L'ordre d'importation est important :
+ * 1. Base (variables et fondations)
+ * 2. Components (éléments réutilisables)
+ * 3. Layout (structure globale)
+ * 4. Pages (styles spécifiques)
+ * 5. Responsive (adaptations)
+ */
