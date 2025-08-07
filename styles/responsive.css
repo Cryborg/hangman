@@ -40,7 +40,7 @@
             "game"
             "next"
             "keyboard";
-        gap: 4px;
+        gap: var(--spacing-sm);
         padding: 60px 8px 8px 8px;
     }
     
@@ -160,19 +160,21 @@
         font-size: 1.6rem;
     }
     
-    /* Bouton Passer toujours visible */
+    /* Bouton Passer toujours visible avec espacement */
     .fullscreen-mode .mobile-next-word {
         grid-area: next;
         display: block !important;
         flex-shrink: 0;
-        padding: 0;
+        padding: var(--spacing-sm) 0;
         margin: 0;
     }
     
     .fullscreen-mode .mobile-next-word .btn {
         width: 100%;
-        padding: 8px 16px;
+        padding: var(--spacing-sm) var(--spacing-md);
         font-size: 0.9rem;
+        margin: 0 auto;
+        max-width: 200px;
     }
     
     /* Clavier optimisé */
@@ -280,11 +282,13 @@
     /* Ajustements pour très petit écran mais garde les éléments essentiels */
     .fullscreen-mode .mobile-next-word {
         display: block !important; /* Garder le bouton Passer */
+        padding: var(--spacing-xs) 0;
     }
     
     .fullscreen-mode .mobile-next-word .btn {
-        padding: 6px 12px;
+        padding: var(--spacing-xs) var(--spacing-sm);
         font-size: 0.8rem;
+        max-width: 180px;
     }
     
     .fullscreen-mode .game-stats-bar {
