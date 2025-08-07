@@ -2,13 +2,20 @@
 
 /**
  * Clavier virtuel mobile avec support des appuis longs et accents
+ * 
+ * 🎯 ARCHITECTURE CSS-FIRST (v4.2.0) :
+ * - L'affichage/masquage est entièrement géré par CSS pur via media queries
+ * - JavaScript se contente de générer/détruire le CONTENU du clavier
+ * - Plus de logique window.innerWidth ou de gestion d'état isVisible
+ * - Performance améliorée : transitions CSS natives, pas de JS d'affichage
+ * 
  * Fonctionnalités :
- * - Layout AZERTY avec décalage visuel
- * - Appui long sur E,A,U,I,O,C pour accents
+ * - Layout AZERTY avec décalage visuel authentique
+ * - Appui long sur E,A,U,I,O,C pour accents français
  * - Popup d'accents avec glisser-relâcher
  * - États visuels (correct/wrong/disabled)
- * - Ligne de chiffres optionnelle
- * - Responsive et adaptatif
+ * - Ligne de chiffres optionnelle selon difficulté
+ * - Responsive CSS pur : Desktop (caché) / Mobile-Tablette (visible si contenu)
  */
 class VirtualKeyboard {
     constructor(app, containerId = 'keyboard') {
@@ -16,8 +23,7 @@ class VirtualKeyboard {
         this.containerId = containerId;
         this.container = null;
         
-        // État du clavier
-        this.isVisible = false;
+        // Configuration du clavier (plus besoin de isVisible !)
         this.difficultyOptions = { accents: false, numbers: false };
         
         // Gestionnaires d'événements (pour nettoyage)
@@ -51,11 +57,8 @@ class VirtualKeyboard {
     create(difficultyOptions = {}) {
         if (!this.container) return;
         
-        // Créer le clavier virtuel uniquement sur mobile/tablette
-        if (window.innerWidth > 1024) {
-            this.clear();
-            return;
-        }
+        // L'affichage/masquage est maintenant géré par CSS pur !
+        // Le JavaScript génère seulement le contenu, CSS gère la visibilité
         
         // Ne créer le clavier que s'il n'existe pas déjà
         if (this.container.children.length > 0) {
@@ -101,8 +104,7 @@ class VirtualKeyboard {
             this.createKeyboardRow(rowData);
         });
         
-        this.isVisible = true;
-        console.log('⌨️ Clavier virtuel créé');
+        console.log('🎹 Clavier virtuel créé - affichage géré par CSS pur');
     }
     
     createKeyboardRow(rowData) {
@@ -411,7 +413,7 @@ class VirtualKeyboard {
         
         // Vider le contenu
         this.container.innerHTML = '';
-        this.isVisible = false;
+        // Plus besoin de isVisible - CSS gère l'affichage
     }
     
     destroy() {
@@ -436,7 +438,9 @@ class VirtualKeyboard {
     }
     
     isKeyboardVisible() {
-        return this.isVisible;
+        // Plus besoin de variable - CSS gère tout !
+        // On vérifie juste si le conteneur a du contenu
+        return this.container && this.container.children.length > 0;
     }
     
     // ===== INTERFACE PUBLIQUE COMPATIBLE ===== //

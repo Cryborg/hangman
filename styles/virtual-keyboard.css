@@ -1,9 +1,10 @@
-/* ===== VIRTUAL-KEYBOARD.CSS - STYLES POUR LE CLAVIER VIRTUEL MOBILE ===== */
+/* ===== VIRTUAL-KEYBOARD.CSS - CLAVIER VIRTUEL RESPONSIVE CSS PURE ===== */
 
 /* ===== CONTENEUR PRINCIPAL ===== */
 
 .keyboard {
-    display: none; /* Sera affiché par le JS sur mobile */
+    /* Par défaut caché - L'affichage est géré par les media queries */
+    display: none;
     flex-direction: column;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-xl);
@@ -12,7 +13,31 @@
     margin-right: auto;
 }
 
-/* Affichage responsive géré dans responsive.css */
+/* ===== AFFICHAGE RESPONSIVE CSS PURE ===== */
+
+/* DESKTOP : Masquage forcé (>1024px) */
+@media (min-width: 1025px) {
+    .keyboard {
+        display: none !important;
+    }
+}
+
+/* MOBILE/TABLETTE : Affichage automatique (≤1024px) */
+@media (max-width: 1024px) {
+    .keyboard {
+        display: flex;
+    }
+    
+    /* Masquer si le conteneur est vide (pas de touches générées) */
+    .keyboard:empty {
+        display: none !important;
+    }
+    
+    /* Animation d'apparition pour les claviers avec contenu */
+    .keyboard:not(:empty) {
+        animation: keyboardSlideIn 0.3s ease-out;
+    }
+}
 
 /* ===== LIGNES DU CLAVIER ===== */
 
@@ -215,8 +240,83 @@
     }
 }
 
-.keyboard {
-    animation: keyboardSlideIn 0.3s ease-out;
+/* ===== RESPONSIVE ADAPTATIF PAR TAILLE D'ÉCRAN ===== */
+
+/* TABLETTE (769px - 1024px) : Clavier compact */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .keyboard {
+        max-width: 500px;
+    }
+    
+    .keyboard button {
+        min-width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 20px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 40px;
+    }
 }
 
-/* Responsive géré dans responsive.css */
+/* MOBILE STANDARD (481px - 768px) : Clavier optimisé */
+@media (max-width: 768px) {
+    .keyboard {
+        max-width: 100%;
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .keyboard button {
+        min-width: 35px;
+        height: 45px;
+        font-size: 1rem;
+    }
+}
+
+/* PETIT MOBILE (320px - 480px) : Clavier très compact */
+@media (max-width: 480px) {
+    .keyboard button {
+        min-width: 32px;
+        height: 42px;
+        font-size: 0.9rem;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 16px; /* Décalage réduit */
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 32px; /* Décalage réduit */
+    }
+}
+
+/* TRÈS PETIT MOBILE (≤320px) : Clavier minimal */
+@media (max-width: 320px) {
+    .keyboard {
+        gap: 4px;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .keyboard-row {
+        gap: 3px;
+    }
+    
+    .keyboard button {
+        min-width: 28px;
+        height: 38px;
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 12px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 24px;
+    }
+}

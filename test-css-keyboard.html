@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Clavier Virtuel CSS Pur</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/virtual-keyboard.css">
+    <style>
+        /* Styles de test */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-info {
+            background: rgba(243, 156, 18, 0.1);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-info h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .test-info ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            background: rgba(46, 213, 115, 0.1);
+            border: 2px solid var(--success-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .status h3 {
+            color: var(--success-color);
+            margin: 0 0 10px 0;
+        }
+        
+        .keyboard-container {
+            border: 2px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 20px;
+            background: rgba(60, 60, 60, 0.3);
+            min-height: 200px;
+        }
+        
+        #viewportInfo {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-info">
+            <h1>🧪 Test - Clavier Virtuel CSS Pur</h1>
+            <p><strong>Objectif :</strong> Valider que le clavier s'affiche/masque automatiquement selon la taille d'écran, sans JavaScript de gestion d'affichage.</p>
+            
+            <h3>Tests à effectuer :</h3>
+            <ul>
+                <li>✅ <strong>Desktop (>1024px)</strong> : Clavier invisible même avec contenu</li>
+                <li>✅ <strong>Tablette/Mobile (≤1024px)</strong> : Clavier visible si contenu</li>
+                <li>✅ <strong>Conteneur vide</strong> : Clavier invisible sur tous les écrans</li>
+                <li>✅ <strong>Redimensionnement</strong> : Affichage dynamique sans JavaScript</li>
+                <li>✅ <strong>Responsive</strong> : Adaptation selon taille d'écran</li>
+            </ul>
+        </div>
+        
+        <div class="test-controls">
+            <button class="btn" onclick="generateKeyboard()">🎹 Générer Clavier</button>
+            <button class="btn" onclick="clearKeyboard()">🧹 Vider Clavier</button>
+            <button class="btn" onclick="generateNumbers()">🔢 Avec Chiffres</button>
+        </div>
+        
+        <div class="status">
+            <h3>📊 Status CSS</h3>
+            <p id="statusText">Clavier non généré - Devrait être invisible sur toutes les tailles</p>
+        </div>
+        
+        <div class="keyboard-container">
+            <h3 style="margin-bottom: 15px;">📱 Zone du Clavier Virtuel :</h3>
+            
+            <!-- Le clavier sera généré ici -->
+            <div class="keyboard" id="keyboard">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+    </div>
+    
+    <div id="viewportInfo"></div>
+    
+    <script>
+        // ===== TEST LOGIC ===== //
+        
+        function updateViewportInfo() {
+            const info = document.getElementById('viewportInfo');
+            const width = window.innerWidth;
+            const isMobile = width <= 1024;
+            
+            info.innerHTML = `
+                📐 ${width}px<br>
+                ${isMobile ? '📱 Mobile/Tablette' : '🖥️ Desktop'}
+            `;
+        }
+        
+        function updateStatus() {
+            const keyboard = document.getElementById('keyboard');
+            const status = document.getElementById('statusText');
+            const hasContent = keyboard.children.length > 0;
+            const width = window.innerWidth;
+            const isMobile = width <= 1024;
+            
+            if (!hasContent) {
+                status.textContent = `Clavier vide - Devrait être invisible sur toutes tailles (${width}px)`;
+            } else if (isMobile) {
+                status.textContent = `Clavier avec contenu - Devrait être VISIBLE sur mobile/tablette (${width}px)`;
+            } else {
+                status.textContent = `Clavier avec contenu - Devrait être INVISIBLE sur desktop (${width}px)`;
+            }
+        }
+        
+        function generateKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            
+            // Générer un clavier AZERTY simple
+            const rows = [
+                'AZERTYUIOP',
+                'QSDFGHJKLM',
+                'WXCVBN'
+            ];
+            
+            keyboard.innerHTML = '';
+            
+            rows.forEach((rowLetters, index) => {
+                const row = document.createElement('div');
+                row.className = `keyboard-row keyboard-row-azerty keyboard-row-${index + 1}`;
+                
+                for (let letter of rowLetters) {
+                    const button = document.createElement('button');
+                    button.textContent = letter;
+                    button.className = 'key-letter';
+                    button.onclick = () => console.log('Touche pressée:', letter);
+                    row.appendChild(button);
+                }
+                
+                keyboard.appendChild(row);
+            });
+            
+            console.log('🎹 Clavier généré - CSS gère l\'affichage !');
+            updateStatus();
+        }
+        
+        function generateNumbers() {
+            const keyboard = document.getElementById('keyboard');
+            
+            // Générer clavier avec ligne de chiffres
+            keyboard.innerHTML = '';
+            
+            // Ligne de chiffres
+            const numberRow = document.createElement('div');
+            numberRow.className = 'keyboard-row keyboard-row-numbers';
+            
+            for (let i = 0; i <= 9; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = 'key-number';
+                button.onclick = () => console.log('Chiffre pressé:', i);
+                numberRow.appendChild(button);
+            }
+            
+            keyboard.appendChild(numberRow);
+            
+            // Puis les lettres
+            const letterRows = ['AZERTYUIOP', 'QSDFGHJKLM', 'WXCVBN'];
+            letterRows.forEach((rowLetters, index) => {
+                const row = document.createElement('div');
+                row.className = `keyboard-row keyboard-row-azerty keyboard-row-${index + 1}`;
+                
+                for (let letter of rowLetters) {
+                    const button = document.createElement('button');
+                    button.textContent = letter;
+                    button.className = 'key-letter';
+                    button.onclick = () => console.log('Lettre pressée:', letter);
+                    row.appendChild(button);
+                }
+                
+                keyboard.appendChild(row);
+            });
+            
+            console.log('🔢 Clavier avec chiffres généré !');
+            updateStatus();
+        }
+        
+        function clearKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            keyboard.innerHTML = '';
+            console.log('🧹 Clavier vidé - devrait disparaître sur mobile !');
+            updateStatus();
+        }
+        
+        // ===== EVENT LISTENERS ===== //
+        
+        window.addEventListener('resize', () => {
+            updateViewportInfo();
+            updateStatus();
+        });
+        
+        // ===== INITIALISATION ===== //
+        
+        updateViewportInfo();
+        updateStatus();
+        
+        // Message de bienvenue
+        console.log('🧪 Test CSS Keyboard Ready!');
+        console.log('📱 Redimensionnez la fenêtre pour voir l\'affichage CSS pur en action');
+    </script>
+</body>
+</html>

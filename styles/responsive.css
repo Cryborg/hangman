@@ -102,11 +102,7 @@
         display: none !important;
     }
     
-    /* Clavier virtuel visible */
-    .keyboard {
-        display: flex !important;
-        flex-direction: column;
-    }
+    /* Clavier virtuel géré dans virtual-keyboard.css */
     
     /* === LAYOUT (depuis layout.css) === */
     .header-content {
@@ -123,9 +119,7 @@
     
     
     /* === VIRTUAL KEYBOARD === */
-    .keyboard:not(:empty) {
-        display: flex;
-    }
+    /* Gestion déplacée dans virtual-keyboard.css pour CSS pur */
     
     
     /* === GAME HEADER (depuis game-header.css) === */
@@ -611,10 +605,7 @@
 /* ===== DESKTOP (width > 1024px) ===== */
 
 @media (min-width: 1025px) {
-    /* Masquer le clavier virtuel sur desktop */
-    .keyboard {
-        display: none !important;
-    }
+    /* Masquage du clavier virtuel géré dans virtual-keyboard.css */
     
     /* Boutons Passer en mode desktop */
     .mobile-next-word {
