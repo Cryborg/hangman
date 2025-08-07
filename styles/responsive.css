@@ -489,7 +489,7 @@ html, body {
     .game-header-unified {
         padding: var(--spacing-xs) var(--spacing-md);
         border-radius: var(--radius-lg);
-        margin-bottom: var(--spacing-sm);
+        margin-bottom: 4px;
         flex-shrink: 0;
     }
     
