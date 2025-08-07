@@ -1,374 +1,48 @@
-/* ===== LANDSCAPE.CSS - OPTIMISATIONS POUR MODE PAYSAGE ===== */
+/* ===== LANDSCAPE.CSS - OPTIMISATIONS SIMPLES ===== */
 
-/* ===== TABLETTE PAYSAGE (768px - 1024px en largeur ET ratio paysage) ===== */
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-    
-    /* Layout principal reste en colonne */
-    #gameView .container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-        gap: var(--spacing-sm);
-    }
-    
-    /* Header reste en haut */
-    .game-header-unified {
-        flex-shrink: 0;
-    }
-    
-    /* game-area reste flex */
-    .game-area {
-        display: flex !important;
-        flex-direction: column;
-        flex: 1;
-        padding: var(--spacing-sm);
-        overflow: hidden;
-    }
-    
-    /* top-section devient grille 2 colonnes pour séparer le contenu du pendu */
-    .game-area .top-section {
-        display: grid !important;
-        grid-template-columns: 1fr 300px;
-        grid-template-rows: auto auto;
-        gap: var(--spacing-md);
-        flex: 1;
-        align-items: center;
-    }
-    
-    /* game-header-unified prend la première colonne, première ligne */
-    .game-area .top-section .game-header-unified {
-        grid-column: 1;
-        grid-row: 1;
-    }
-    
-    /* next-word-section mobile sous le header */
-    .game-area .top-section .mobile-next-word {
-        grid-column: 1;
-        grid-row: 2;
-    }
-    
-    /* Pendu dans la deuxième colonne, occupe toutes les lignes */
-    .game-area .top-section .hangman-container {
-        grid-column: 2;
-        grid-row: 1 / -1; /* Occupe toutes les lignes */
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-md);
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 2px solid var(--border-primary);
-        height: 100%;
-        max-height: calc(100vh - 250px);
-    }
-    
-    /* game-info positionné sous le top-section mais intégré dans le layout */
-    .game-area .game-info {
-        order: 2;
-        margin-top: var(--spacing-sm);
-    }
-    
-    #hangman {
-        width: 100%;
-        height: 100%;
-        max-width: 250px;
-        max-height: 300px;
-    }
-    
-    /* Clavier en bas sur toute la largeur */
-    .keyboard {
-        grid-area: keyboard;
-        max-width: none;
-        padding: var(--spacing-sm);
-    }
-    
-    /* Affichage du mot plus grand */
-    .word-display {
-        font-size: 1.8rem;
-        padding: var(--spacing-md);
-    }
-    
-    /* Réduire la taille des boutons du clavier */
-    .keyboard button {
-        min-width: 38px;
-        height: 38px;
-        font-size: 0.9rem;
-    }
-    
-    /* Ajuster les décalages des lignes */
-    .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 15px;
-    }
-    
-    .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 30px;
-    }
-}
+/* SUPPRIMÉ: Layout paysage complexe trop difficile à maintenir */
 
-/* ===== TÉLÉPHONE PAYSAGE (max 767px en largeur ET ratio paysage) ===== */
-@media (max-width: 767px) and (orientation: landscape) {
-    
-    /* Layout principal compact */
-    #gameView .container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-        gap: var(--spacing-xs);
-    }
-    
-    /* Header ultra compact */
-    .game-header-unified {
-        flex-shrink: 0;
-        padding: var(--spacing-xs);
-        margin-bottom: 0;
-        min-height: auto;
-    }
-    
-    .category-title h2 {
-        font-size: 1rem;
-    }
-    
-    .game-stats {
-        display: none; /* Masquer les stats pour gagner de l'espace */
-    }
-    
-    /* game-area reste flex */
-    .game-area {
-        display: flex !important;
-        flex-direction: column;
-        flex: 1;
-        padding: var(--spacing-xs);
-        overflow: hidden;
-    }
-    
-    /* top-section en grille horizontale */
-    .game-area .top-section {
-        display: grid !important;
-        grid-template-columns: 1fr 180px;
-        grid-template-rows: auto;
-        gap: var(--spacing-sm);
-        flex: 1;
-        align-items: center;
-        padding: 0;
-    }
-    
-    /* game-header-unified prend la première colonne */
-    .game-area .top-section .game-header-unified {
-        grid-column: 1;
-        grid-row: 1;
-    }
-    
-    /* Pendu dans la deuxième colonne */
-    .game-area .top-section .hangman-container {
-        grid-column: 2;
-        grid-row: 1;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: var(--radius-md);
-        padding: var(--spacing-xs);
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--border-primary);
-        height: 100%;
-    }
-    
-    /* game-info positionné sous le top-section */
-    .game-area .game-info {
-        order: 2;
-        margin-top: var(--spacing-xs);
-    }
-    
-    #hangman {
-        width: 100%;
-        height: auto;
-        max-width: 180px;
-        max-height: 200px;
-    }
-    
-    /* Mot plus petit */
-    .word-display {
-        font-size: 1.2rem;
-        padding: var(--spacing-sm);
-        letter-spacing: 2px;
-    }
-    
-    /* Clavier très compact */
-    .keyboard {
-        grid-area: keyboard;
-        padding: var(--spacing-xs);
-        gap: 3px;
-        margin-bottom: var(--spacing-xs);
-    }
-    
-    .keyboard-row {
-        gap: 2px;
-    }
-    
-    .keyboard button {
-        min-width: 28px;
-        height: 32px;
-        font-size: 0.75rem;
-        padding: 2px;
-    }
-    
-    /* Réduire encore plus les décalages */
-    .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 10px;
-    }
-    
-    .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 20px;
-    }
-    
-    /* Masquer les éléments non essentiels */
-    .mobile-next-word,
-    .desktop-next-word {
-        display: none !important;
-    }
-}
-
-/* ===== PETIT TÉLÉPHONE PAYSAGE (max 568px en largeur ET ratio paysage) ===== */
-@media (max-width: 568px) and (orientation: landscape) {
-    
-    /* Ajustements supplémentaires pour petits téléphones */
-    .game-area .top-section {
-        grid-template-columns: 1fr 140px !important;
-    }
-    
-    /* Header minimal */
-    .game-header-unified {
-        min-height: auto;
-    }
-    
-    .category-title {
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
-    
-    .category-title h2 {
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-xs);
-    }
-    
-    .category-icon {
-        font-size: 1rem;
-    }
-    
-    /* Pendu encore plus petit */
-    .hangman-container {
-        padding: 4px;
-    }
-    
-    #hangman {
-        max-width: 120px;
-        max-height: 140px;
-    }
-    
-    /* Mot encore plus petit */
-    .word-display {
-        font-size: 1rem;
-        letter-spacing: 1px;
-    }
-    
-    /* Clavier ultra-compact */
-    .keyboard button {
-        min-width: 24px;
-        height: 28px;
-        font-size: 0.7rem;
-    }
-    
-    .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 8px;
-    }
-    
-    .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 16px;
-    }
-}
-
-/* ===== GESTION DE LA BARRE TIME ATTACK EN LANDSCAPE ===== */
-@media (orientation: landscape) and (max-width: 1024px) {
-    /* Intégrer la barre Time Attack dans le header en mode paysage */
-    .time-attack-bar {
-        position: static;
-        margin-top: var(--spacing-xs);
-        padding: var(--spacing-xs);
-        background: rgba(255, 107, 53, 0.1);
-        border-radius: var(--radius-sm);
-    }
-    
-    .time-attack-bar .time-display {
-        font-size: 1rem;
-    }
-    
-    .time-attack-bar .score-display {
-        font-size: 0.9rem;
-    }
-}
-
-/* ===== OPTIMISATIONS GÉNÉRALES POUR LANDSCAPE ===== */
+/* Simple règle pour éviter le débordement horizontal sur tous les écrans */
 @media (orientation: landscape) {
-    /* Réduire les marges verticales en mode paysage */
-    .view {
-        padding-top: var(--spacing-sm);
-        padding-bottom: var(--spacing-sm);
-    }
-    
-    /* Header plus compact */
-    .header-content {
-        padding: var(--spacing-sm) var(--spacing-md);
-    }
-    
-    .header-content h1 {
-        font-size: 1.2rem;
-    }
-    
-    /* Masquer le bouton retour à la borne en paysage pour gagner de l'espace */
-    @media (max-width: 767px) {
-        .arcade-back-button {
-            display: none;
-        }
-    }
-}
-
-/* ===== ANIMATIONS SPÉCIFIQUES AU LANDSCAPE ===== */
-@media (orientation: landscape) {
-    /* Animation du pendu depuis la droite */
-    @keyframes slideInFromRight {
-        from {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    .hangman-container {
-        animation: slideInFromRight 0.3s ease-out;
-    }
-}
-
-/* ===== FIX POUR ÉVITER LE SCROLL EN LANDSCAPE ===== */
-@media (orientation: landscape) and (max-width: 1024px) {
     body {
-        overflow: hidden;
-        height: 100vh;
-    }
-    
-    #gameView {
-        height: 100vh;
-        overflow: hidden;
+        overflow-x: hidden;
+        width: 100vw;
     }
     
     .container {
-        height: 100%;
-        overflow: hidden;
+        max-width: 100vw;
+        overflow-x: hidden;
     }
+    
+    /* Réduire légèrement les marges en paysage pour optimiser l'espace */
+    .view {
+        padding: var(--spacing-sm) 0;
+    }
+    
+    /* Clavier plus compact en paysage */
+    @media (max-width: 1024px) {
+        .keyboard button {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .keyboard-row {
+            gap: 4px;
+        }
+    }
+}
+
+/* Règle générale anti-débordement */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.container, .view, .game-area {
+    max-width: 100vw;
+    overflow-x: hidden;
 }

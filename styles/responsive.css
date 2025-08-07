@@ -283,6 +283,86 @@
     }
 }
 
+/* ===== ANTI-DÉBORDEMENT HORIZONTAL - TOUTES TAILLES ===== */
+
+/* Règles universelles pour éviter le scroll horizontal */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.container, .view, .game-area, .keyboard, .word-display {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Clavier responsive - s'adapte à toutes les largeurs */
+.keyboard {
+    width: 100%;
+    max-width: 100vw;
+    padding: var(--spacing-sm);
+    box-sizing: border-box;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: min(6px, 0.8vw);
+    width: 100%;
+}
+
+.keyboard button {
+    flex: 1;
+    min-width: 0;
+    max-width: min(50px, 9vw);
+    height: min(50px, 9vw);
+    padding: min(0.8rem, 2vw);
+    font-size: min(1.1rem, 2.5vw);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Mot responsive - ne déborde jamais */
+.word-display {
+    width: 100%;
+    max-width: 100vw;
+    padding: var(--spacing-sm);
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.word-display span {
+    display: inline-block;
+    margin: 0 min(0.3rem, 1vw);
+    padding: 0 min(0.4rem, 1vw);
+    min-width: min(2rem, 5vw);
+    font-size: min(2.5rem, 6vw);
+    flex-shrink: 0;
+}
+
+/* Menu stats responsive */
+.quick-stats {
+    width: 100%;
+    max-width: 100vw;
+    padding: 0 var(--spacing-sm);
+    box-sizing: border-box;
+}
+
+.quick-stats .stat-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
 /* ===== MOBILE ET TABLETTES (width ≤ 1024px) ===== */
 
 @media (max-width: 1024px) {
