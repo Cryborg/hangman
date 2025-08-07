@@ -1,0 +1,67 @@
+/* ===== ADMIN THEME - VARIABLES ET RESET ===== */
+
+/* Variables CSS principales */
+:root {
+    /* Couleurs principales */
+    --primary-color: #f39c12;
+    --primary-shadow: rgba(243, 156, 18, 0.5);
+    --secondary-color: #e94560;
+    --success-color: #2ed573;
+    --error-color: #ff6b6b;
+    --warning-color: #ff6b35;
+    
+    /* Arrière-plans */
+    --bg-primary: #2d2d2d;
+    --bg-secondary: rgba(60, 60, 60, 0.9);
+    --bg-tertiary: rgba(72, 72, 72, 0.8);
+    --bg-card: rgba(60, 60, 60, 0.7);
+    --bg-modal: rgba(40, 40, 40, 0.95);
+    --bg-input: rgba(45, 45, 45, 0.8);
+    
+    /* Textes */
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --text-muted: #6c757d;
+    
+    /* Bordures */
+    --border-primary: rgba(95, 99, 104, 0.3);
+    --border-light: rgba(255, 255, 255, 0.1);
+    --border-focus: #f39c12;
+    
+    /* Animations */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Espacements */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 15px;
+    --radius-xl: 20px;
+    --radius-round: 50px;
+}
+
+/* Reset et base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}

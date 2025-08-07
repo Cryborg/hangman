@@ -1,0 +1,9 @@
+/* ===== ADMIN THEME - THÈME MODULAIRE ===== */
+
+/* Import des modules CSS par ordre de priorité */
+@import url('./css/theme/variables.css');
+@import url('./css/theme/layout.css');
+@import url('./css/theme/components.css');
+@import url('./css/theme/pages.css');
+@import url('./css/theme/responsive.css');
+@import url('./css/theme/utilities.css');

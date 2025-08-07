@@ -8,25 +8,23 @@
  */
 
 /* Base - Variables, reset, utilitaires */
-@import url('./admin-base.css');
+@import url('./theme/variables.css');
+@import url('./theme/layout.css');
+@import url('./theme/components.css');
+@import url('./theme/pages.css');
+@import url('./theme/responsive.css');
+@import url('./theme/utilities.css');
 
-/* Components - Boutons, formulaires, modals, etc. */
-@import url('./admin-components.css');
-
-/* Layout - Structure, navigation, header */
-@import url('./admin-layout.css');
-
-/* Pages - Styles spécifiques aux sections */
-@import url('./admin-pages.css');
-
-/* Responsive - Media queries */
-@import url('./admin-responsive.css');
+/* Responsive - Media queries modulaires */
+@import url('./admin-responsive-new.css');
 
 /* 
  * L'ordre d'importation est important :
- * 1. Base (variables et fondations)
- * 2. Components (éléments réutilisables)
- * 3. Layout (structure globale)
+ * 1. Variables (fondations CSS)
+ * 2. Layout (structure globale)
+ * 3. Components (éléments réutilisables)
  * 4. Pages (styles spécifiques)
- * 5. Responsive (adaptations)
+ * 5. Responsive theme (adaptations de base)
+ * 6. Utilities (classes utilitaires)
+ * 7. Responsive modules (media queries détaillées)
  */

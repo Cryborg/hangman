@@ -1,0 +1,243 @@
+/* ===== ADMIN RESPONSIVE - MOBILE (≤768px) ===== */
+
+@media (max-width: 768px) {
+    /* Stats et grilles adaptées */
+    .stats-overview {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .analysis-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .top-categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .difficulty-pie {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        align-items: center;
+    }
+    
+    .pie-chart {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .length-label {
+        min-width: 80px;
+        font-size: var(--font-sm);
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-card.large .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .stat-number {
+        font-size: var(--font-3xl);
+    }
+    
+    /* Interface et navigation */
+    /* Header compact avec logo + déconnexion sur la même ligne */
+    .admin-header-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        align-items: center;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .admin-logo {
+        flex: 1;
+    }
+    
+    .admin-logo h1 {
+        font-size: var(--font-lg);
+    }
+    
+    .admin-user {
+        flex: 0 0 auto;
+    }
+    
+    .admin-user span {
+        display: none; /* Cache le nom d'utilisateur */
+    }
+    
+    /* Bouton déconnexion compact */
+    #logoutBtn {
+        padding: var(--btn-padding-compact);
+        font-size: var(--font-sm);
+        width: auto;
+        min-width: auto;
+    }
+    
+    /* Navigation en ligne complète en dessous */
+    .admin-nav {
+        display: flex;
+        gap: 2px;
+        width: 100%;
+        order: 3;
+        margin-top: var(--spacing-xs);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-nav .nav-btn {
+        flex: 1;
+        font-size: var(--font-xs);
+        padding: var(--spacing-xs);
+        text-align: center;
+        white-space: nowrap;
+        min-width: 0;
+        background: rgba(60, 60, 60, 0.5);
+        color: var(--text-secondary);
+        border-color: var(--border-primary);
+    }
+    
+    /* Onglet actif très visible */
+    .admin-nav .nav-btn.active {
+        background: var(--primary-color);
+        color: black;
+        font-weight: bold;
+        border-color: var(--primary-color);
+    }
+    
+    /* Réduire tous les espaces dans les sections */
+    .section-header {
+        margin-bottom: var(--spacing-md);
+        padding: 0;
+    }
+    
+    .section-actions {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .section-actions .btn {
+        width: 100%;
+        max-width: none;
+    }
+    
+    /* Cache la nav mobile qui n'est pas utilisée */
+    .admin-nav-mobile {
+        display: none;
+    }
+    
+    /* Layout adjustments */
+    .admin-main {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .section-header h2 {
+        font-size: var(--font-2xl);
+    }
+    
+    /* Category detail header */
+    .category-detail-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .category-info {
+        justify-content: center;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .category-actions {
+        justify-content: center;
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .category-quick-stats .stat-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .category-quick-stats .stat-value {
+        font-size: var(--font-2xl);
+    }
+    
+    .category-quick-stats .stat-label {
+        font-size: var(--font-sm);
+    }
+    
+    /* Filters and search */
+    .words-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+    
+    .search-box {
+        min-width: auto;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Pagination */
+    .pagination-container {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    /* Data cards */
+    .data-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .data-actions .btn {
+        min-width: 100%;
+    }
+    
+    /* Tables */
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: var(--font-base);
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    /* Modals */
+    .admin-modal {
+        margin: var(--spacing-sm);
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .admin-modal-header,
+    .admin-modal-content,
+    .admin-modal-actions {
+        padding: var(--spacing-md);
+    }
+    
+    .admin-modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .admin-modal-actions .btn {
+        width: 100%;
+    }
+}

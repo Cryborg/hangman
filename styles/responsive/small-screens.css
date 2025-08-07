@@ -1,0 +1,49 @@
+/* ===== TRÈS PETITS ÉCRANS ===== */
+
+/* ===== CLAVIER VIRTUEL - TRÈS PETITS ÉCRANS (≤ 480px) ===== */
+
+@media (max-width: 480px) {
+    .keyboard button {
+        padding: 0.6rem;
+        font-size: 1rem;
+    }
+    
+    /* AZERTY plein écran géré dans virtual-keyboard.css */
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 15px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 30px;
+    }
+    
+    .accent-popup .accent-option {
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
+        min-width: 35px;
+    }
+}
+
+/* ===== CLAVIER VIRTUEL - ÉCRANS EXTRA-PETITS (≤ 360px) ===== */
+
+@media (max-width: 360px) {
+    .keyboard button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+    }
+    
+    /* AZERTY plein écran extra-petits géré dans virtual-keyboard.css */
+    
+    .keyboard-row-azerty.keyboard-row-2 {
+        padding-left: 10px;
+    }
+    
+    .keyboard-row-azerty.keyboard-row-3 {
+        padding-left: 20px;
+    }
+}

@@ -1,0 +1,171 @@
+/* ===== ADMIN RESPONSIVE - ACCESSIBILITY & SPECIAL FEATURES ===== */
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (orientation: landscape) and (max-height: 500px) {
+    .admin-main {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--spacing-xs);
+    }
+    
+    .category-quick-stats .stat-card {
+        padding: var(--spacing-xs);
+    }
+    
+    .category-quick-stats .stat-value {
+        font-size: var(--font-lg);
+    }
+    
+    .category-quick-stats .stat-label {
+        font-size: var(--font-xs);
+    }
+    
+    .login-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .admin-modal {
+        max-height: 90vh;
+    }
+}
+
+/* ===== HIGH DPI SCREENS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Optimize for retina displays */
+    .admin-table th,
+    .admin-table td {
+        border-bottom-width: 0.5px;
+    }
+    
+    .border-primary {
+        border-width: 0.5px;
+    }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
+    }
+    
+    .loading-spinner .spinner {
+        animation: none;
+        border: 3px solid var(--primary-color);
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .data-card:hover,
+    .stat-card:hover {
+        transform: none;
+    }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    :root {
+        --border-primary: rgba(255, 255, 255, 0.6);
+        --text-secondary: #ffffff;
+        --bg-secondary: rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn {
+        border-width: 2px;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        border-width: 2px;
+    }
+}
+
+/* ===== FOCUS MANAGEMENT ===== */
+@media (hover: none) {
+    /* Touch devices - remove hover effects that don't work */
+    .btn:hover,
+    .nav-btn:hover,
+    .admin-table tbody tr:hover,
+    .data-card:hover,
+    .stat-card:hover {
+        transform: none;
+        box-shadow: none;
+        background: initial;
+        border-color: initial;
+        color: initial;
+    }
+    
+    /* Add active states for touch */
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .data-card:active,
+    .stat-card:active {
+        transform: scale(0.98);
+    }
+    
+    /* Cacher certaines colonnes des tableaux en mobile */
+    .hide-mobile {
+        display: none;
+    }
+    
+    /* Optimisations tableaux pour mobile */
+    .admin-table-container {
+        padding: var(--spacing-sm);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-table {
+        min-width: 100%;
+        table-layout: fixed;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: var(--font-base);
+        white-space: nowrap;
+    }
+    
+    /* Colonnes actions plus compactes */
+    .admin-table td.action-buttons {
+        width: 80px;
+        min-width: 80px;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .action-buttons .btn {
+        min-width: var(--btn-min-width);
+        min-height: var(--btn-min-height);
+        padding: var(--spacing-xs);
+        font-size: var(--font-base);
+    }
+    
+    /* Boutons carrés pour les icônes SAUF le bouton déconnexion */
+    .btn-small:not(#logoutBtn) {
+        min-width: var(--btn-min-width);
+        min-height: var(--btn-min-height);
+        padding: var(--spacing-xs);
+        aspect-ratio: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

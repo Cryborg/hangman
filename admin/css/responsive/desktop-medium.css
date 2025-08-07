@@ -1,0 +1,11 @@
+/* ===== ADMIN RESPONSIVE - MEDIUM SCREENS (1024px - 1399px) ===== */
+
+@media (max-width: 1399px) {
+    .admin-header-content {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .category-quick-stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}

@@ -1,0 +1,16 @@
+/* ===== ADMIN RESPONSIVE - LARGE SCREENS (≥1400px) ===== */
+
+@media (min-width: 1400px) {
+    .admin-header-content,
+    .admin-main {
+        max-width: 1600px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .data-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+}

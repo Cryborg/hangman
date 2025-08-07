@@ -1,0 +1,78 @@
+/* ===== ADMIN THEME - RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .admin-header-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .admin-nav {
+        display: none;
+    }
+    
+    .admin-nav-mobile {
+        display: block;
+    }
+    
+    .admin-main {
+        padding: var(--spacing-lg);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-charts {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .modal-content {
+        margin: var(--spacing-lg);
+        max-width: none;
+        width: calc(100% - 2rem);
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: center;
+    }
+    
+    .section-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-main {
+        padding: var(--spacing-md);
+    }
+    
+    .dashboard-card {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    .card-content h3 {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,155 @@
+/* ===== ADMIN RESPONSIVE - SMALL SCREENS (≤767px) ===== */
+
+/* ===== MOBILE LANDSCAPE (480px - 767px) ===== */
+@media (max-width: 767px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-value {
+        font-size: var(--font-4xl);
+    }
+    
+    /* Login page */
+    .login-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .login-header h1 {
+        font-size: var(--font-2xl);
+    }
+    
+    /* Form adjustments */
+    .form-group label {
+        font-size: var(--font-base);
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+/* ===== MOBILE PORTRAIT (320px - 479px) ===== */
+@media (max-width: 479px) {
+    .admin-main {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+    
+    .section-header h2 {
+        font-size: var(--font-xl);
+    }
+    
+    /* Category stats - single column */
+    .category-quick-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Par défaut, les boutons gardent leur taille normale */
+    .btn {
+        width: auto;
+        justify-content: center;
+    }
+    
+    /* Seuls les boutons principaux sont en pleine largeur */
+    .btn-primary,
+    .section-actions .btn-primary,
+    .category-actions .btn-primary,
+    #addCategoryBtn,
+    #addWordToCategoryBtn,
+    #addTagBtn,
+    #importBtn,
+    #exportAllBtn {
+        width: 100%;
+    }
+    
+    /* Les boutons d'action restent compacts */
+    .action-buttons .btn {
+        width: auto;
+        padding: var(--btn-padding-compact);
+    }
+    
+    /* Filter buttons stack */
+    .filter-buttons {
+        flex-direction: column;
+    }
+    
+    .filter-btn {
+        text-align: center;
+    }
+    
+    /* Data cards */
+    .data-card {
+        padding: var(--spacing-md);
+    }
+    
+    .data-card h3 {
+        font-size: var(--font-xl);
+    }
+    
+    /* Import preview */
+    .import-preview {
+        padding: var(--spacing-md);
+        font-size: var(--font-base);
+    }
+    
+    .import-preview h4 {
+        font-size: var(--font-md);
+    }
+    
+    /* Tables - more compact */
+    .admin-table-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: var(--spacing-xs);
+        font-size: var(--font-sm);
+    }
+    
+    /* Toast adjustments */
+    .toast-container {
+        top: 0.5rem;
+        right: 0.5rem;
+        left: 0.5rem;
+    }
+    
+    .admin-toast {
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .toast-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .toast-message strong {
+        font-size: var(--font-base);
+    }
+}
+
+/* ===== VERY SMALL SCREENS (< 320px) ===== */
+@media (max-width: 319px) {
+    .admin-logo h1 {
+        font-size: var(--font-lg);
+    }
+    
+    .section-header h2 {
+        font-size: var(--font-lg);
+    }
+    
+    .stat-value {
+        font-size: var(--font-2xl);
+    }
+    
+    .nav-btn {
+        font-size: var(--font-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}

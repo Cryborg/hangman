@@ -1,0 +1,242 @@
+/* ===== RESPONSIVE DESKTOP (≥ 1025px) ===== */
+
+/* Desktop en plein écran */
+@media (min-width: 1025px) {
+    .fullscreen-mode .word-display {
+        font-size: 4rem;
+        padding: var(--spacing-xl);
+    }
+    
+    .fullscreen-mode .hangman-container {
+        padding: var(--spacing-xxl, 3rem);
+    }
+    
+    .fullscreen-mode #hangman {
+        max-width: 450px;
+        max-height: 500px;
+    }
+    
+    .fullscreen-mode .keyboard {
+        transform: scale(1.1);
+        transform-origin: center;
+    }
+}
+
+/* ===== DESKTOP STANDARD (≥ 1025px) ===== */
+
+@media (min-width: 1025px) {
+    /* Masquage du clavier virtuel géré dans virtual-keyboard.css */
+    
+    /* Desktop layout - garde les styles d'origine */
+    .container {
+        max-width: 1200px;
+        width: 95%;
+        padding: var(--spacing-xl);
+        height: auto;
+    }
+    
+    /* Layout principal en grille 3 colonnes pour le jeu */
+    .top-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        grid-template-areas: 
+            "category progression streak"
+            "tries letters hangman"
+            "tries letters hangman";
+    }
+    
+    /* Header sur toute la largeur avec grille */
+    .game-header {
+        display: contents;
+        margin-bottom: 0;
+    }
+    
+    .category-card {
+        grid-area: category;
+    }
+    
+    .progress-card {
+        grid-area: progression;
+    }
+    
+    .streak-card {
+        grid-area: streak;
+    }
+    
+    .game-stats {
+        display: contents;
+        margin-bottom: 0;
+    }
+    
+    .stat-item:first-child {
+        grid-area: tries;
+    }
+    
+    .stat-item:last-child {
+        grid-area: letters;
+    }
+    
+    /* Pendu occupe 2 lignes */
+    .hangman-container {
+        grid-area: hangman;
+        padding: var(--spacing-lg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius-lg);
+    }
+    
+    #hangman {
+        width: 100%;
+        height: auto;
+        max-width: 280px; /* Taille raisonnable pour desktop */
+        max-height: 100%;
+    }
+    
+    /* Styles communs pour toutes les cartes */
+    .category-card, 
+    .progress-card, 
+    .streak-card,
+    .stat-item {
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-md);
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-light);
+    }
+    
+    .category-card h3, 
+    .progress-card h3, 
+    .streak-card h3,
+    .stat-item .stat-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .category-card p, 
+    .progress-card p, 
+    .streak-card p,
+    .stat-item .stat-value {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--text-primary);
+    }
+    
+    .streak-card p {
+        color: var(--warning-color);
+    }
+    
+    /* Zone du mot plus grande */
+    .word-display {
+        font-size: 2.8rem;
+        gap: 1.2rem;
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: var(--radius-md);
+    }
+    
+    .word-display span {
+        min-width: 2.2rem;
+        min-height: 1.2em;
+        line-height: 1.2;
+        padding: 0 0.6rem;
+        border-bottom-width: 3px;
+        margin: 0 0.25rem;
+    }
+    
+    .btn {
+        padding: 0.9rem var(--spacing-xl);
+        font-size: 1.1rem;
+        border-radius: var(--radius-round);
+    }
+    
+    /* Menu actions desktop */
+    .menu-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    /* === GAME HEADER DESKTOP === */
+    .top-section {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: var(--spacing-xl);
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .game-header-unified {
+        flex: 1;
+        max-width: none;
+        margin-bottom: 0;
+        height: fit-content;
+    }
+    
+    .hangman-container {
+        flex-shrink: 0;
+        width: 280px;
+        order: 2; /* Hangman à droite */
+    }
+    
+    .category-title h2 {
+        font-size: 1.3rem; /* Réduit de ~40% aussi (1.8rem → 1.3rem) */
+    }
+    
+    .category-icon {
+        font-size: 2.2rem;
+    }
+    
+    /* === VUE JEU DESKTOP === */
+    #gameView .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: calc(100vh - 80px);
+    }
+    
+    /* Hauteur stable pour la zone d'affichage du mot sur desktop aussi */
+    .game-info {
+        min-height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .word-display {
+        min-height: 3.5rem;
+    }
+}
+
+/* ===== TRÈS LARGE ÉCRAN (≥ 1200px) ===== */
+
+@media (min-width: 1200px) {
+    .welcome-section h2 {
+        font-size: 3rem;
+    }
+    
+    .stats-content h2 {
+        font-size: 3rem;
+    }
+    
+    .word-display {
+        font-size: 3.2rem;
+    }
+    
+    .big-stat-number {
+        font-size: 5rem;
+    }
+}

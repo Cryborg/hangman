@@ -1,0 +1,85 @@
+/* ===== ADMIN RESPONSIVE - TABLET LANDSCAPE (768px - 1023px) ===== */
+
+@media (max-width: 1023px) {
+    .admin-header-content {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: stretch;
+    }
+    
+    .admin-logo {
+        text-align: center;
+    }
+    
+    .admin-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .admin-user {
+        justify-content: center;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .section-actions {
+        justify-content: center;
+    }
+    
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .admin-table-container {
+        overflow-x: auto;
+    }
+    
+    .admin-table {
+        min-width: 600px;
+    }
+    
+    /* Colonne d'icônes générique pour tous les tableaux */
+    .admin-table .icon-column {
+        width: 50px;
+        max-width: 50px;
+        text-align: center;
+    }
+    
+    /* Boutons mobiles */
+    .btn {
+        padding: var(--btn-padding-small);
+        font-size: var(--font-base);
+        min-height: auto;
+    }
+    
+    .btn-primary {
+        padding: var(--btn-padding-medium);
+    }
+    
+    /* Boutons d'action compacts */
+    .admin-table .action-buttons .btn,
+    .action-buttons .btn {
+        padding: var(--btn-padding-compact);
+        font-size: var(--font-xs);
+        min-width: auto;
+        width: auto;  /* Empêche le 100% de largeur */
+        line-height: var(--btn-line-height);
+    }
+    
+    /* Conteneur des boutons d'action plus compact et horizontal */
+    .action-buttons {
+        gap: 4px;
+        justify-content: flex-end;  /* Aligne à droite */
+        display: flex;
+        flex-direction: row;  /* Force l'alignement horizontal */
+    }
+}

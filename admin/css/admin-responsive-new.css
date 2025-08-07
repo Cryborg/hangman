@@ -1,0 +1,60 @@
+/* ===== ADMIN RESPONSIVE - MODULES ===== */
+/* Architecture modulaire pour une meilleure organisation du CSS responsive */
+
+/* ===== VARIABLES POUR TAILLES DE POLICE ===== */
+:root {
+    --font-xs: 0.7rem;
+    --font-sm: 0.75rem;
+    --font-base: 0.85rem;
+    --font-md: 1rem;
+    --font-lg: 1.2rem;
+    --font-xl: 1.3rem;
+    --font-2xl: 1.5rem;
+    --font-3xl: 1.8rem;
+    --font-4xl: 2rem;
+    --font-5xl: 2.5rem;
+    
+    /* Variables pour les boutons */
+    --btn-padding-compact: 4px 6px;
+    --btn-padding-small: 8px 12px;
+    --btn-padding-medium: 10px 16px;
+    --btn-line-height: 1.2;
+    --btn-min-width: 32px;
+    --btn-min-height: 32px;
+}
+
+/* ===== BASE BUTTON STYLES ===== */
+.btn-compact {
+    padding: var(--btn-padding-compact);
+    font-size: var(--font-xs);
+    line-height: var(--btn-line-height);
+    min-width: auto;
+    width: auto;
+}
+
+.btn-mobile {
+    padding: var(--btn-padding-small);
+    font-size: var(--font-base);
+    min-height: auto;
+}
+
+.btn-icon {
+    min-width: var(--btn-min-width);
+    min-height: var(--btn-min-height);
+    padding: var(--spacing-xs);
+    aspect-ratio: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== IMPORTS DES MODULES ===== */
+@import 'responsive/desktop-large.css';
+@import 'responsive/desktop-medium.css';
+@import 'responsive/tablet.css';
+@import 'responsive/mobile.css';
+@import 'responsive/small-screens.css';
+@import 'responsive/accessibility.css';
+
+/* ===== DARK MODE SUPPORT ===== */
+/* Thème sombre géré par défaut dans les variables principales, aucune surcharge nécessaire */
