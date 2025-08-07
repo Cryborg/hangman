@@ -176,36 +176,13 @@
         max-width: 200px;
     }
     
-    /* Clavier plein écran - 100% responsive sans contraintes fixes */
+    /* Clavier géré dans virtual-keyboard.css */
     .fullscreen-mode .keyboard {
         grid-area: keyboard;
         flex-shrink: 0;
-        padding: 1.5%; /* Padding en pourcentage de la largeur */
-        gap: 0.8%; /* Gap en pourcentage */
         display: flex !important;
         flex-direction: column;
-        width: 100%;
-        margin: 0 auto;
-        box-sizing: border-box;
-    }
-    
-    .fullscreen-mode .keyboard-row {
-        gap: 0.8%; /* Gap uniforme en pourcentage */
-        justify-content: center;
-        width: 100%;
-        display: flex;
-    }
-    
-    .fullscreen-mode .keyboard button {
-        flex: 1; /* Répartition égale automatique */
-        padding: 2.5% 1%; /* Padding en pourcentage */
-        font-size: 1.1rem; /* Taille fixe similaire au mode normal */
-        min-width: 0; /* Pas de contrainte minimale */
-        height: 8vh; /* Hauteur en fonction de la hauteur d'écran */
-        white-space: nowrap;
-        overflow: hidden;
-        border-radius: var(--radius-sm);
-        /* Aucune contrainte max-width - vraiment flexible */
+        /* Toutes les autres règles déplacées dans virtual-keyboard.css */
     }
 }
 
@@ -261,25 +238,7 @@
         font-size: 1.4rem;
     }
     
-    /* Clavier petit écran - même logique 100% responsive */
-    .fullscreen-mode .keyboard {
-        padding: 1.2%; /* Padding légèrement réduit */
-        gap: 0.6%; /* Gap réduit */
-    }
-    
-    .fullscreen-mode .keyboard-row {
-        gap: 0.6%; /* Gap cohérent */
-        width: 100%;
-    }
-    
-    .fullscreen-mode .keyboard button {
-        flex: 1; /* Toujours répartition égale */
-        padding: 2% 0.8%; /* Padding réduit en pourcentage */
-        font-size: 1rem; /* Taille normale légèrement réduite */
-        min-width: 0; /* Pas de contrainte */
-        height: 7vh; /* Hauteur réduite */
-        /* Aucune contrainte max-width */
-    }
+    /* Clavier petit écran géré dans virtual-keyboard.css */
     
     /* Stats ultra-compactes */
     .fullscreen-mode .stat-group {
@@ -1267,14 +1226,7 @@ html, body {
         font-size: 1rem;
     }
     
-    /* Ajustements AZERTY pour plein écran - décalages en pourcentage */
-    .fullscreen-mode .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 5%; /* Décalage proportionnel */
-    }
-    
-    .fullscreen-mode .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 12%; /* Décalage proportionnel plus important */
-    }
+    /* AZERTY plein écran géré dans virtual-keyboard.css */
     
     .keyboard-row-azerty.keyboard-row-2 {
         padding-left: 15px;
@@ -1303,14 +1255,7 @@ html, body {
         gap: 4px;
     }
     
-    /* Ajustements AZERTY pour plein écran extra-petits - même logique % */
-    .fullscreen-mode .keyboard-row-azerty.keyboard-row-2 {
-        padding-left: 4%; /* Décalage légèrement réduit */
-    }
-    
-    .fullscreen-mode .keyboard-row-azerty.keyboard-row-3 {
-        padding-left: 10%; /* Décalage réduit mais proportionnel */
-    }
+    /* AZERTY plein écran extra-petits géré dans virtual-keyboard.css */
     
     .keyboard-row-azerty.keyboard-row-2 {
         padding-left: 10px;
