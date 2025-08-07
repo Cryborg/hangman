@@ -199,7 +199,7 @@
     .fullscreen-mode .keyboard button {
         flex: 1; /* Répartition égale automatique */
         padding: 2.5% 1%; /* Padding en pourcentage */
-        font-size: 2.8vw; /* Taille de police responsive */
+        font-size: 1.1rem; /* Taille fixe similaire au mode normal */
         min-width: 0; /* Pas de contrainte minimale */
         height: 8vh; /* Hauteur en fonction de la hauteur d'écran */
         white-space: nowrap;
@@ -275,7 +275,7 @@
     .fullscreen-mode .keyboard button {
         flex: 1; /* Toujours répartition égale */
         padding: 2% 0.8%; /* Padding réduit en pourcentage */
-        font-size: 2.5vw; /* Police légèrement plus petite */
+        font-size: 1rem; /* Taille normale légèrement réduite */
         min-width: 0; /* Pas de contrainte */
         height: 7vh; /* Hauteur réduite */
         /* Aucune contrainte max-width */
