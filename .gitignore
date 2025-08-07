@@ -41,3 +41,4 @@ yarn-error.log*
 
 # Configuration locale
 config.local.php
+.dev-config.js
