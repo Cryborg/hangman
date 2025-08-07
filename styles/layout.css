@@ -103,6 +103,11 @@
     transform: translateY(0);
 }
 
+/* Bouton Recommencer caché par défaut, visible seulement en jeu */
+#restartGameHeaderBtn {
+    display: none;
+}
+
 /* Menu hamburger */
 .hamburger-menu {
     display: flex;

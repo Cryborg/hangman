@@ -270,15 +270,14 @@ class PenduApp {
             }
         });
         
-        // Gérer la visibilité du bouton "Recommencer"
-        if (this.restartGameLink) {
-            const parentLi = this.restartGameLink.parentElement;
+        // Gérer la visibilité du bouton "Recommencer" dans le header
+        if (this.restartGameHeaderBtn) {
             if (activeView === 'game') {
                 // Afficher le bouton seulement en vue jeu
-                parentLi.style.display = '';
+                this.restartGameHeaderBtn.style.display = '';
             } else {
                 // Masquer le bouton dans les autres vues
-                parentLi.style.display = 'none';
+                this.restartGameHeaderBtn.style.display = 'none';
             }
         }
     }

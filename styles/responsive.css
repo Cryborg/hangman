@@ -30,28 +30,78 @@
         gap: var(--spacing-xs);
     }
     
+    /* Layout spécial pour la vue jeu en plein écran */
+    .fullscreen-mode #gameView .container {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto auto;
+        grid-template-areas: 
+            "header"
+            "stats" 
+            "game"
+            "next"
+            "keyboard";
+        gap: 4px;
+        padding: 60px 8px 8px 8px;
+    }
+    
     /* Header de jeu plus compact */
     .fullscreen-mode .game-header-unified {
+        grid-area: header;
         padding: var(--spacing-xs);
         margin-bottom: 0;
         flex-shrink: 0;
     }
     
+    .fullscreen-mode .category-title {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        margin-bottom: var(--spacing-xs);
+    }
+    
     .fullscreen-mode .category-title h2 {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin: 0;
     }
     
     .fullscreen-mode .category-icon {
         font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    
+    /* Stats bar toujours visible */
+    .fullscreen-mode .game-stats-bar {
+        grid-area: stats;
+        display: flex !important;
+        gap: 4px;
+        padding: 4px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius-md);
+        flex-shrink: 0;
+    }
+    
+    .fullscreen-mode .stat-group {
+        display: flex !important;
+        align-items: center;
+        padding: 2px 6px;
+        font-size: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+    }
+    
+    .fullscreen-mode .stat-icon {
+        font-size: 0.9rem;
+        margin-right: 2px;
     }
     
     /* Zone de jeu optimisée */
     .fullscreen-mode .game-area {
-        flex: 1;
+        grid-area: game;
         display: flex;
         flex-direction: column;
         gap: var(--spacing-xs);
         min-height: 0;
+        overflow: hidden;
     }
     
     .fullscreen-mode .top-section {
@@ -66,7 +116,7 @@
     .fullscreen-mode .hangman-container {
         flex: 1;
         padding: var(--spacing-xs);
-        max-height: 200px;
+        max-height: 160px;
         display: flex !important;
         align-items: center;
         justify-content: center;
@@ -77,8 +127,8 @@
     .fullscreen-mode #hangman {
         width: 100%;
         height: 100%;
-        max-width: 180px;
-        max-height: 180px;
+        max-width: 140px;
+        max-height: 140px;
     }
     
     /* Mot bien visible */
@@ -87,14 +137,14 @@
         padding: var(--spacing-xs);
         background: rgba(0, 0, 0, 0.1);
         border-radius: var(--radius-md);
-        min-height: 60px;
+        min-height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
     .fullscreen-mode .word-display {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         line-height: 1.2;
         letter-spacing: 1px;
         padding: 0;
@@ -105,16 +155,34 @@
     .fullscreen-mode .word-display span {
         margin: 0 0.1rem;
         padding: 0 0.2rem;
-        min-width: 1.5rem;
-        min-height: 1.5rem;
-        font-size: 1.8rem;
+        min-width: 1.4rem;
+        min-height: 1.4rem;
+        font-size: 1.6rem;
+    }
+    
+    /* Bouton Passer toujours visible */
+    .fullscreen-mode .mobile-next-word {
+        grid-area: next;
+        display: block !important;
+        flex-shrink: 0;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .fullscreen-mode .mobile-next-word .btn {
+        width: 100%;
+        padding: 8px 16px;
+        font-size: 0.9rem;
     }
     
     /* Clavier optimisé */
     .fullscreen-mode .keyboard {
+        grid-area: keyboard;
         flex-shrink: 0;
         padding: var(--spacing-xs);
         gap: 4px;
+        display: flex !important;
+        flex-direction: column;
     }
     
     .fullscreen-mode .keyboard-row {
@@ -126,21 +194,6 @@
         font-size: 1rem;
         min-width: 32px;
         height: 42px;
-    }
-    
-    /* Stats bar plus compacte */
-    .fullscreen-mode .game-stats-bar {
-        gap: 4px;
-        padding: 0;
-    }
-    
-    .fullscreen-mode .stat-group {
-        padding: 2px 6px;
-        font-size: 0.8rem;
-    }
-    
-    .fullscreen-mode .stat-icon {
-        font-size: 0.9rem;
     }
 }
 
@@ -224,42 +277,29 @@
         font-size: 0.8rem;
     }
     
-    /* Masquer les éléments non essentiels sur très petit écran */
+    /* Ajustements pour très petit écran mais garde les éléments essentiels */
     .fullscreen-mode .mobile-next-word {
-        display: none !important;
+        display: block !important; /* Garder le bouton Passer */
+    }
+    
+    .fullscreen-mode .mobile-next-word .btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
     
     .fullscreen-mode .game-stats-bar {
-        display: none; /* Masquer complètement les stats pour gagner de l'espace */
+        display: flex !important; /* Garder les stats mais plus petites */
+        gap: 2px;
+        padding: 2px;
+    }
+    
+    .fullscreen-mode .stat-group {
+        padding: 1px 3px;
+        font-size: 0.65rem;
     }
 }
 
-/* Mobile en plein écran - PAYSAGE */
-@media (max-width: 1024px) and (orientation: landscape) {
-    .fullscreen-mode .word-display {
-        font-size: 2rem;
-    }
-    
-    .fullscreen-mode .hangman-container {
-        padding: var(--spacing-md);
-    }
-    
-    .fullscreen-mode #hangman {
-        max-width: 250px;
-        max-height: 280px;
-    }
-    
-    .fullscreen-mode .app-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-    }
-    
-    .fullscreen-mode .container {
-        padding-top: 70px; /* Compenser le header fixe */
-    }
-}
+/* PAYSAGE SUPPRIMÉ - Verrouillage portrait obligatoire en plein écran */
 
 /* Desktop en plein écran */
 @media (min-width: 1025px) {

@@ -28,6 +28,7 @@ class FullscreenManager {
      */
     init() {
         this.button = document.getElementById('fullscreenHeaderBtn');
+        this.orientationManager = null;
         
         if (!this.button) {
             console.warn('🖼️ Bouton plein écran non trouvé');
@@ -52,6 +53,11 @@ class FullscreenManager {
         // Raccourci clavier F11 (uniquement si en mode dev)
         if (window.DEV_MODE || (window.DEV_CONFIG && window.DEV_CONFIG.enableF11)) {
             document.addEventListener('keydown', this.handleKeydown.bind(this));
+        }
+        
+        // Initialiser le gestionnaire d'orientation
+        if (typeof OrientationManager !== 'undefined') {
+            this.orientationManager = new OrientationManager();
         }
         
         this.updateButtonState();
@@ -152,10 +158,22 @@ class FullscreenManager {
             console.log('🖼️ Plein écran activé');
             this.showToast('Mode plein écran activé', 'success');
             document.body.classList.add('fullscreen-mode');
+            
+            // Tenter de verrouiller l'orientation en portrait
+            if (this.orientationManager) {
+                setTimeout(() => {
+                    this.orientationManager.lockToPortrait();
+                }, 100);
+            }
         } else {
             console.log('🖼️ Plein écran désactivé');
             this.showToast('Mode plein écran désactivé', 'info');
             document.body.classList.remove('fullscreen-mode');
+            
+            // L'orientation se déverrouille automatiquement en sortant du plein écran
+            if (this.orientationManager) {
+                this.orientationManager.isLocked = false;
+            }
         }
     }
     
