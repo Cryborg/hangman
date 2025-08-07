@@ -1,5 +1,52 @@
 /* ===== ADMIN RESPONSIVE - Media queries et adaptations ===== */
 
+/* ===== VARIABLES POUR TAILLES DE POLICE ===== */
+:root {
+    --font-xs: 0.7rem;
+    --font-sm: 0.75rem;
+    --font-base: 0.85rem;
+    --font-md: 1rem;
+    --font-lg: 1.2rem;
+    --font-xl: 1.3rem;
+    --font-2xl: 1.5rem;
+    --font-3xl: 1.8rem;
+    --font-4xl: 2rem;
+    --font-5xl: 2.5rem;
+    
+    /* Variables pour les boutons */
+    --btn-padding-compact: 4px 6px;
+    --btn-padding-small: 8px 12px;
+    --btn-padding-medium: 10px 16px;
+    --btn-line-height: 1.2;
+    --btn-min-width: 32px;
+    --btn-min-height: 32px;
+}
+
+/* ===== BASE BUTTON STYLES ===== */
+.btn-compact {
+    padding: var(--btn-padding-compact);
+    font-size: var(--font-xs);
+    line-height: var(--btn-line-height);
+    min-width: auto;
+    width: auto;
+}
+
+.btn-mobile {
+    padding: var(--btn-padding-small);
+    font-size: var(--font-base);
+    min-height: auto;
+}
+
+.btn-icon {
+    min-width: var(--btn-min-width);
+    min-height: var(--btn-min-height);
+    padding: var(--spacing-xs);
+    aspect-ratio: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ===== LARGE SCREENS (1400px+) ===== */
 @media (min-width: 1400px) {
     .admin-header-content,
@@ -75,44 +122,41 @@
         min-width: 600px;
     }
     
-    /* Première colonne (icônes) plus étroite SEULEMENT pour le tableau des catégories */
-    #categoriesTable th:first-child,
-    #categoriesTable td:first-child,
-    #categoryWordsTable th:first-child,
-    #categoryWordsTable td:first-child {
-        width: 50px !important;
-        max-width: 50px !important;
+    /* Colonne d'icônes générique pour tous les tableaux */
+    .admin-table .icon-column {
+        width: 50px;
+        max-width: 50px;
         text-align: center;
     }
     
-    /* Réduire la taille de TOUS les boutons en mobile */
+    /* Boutons mobiles */
     .btn {
-        padding: 8px 12px !important;
-        font-size: 0.85rem !important;
-        min-height: auto !important;
+        padding: var(--btn-padding-small);
+        font-size: var(--font-base);
+        min-height: auto;
     }
     
     .btn-primary {
-        padding: 10px 16px !important;
+        padding: var(--btn-padding-medium);
         /* width: 100% sera géré au cas par cas */
     }
     
-    /* Boutons d'action dans les tableaux encore plus petits */
+    /* Boutons d'action compacts */
     .admin-table .action-buttons .btn,
     .action-buttons .btn {
-        padding: 4px 6px !important;
-        font-size: 0.7rem !important;
-        min-width: auto !important;
-        width: auto !important;  /* Empêche le 100% de largeur */
-        line-height: 1.2 !important;
+        padding: var(--btn-padding-compact);
+        font-size: var(--font-xs);
+        min-width: auto;
+        width: auto;  /* Empêche le 100% de largeur */
+        line-height: var(--btn-line-height);
     }
     
     /* Conteneur des boutons d'action plus compact et horizontal */
     .action-buttons {
-        gap: 4px !important;
-        justify-content: flex-end !important;  /* Aligne à droite */
-        display: flex !important;
-        flex-direction: row !important;  /* Force l'alignement horizontal */
+        gap: 4px;
+        justify-content: flex-end;  /* Aligne à droite */
+        display: flex;
+        flex-direction: row;  /* Force l'alignement horizontal */
     }
 }
 
@@ -146,7 +190,7 @@
     
     .length-label {
         min-width: 80px;
-        font-size: 0.8rem;
+        font-size: var(--font-sm);
     }
     
     .stat-card {
@@ -158,7 +202,7 @@
     }
     
     .stat-number {
-        font-size: 1.8rem;
+        font-size: var(--font-3xl);
     }
     
     /* Interface et navigation */
@@ -176,7 +220,7 @@
     }
     
     .admin-logo h1 {
-        font-size: 1.2rem;
+        font-size: var(--font-lg);
     }
     
     .admin-user {
@@ -189,10 +233,10 @@
     
     /* Bouton déconnexion compact */
     #logoutBtn {
-        padding: 4px 8px !important;
-        font-size: 0.75rem !important;
-        width: auto !important;
-        min-width: auto !important;
+        padding: var(--btn-padding-compact);
+        font-size: var(--font-sm);
+        width: auto;
+        min-width: auto;
     }
     
     /* Navigation en ligne complète en dessous */
@@ -208,7 +252,7 @@
     
     .admin-nav .nav-btn {
         flex: 1;
-        font-size: 0.7rem;
+        font-size: var(--font-xs);
         padding: var(--spacing-xs);
         text-align: center;
         white-space: nowrap;
@@ -220,25 +264,25 @@
     
     /* Onglet actif très visible */
     .admin-nav .nav-btn.active {
-        background: var(--primary-color) !important;
-        color: black !important;
+        background: var(--primary-color);
+        color: black;
         font-weight: bold;
-        border-color: var(--primary-color) !important;
+        border-color: var(--primary-color);
     }
     
     /* Réduire tous les espaces dans les sections */
     .section-header {
-        margin-bottom: var(--spacing-md) !important;
-        padding: 0 !important;
+        margin-bottom: var(--spacing-md);
+        padding: 0;
     }
     
     .section-actions {
-        margin-bottom: var(--spacing-md) !important;
+        margin-bottom: var(--spacing-md);
     }
     
     .section-actions .btn {
         width: 100%;
-        max-width: none !important;
+        max-width: none;
     }
     
     /* Cache la nav mobile qui n'est pas utilisée */
@@ -252,7 +296,7 @@
     }
     
     .section-header h2 {
-        font-size: 1.5rem;
+        font-size: var(--font-2xl);
     }
     
     /* Category detail header */
@@ -283,11 +327,11 @@
     }
     
     .category-quick-stats .stat-value {
-        font-size: 1.5rem;
+        font-size: var(--font-2xl);
     }
     
     .category-quick-stats .stat-label {
-        font-size: 0.8rem;
+        font-size: var(--font-sm);
     }
     
     /* Filters and search */
@@ -329,7 +373,7 @@
     .admin-table th,
     .admin-table td {
         padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: 0.85rem;
+        font-size: var(--font-base);
     }
     
     .action-buttons {
@@ -370,7 +414,7 @@
     }
     
     .stat-value {
-        font-size: 2rem;
+        font-size: var(--font-4xl);
     }
     
     /* Login page */
@@ -379,12 +423,12 @@
     }
     
     .login-header h1 {
-        font-size: 1.5rem;
+        font-size: var(--font-2xl);
     }
     
     /* Form adjustments */
     .form-group label {
-        font-size: 0.9rem;
+        font-size: var(--font-base);
     }
     
     .form-input,
@@ -401,7 +445,7 @@
     }
     
     .section-header h2 {
-        font-size: 1.3rem;
+        font-size: var(--font-xl);
     }
     
     /* Category stats - single column */
@@ -429,8 +473,8 @@
     
     /* Les boutons d'action restent compacts */
     .action-buttons .btn {
-        width: auto !important;
-        padding: 4px 6px !important;
+        width: auto;
+        padding: var(--btn-padding-compact);
     }
     
     /* Filter buttons stack */
@@ -448,17 +492,17 @@
     }
     
     .data-card h3 {
-        font-size: 1.3rem;
+        font-size: var(--font-xl);
     }
     
     /* Import preview */
     .import-preview {
         padding: var(--spacing-md);
-        font-size: 0.85rem;
+        font-size: var(--font-base);
     }
     
     .import-preview h4 {
-        font-size: 1rem;
+        font-size: var(--font-md);
     }
     
     /* Tables - more compact */
@@ -469,7 +513,7 @@
     .admin-table th,
     .admin-table td {
         padding: var(--spacing-xs);
-        font-size: 0.8rem;
+        font-size: var(--font-sm);
     }
     
     /* Toast adjustments */
@@ -489,26 +533,26 @@
     }
     
     .toast-message strong {
-        font-size: 0.9rem;
+        font-size: var(--font-base);
     }
 }
 
 /* ===== VERY SMALL SCREENS (< 320px) ===== */
 @media (max-width: 319px) {
     .admin-logo h1 {
-        font-size: 1.4rem;
+        font-size: var(--font-lg);
     }
     
     .section-header h2 {
-        font-size: 1.2rem;
+        font-size: var(--font-lg);
     }
     
     .stat-value {
-        font-size: 1.5rem;
+        font-size: var(--font-2xl);
     }
     
     .nav-btn {
-        font-size: 0.8rem;
+        font-size: var(--font-sm);
         padding: var(--spacing-xs) var(--spacing-sm);
     }
 }
@@ -533,11 +577,11 @@
     }
     
     .category-quick-stats .stat-value {
-        font-size: 1.2rem;
+        font-size: var(--font-lg);
     }
     
     .category-quick-stats .stat-label {
-        font-size: 0.7rem;
+        font-size: var(--font-xs);
     }
     
     .login-card {
@@ -564,16 +608,14 @@
 
 
 /* ===== DARK MODE SUPPORT ===== */
-@media (prefers-color-scheme: dark) {
-    /* Already using dark theme, but can add adjustments if needed */
-}
+/* Thème sombre géré par défaut dans les variables principales, aucune surcharge nécessaire */
 
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
     * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
     }
     
     .loading-spinner .spinner {
@@ -637,7 +679,7 @@
     
     /* Cacher certaines colonnes des tableaux en mobile */
     .hide-mobile {
-        display: none !important;
+        display: none;
     }
     
     /* Optimisations tableaux pour mobile */
@@ -655,7 +697,7 @@
     .admin-table th,
     .admin-table td {
         padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: 0.85rem;
+        font-size: var(--font-base);
         white-space: nowrap;
     }
     
@@ -671,17 +713,17 @@
     }
     
     .action-buttons .btn {
-        min-width: 32px;
-        min-height: 32px;
+        min-width: var(--btn-min-width);
+        min-height: var(--btn-min-height);
         padding: var(--spacing-xs);
-        font-size: 0.9rem;
+        font-size: var(--font-base);
     }
     
     /* Boutons carrés pour les icônes SAUF le bouton déconnexion */
     .btn-small:not(#logoutBtn) {
-        min-width: 32px !important;
-        min-height: 32px !important;
-        padding: var(--spacing-xs) !important;
+        min-width: var(--btn-min-width);
+        min-height: var(--btn-min-height);
+        padding: var(--spacing-xs);
         aspect-ratio: 1;
         display: inline-flex;
         align-items: center;

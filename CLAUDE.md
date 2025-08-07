@@ -358,9 +358,43 @@ penduApp.modalManager   // ModalManager instance
 ## 🔄 Points d'entrée pour modifications
 
 ### 🎯 Bonnes pratiques de développement
+
+#### Architecture JavaScript
 - **Accès DOM** : Toujours utiliser `this.domManager.getById()` au lieu de `document.getElementById()`
 - **Event listeners** : Utiliser `this.domManager.addEventListener()` pour un cleanup automatique
 - **Performance** : Le DOMManager met en cache les éléments, évitant les recherches DOM répétées
+
+#### Architecture CSS et bonnes pratiques (mises à jour récentes)
+- **Variables CSS** : Utiliser les variables centralisées (`--font-xs` à `--font-5xl`, `--btn-padding-*`) pour la cohérence
+- **Classes utilitaires** : Préférer `.btn-compact`, `.btn-mobile`, `.btn-icon` aux styles inline
+- **Éviter !important** : Utiliser la spécificité naturelle des sélecteurs plutôt que de forcer avec `!important`
+- **Classes génériques** : Utiliser `.icon-column` pour les colonnes d'icônes au lieu de sélecteurs spécifiques comme `#tableId th:first-child`
+- **Système de tailles** : Toutes les `font-size` doivent utiliser les variables CSS (`var(--font-md)`) plutôt que des valeurs en dur
+- **Espacement boutons** : Utiliser `var(--btn-padding-compact/small/medium)` et `var(--btn-line-height)` pour la cohérence
+
+#### Structure des tableaux admin (HTML)
+```html
+<!-- ✅ CORRECT : Utiliser les classes génériques -->
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th class="icon-column">Icône</th>
+      <th>Nom</th>
+      <th class="hide-mobile">Détails</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+</table>
+
+<!-- ❌ INCORRECT : Éviter les sélecteurs spécifiques -->
+<table id="categoriesTable">
+  <thead>
+    <tr>
+      <th>Icône</th> <!-- Pas de classe, dépend de #categoriesTable th:first-child -->
+    </tr>
+  </thead>
+</table>
+```
 
 ### Ajouter une nouvelle catégorie
 1. Modifier `categories.json` : ajouter dans l'array `categories`
