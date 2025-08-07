@@ -5,9 +5,9 @@
  * GET /api/categories-levels.php - Liste toutes les catégories avec niveaux
  * GET /api/categories-levels.php?levels=easy,medium - Filtre par niveaux de difficulté 
  * GET /api/categories-levels.php?id=1&levels=hard - Catégorie spécifique avec niveau hard
- * GET /api/categories-levels.php?format=legacy - Format legacy compatible (pour migration douce)
  * 
- * @version 2.0.0
+ * Format: Retourne toujours le format moderne structuré par niveaux
+ * @version 3.0.0
  */
 
 require_once 'config.php';
@@ -19,7 +19,6 @@ try {
     $categoryId = isset($_GET['id']) ? sanitizeInt($_GET['id'], 1) : null;
     $categorySlug = isset($_GET['slug']) ? sanitizeString($_GET['slug']) : null;
     $levelsFilter = isset($_GET['levels']) ? sanitizeString($_GET['levels']) : 'easy,medium,hard';
-    $format = isset($_GET['format']) ? sanitizeString($_GET['format']) : 'levels';
     $includeStats = isset($_GET['stats']) && $_GET['stats'] === 'true';
     
     // Parse les niveaux demandés
@@ -100,41 +99,8 @@ try {
         $wordsByCategory[$categoryId][$difficulty][] = $word['word'];
     }
     
-    // Construire la réponse selon le format demandé
-    if ($format === 'legacy') {
-        // Format legacy compatible avec l'ancienne structure
-        $result = [];
-        foreach ($categories as $category) {
-            $categoryId = $category['id'];
-            $allWordsForCategory = [];
-            
-            // Combiner tous les mots des niveaux demandés
-            if (isset($wordsByCategory[$categoryId])) {
-                foreach ($levels as $level) {
-                    if (isset($wordsByCategory[$categoryId][$level])) {
-                        $allWordsForCategory = array_merge($allWordsForCategory, $wordsByCategory[$categoryId][$level]);
-                    }
-                }
-            }
-            
-            // Filtrer les catégories sans mots pour les niveaux demandés
-            if (count($allWordsForCategory) > 0) {
-                $result[] = [
-                    'id' => (int)$category['id'],
-                    'name' => $category['name'],
-                    'icon' => $category['icon'],
-                    'slug' => $category['slug'],
-                    'description' => $category['description'],
-                    'tags' => $category['tags'] ? explode(',', $category['tags']) : [],
-                    'words' => $allWordsForCategory,
-                    'word_count' => count($allWordsForCategory),
-                    'levels_included' => $levels
-                ];
-            }
-        }
-    } else {
-        // Nouveau format avec niveaux structurés
-        $result = [
+    // Construire la réponse au format moderne avec niveaux structurés
+    $result = [
             'version' => '2.0',
             'levels_info' => [
                 'easy' => [
@@ -191,18 +157,11 @@ try {
                 $result['categories'][] = $categoryData;
             }
         }
-    }
     
     // Ajouter les statistiques si demandées
     if ($includeStats) {
-        $totalCategories = count($result['categories'] ?? $result);
-        $totalWords = 0;
-        
-        if ($format === 'legacy') {
-            $totalWords = array_sum(array_column($result, 'word_count'));
-        } else {
-            $totalWords = array_sum(array_column($result['categories'], 'total_words'));
-        }
+        $totalCategories = count($result['categories']);
+        $totalWords = array_sum(array_column($result['categories'], 'total_words'));
         
         $stats = [
             'total_categories' => $totalCategories,
@@ -212,14 +171,7 @@ try {
             'generated_at' => date('c')
         ];
         
-        if ($format === 'legacy') {
-            $result = [
-                'categories' => $result,
-                'stats' => $stats
-            ];
-        } else {
-            $result['stats'] = $stats;
-        }
+        $result['stats'] = $stats;
     }
     
     sendSuccessResponse($result);

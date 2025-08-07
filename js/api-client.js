@@ -113,13 +113,12 @@ class HangmanAPIClient {
     /**
      * Récupère les catégories avec système de niveaux de difficulté
      * @param {string[]} levels - Niveaux souhaités ['easy', 'medium', 'hard']
-     * @param {string} format - Format de réponse ('levels' ou 'legacy')
      * @param {boolean} includeStats - Inclure les statistiques
+     * @returns {Promise} Réponse au format moderne structuré par niveaux
      */
-    async getCategoriesWithLevels(levels = ['easy', 'medium', 'hard'], format = 'levels', includeStats = false) {
+    async getCategoriesWithLevels(levels = ['easy', 'medium', 'hard'], includeStats = false) {
         const params = {
             levels: Array.isArray(levels) ? levels.join(',') : levels,
-            format: format,
             stats: includeStats ? 'true' : 'false'
         };
         

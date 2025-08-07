@@ -108,10 +108,11 @@ class PenduGameEngine {
             const enabledLevels = this.app.getLevelManager().getEnabledLevels();
             console.log('🎯 Niveaux activés:', enabledLevels);
             
-            // Utiliser la nouvelle API avec niveaux en format legacy pour compatibilité
-            const categories = await window.HangmanAPI.getCategoriesWithLevels(enabledLevels, 'legacy');
+            // Utiliser l'API moderne avec format structuré par niveaux
+            const response = await window.HangmanAPI.getCategoriesWithLevels(enabledLevels);
             
-            this.categories = categories;
+            // Transformer le format moderne en format plat pour la compatibilité actuelle
+            this.categories = this.transformModernToFlat(response.categories || response, enabledLevels);
             this.totalWords = this.categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
             
             console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots (niveaux: ${enabledLevels.join(', ')})`);
@@ -122,6 +123,38 @@ class PenduGameEngine {
             this.showErrorMessage('Impossible de charger les données depuis la base MySQL. Vérifiez votre connexion et la configuration de l\'API.');
             return false;
         }
+    }
+    
+    /**
+     * Transforme le format moderne structuré en format plat pour compatibilité
+     * @param {Array} categoriesWithLevels - Catégories au format moderne avec niveaux
+     * @param {Array} enabledLevels - Niveaux activés par l'utilisateur
+     * @returns {Array} Catégories au format plat avec tous les mots des niveaux activés
+     */
+    transformModernToFlat(categoriesWithLevels, enabledLevels) {
+        return categoriesWithLevels.map(category => {
+            // Combiner tous les mots des niveaux activés
+            const allWords = [];
+            
+            enabledLevels.forEach(level => {
+                if (category.levels && category.levels[level] && category.levels[level].words) {
+                    allWords.push(...category.levels[level].words);
+                }
+            });
+            
+            return {
+                id: category.id,
+                name: category.name,
+                icon: category.icon,
+                slug: category.slug,
+                description: category.description,
+                tags: category.tags || [],
+                words: allWords,
+                word_count: allWords.length,
+                // Conserver les données de niveaux pour référence future
+                levels: category.levels
+            };
+        }).filter(cat => cat.words.length > 0); // Filtrer les catégories vides
     }
     
     startNewGame() {

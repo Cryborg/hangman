@@ -739,26 +739,7 @@
         max-width: 200px;
     }
     
-    /* Grille des catégories mobile */
-    .categories-grid {
-        grid-template-columns: 1fr;
-        max-height: 300px;
-        gap: var(--spacing-xs);
-        padding: var(--spacing-xs);
-    }
-    
-    .category-item {
-        padding: var(--spacing-xs);
-    }
-    
-    .category-name {
-        font-size: 0.95rem;
-        gap: var(--spacing-xs);
-    }
-    
-    .category-count {
-        font-size: 0.8rem;
-    }
+    /* Note: Styles pour categories-grid déplacés dans responsive.css pour éviter la duplication */
     
     /* Actions des paramètres */
     .settings-actions {

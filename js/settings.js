@@ -20,13 +20,15 @@ class PenduSettings {
         // Paramètres actuels
         this.settings = { ...this.defaultSettings };
         
+        // Cache des données de catégories pour éviter les recharges API
+        this.cachedCategoriesData = null;
+        
         // Références DOM
         this.accentDifficultyCheckbox = null;
         this.numberDifficultyCheckbox = null;
         this.categoriesGrid = null;
         this.selectAllBtn = null;
         this.deselectAllBtn = null;
-        this.saveBtn = null;
         this.resetBtn = null;
         this.backBtn = null;
         
@@ -41,7 +43,6 @@ class PenduSettings {
         this.categoriesGrid = window.domManager.settingsCategoriesGrid;
         this.selectAllBtn = window.domManager.getById('selectAllCategoriesBtn');
         this.deselectAllBtn = window.domManager.getById('deselectAllCategoriesBtn');
-        this.saveBtn = window.domManager.getById('saveSettingsBtn');
         this.resetBtn = window.domManager.getById('resetSettingsBtn');
         this.backBtn = window.domManager.getById('backToMenuFromSettingsBtn');
     }
@@ -170,8 +171,6 @@ class PenduSettings {
             } else if (!isAutoSave && this.app.getUIModule()) {
                 this.app.getUIModule().showToast('⚙️ Paramètres sauvegardés !', 'success', 2000);
             }
-            
-            console.log('✅ Paramètres sauvegardés:', this.settings);
         } catch (error) {
             console.error('❌ Erreur lors de la sauvegarde des paramètres:', error);
             if (this.app.getUIModule()) {
@@ -194,8 +193,6 @@ class PenduSettings {
         
         // Sauvegarder automatiquement après réinitialisation
         this.saveSettings(false); // false = pas une sauvegarde automatique silencieuse
-        
-        console.log('🔄 Paramètres réinitialisés');
     }
     
     // ===== GESTION DE L'INTERFACE ===== //
@@ -213,45 +210,91 @@ class PenduSettings {
         this.generateCategoriesGrid();
     }
     
-    generateCategoriesGrid() {
+    async generateCategoriesGrid() {
         if (!this.categoriesGrid) return;
         
-        const categories = this.app.getGameManager()?.getAllCategories() || [];
         this.categoriesGrid.innerHTML = '';
         
-        if (categories.length === 0) {
-            this.categoriesGrid.innerHTML = `
-                <div style="
-                    grid-column: 1 / -1; 
-                    text-align: center; 
-                    color: var(--text-secondary); 
-                    padding: var(--spacing-lg);
-                    font-style: italic;
-                ">
-                    ⏳ Chargement des catégories...
-                </div>
-            `;
-            return;
-        }
+        // Afficher un message de chargement
+        this.categoriesGrid.innerHTML = `
+            <div style="
+                grid-column: 1 / -1; 
+                text-align: center; 
+                color: var(--text-secondary); 
+                padding: var(--spacing-lg);
+                font-style: italic;
+            ">
+                ⏳ Chargement des catégories...
+            </div>
+        `;
         
-        categories.forEach(category => {
-            const isSelected = this.settings.categories[category.name] !== false;
+        try {
+            // Récupérer les catégories avec les niveaux depuis l'API (format moderne)
+            const response = await window.HangmanAPI.getCategoriesWithLevels(['easy', 'medium', 'hard'], true);
             
-            const categoryItem = document.createElement('div');
-            categoryItem.className = `category-item ${isSelected ? 'selected' : ''}`;
-            categoryItem.innerHTML = `
-                <input type="checkbox" 
-                       class="category-checkbox" 
-                       data-category="${category.name}"
-                       ${isSelected ? 'checked' : ''}>
-                <div class="category-info">
-                    <div class="category-name">
-                        <span>${category.icon || '📁'}</span>
-                        <span>${category.name}</span>
+            // Le format moderne retourne un objet avec une propriété 'categories'
+            const categoriesWithLevels = response.categories || response;
+            
+            // Mettre en cache les données pour les mises à jour en temps réel
+            this.cachedCategoriesData = categoriesWithLevels;
+            
+            if (!categoriesWithLevels || categoriesWithLevels.length === 0) {
+                this.categoriesGrid.innerHTML = `
+                    <div style="
+                        grid-column: 1 / -1; 
+                        text-align: center; 
+                        color: var(--text-secondary); 
+                        padding: var(--spacing-lg);
+                    ">
+                        ❌ Aucune catégorie disponible
                     </div>
-                    <div class="category-count">${category.words?.length || 0} mots</div>
-                </div>
-            `;
+                `;
+                return;
+            }
+            
+            this.categoriesGrid.innerHTML = '';
+            
+            // Récupérer les niveaux activés par l'utilisateur
+            const levelManager = this.app.getLevelManager();
+            const isEasyEnabled = levelManager ? levelManager.isLevelEnabled('easy') : true;
+            const isMediumEnabled = levelManager ? levelManager.isLevelEnabled('medium') : true;
+            const isHardEnabled = levelManager ? levelManager.isLevelEnabled('hard') : true;
+            
+            categoriesWithLevels.forEach(category => {
+                const isSelected = this.settings.categories[category.name] !== false;
+                
+                // Calculer le nombre de mots par niveau
+                const easyCount = category.levels?.easy?.words?.length || 0;
+                const mediumCount = category.levels?.medium?.words?.length || 0;
+                const hardCount = category.levels?.hard?.words?.length || 0;
+                
+                // Compter seulement les mots des niveaux activés pour le total
+                const totalCount = (isEasyEnabled ? easyCount : 0) + 
+                                  (isMediumEnabled ? mediumCount : 0) + 
+                                  (isHardEnabled ? hardCount : 0);
+                
+                const categoryItem = document.createElement('div');
+                categoryItem.className = `category-item ${isSelected ? 'selected' : ''}`;
+                categoryItem.innerHTML = `
+                    <input type="checkbox" 
+                           class="category-checkbox" 
+                           data-category="${category.name}"
+                           ${isSelected ? 'checked' : ''}>
+                    <div class="category-info">
+                        <div class="category-header">
+                            <div class="category-name">
+                                <span>${category.icon || '📁'}</span>
+                                <span>${category.name}</span>
+                            </div>
+                            <div class="category-count">${totalCount} mots actifs</div>
+                        </div>
+                        <div class="category-levels">
+                            ${easyCount > 0 ? `<span class="level-badge level-easy ${!isEasyEnabled ? 'level-disabled' : ''}" title="Facile${!isEasyEnabled ? ' (désactivé)' : ''}">🟢 ${easyCount}</span>` : ''}
+                            ${mediumCount > 0 ? `<span class="level-badge level-medium ${!isMediumEnabled ? 'level-disabled' : ''}" title="Medium${!isMediumEnabled ? ' (désactivé)' : ''}">🟠 ${mediumCount}</span>` : ''}
+                            ${hardCount > 0 ? `<span class="level-badge level-hard ${!isHardEnabled ? 'level-disabled' : ''}" title="Difficile${!isHardEnabled ? ' (désactivé)' : ''}">🔴 ${hardCount}</span>` : ''}
+                        </div>
+                    </div>
+                `;
             
             // Event listener pour le changement d'état
             const checkbox = categoryItem.querySelector('.category-checkbox');
@@ -267,10 +310,69 @@ class PenduSettings {
                     checkbox.dispatchEvent(new Event('change'));
                 }
             });
+                
+                this.categoriesGrid.appendChild(categoryItem);
+            });
             
-            this.categoriesGrid.appendChild(categoryItem);
-        });
-        
+        } catch (error) {
+            console.error('❌ Erreur lors du chargement des catégories avec niveaux:', error);
+            
+            // Fallback : essayer avec les catégories déjà chargées dans le GameManager
+            const categories = this.app.getGameManager()?.getAllCategories() || [];
+            
+            if (categories.length === 0) {
+                this.categoriesGrid.innerHTML = `
+                    <div style="
+                        grid-column: 1 / -1; 
+                        text-align: center; 
+                        color: var(--text-secondary); 
+                        padding: var(--spacing-lg);
+                    ">
+                        ❌ Erreur de chargement des catégories
+                    </div>
+                `;
+                return;
+            }
+            
+            this.categoriesGrid.innerHTML = '';
+            
+            // Affichage simple sans les niveaux
+            categories.forEach(category => {
+                const isSelected = this.settings.categories[category.name] !== false;
+                
+                const categoryItem = document.createElement('div');
+                categoryItem.className = `category-item ${isSelected ? 'selected' : ''}`;
+                categoryItem.innerHTML = `
+                    <input type="checkbox" 
+                           class="category-checkbox" 
+                           data-category="${category.name}"
+                           ${isSelected ? 'checked' : ''}>
+                    <div class="category-info">
+                        <div class="category-name">
+                            <span>${category.icon || '📁'}</span>
+                            <span>${category.name}</span>
+                        </div>
+                        <div class="category-count">${category.words?.length || 0} mots</div>
+                    </div>
+                `;
+                
+                // Event listeners
+                const checkbox = categoryItem.querySelector('.category-checkbox');
+                checkbox.addEventListener('change', () => {
+                    categoryItem.classList.toggle('selected', checkbox.checked);
+                    this.autoSave();
+                });
+                
+                categoryItem.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+                
+                this.categoriesGrid.appendChild(categoryItem);
+            });
+        }
     }
     
     selectAllCategories() {
@@ -309,6 +411,98 @@ class PenduSettings {
     }
     
     // ===== INTÉGRATION AVEC LE JEU ===== //
+    
+    /**
+     * Méthode appelée quand les préférences de niveau changent
+     * Met à jour l'affichage en temps réel sans recharger depuis l'API
+     */
+    onLevelPreferencesChanged() {
+        console.log('🔄 PenduSettings.onLevelPreferencesChanged() appelée');
+        console.log('📋 Vue actuelle:', this.app.currentView);
+        console.log('📋 Données en cache disponibles:', !!this.cachedCategoriesData);
+        console.log('📋 categoriesGrid exists:', !!this.categoriesGrid);
+        
+        // Ne mettre à jour que si on est dans la vue paramètres
+        if (this.app.currentView !== 'settings') {
+            console.log('⏭️ Pas dans la vue paramètres, pas de mise à jour');
+            return;
+        }
+        
+        // Si on a déjà les données, on met juste à jour l'affichage
+        if (this.cachedCategoriesData) {
+            console.log('✅ Utilisation du cache pour mise à jour');
+            this.updateCategoriesDisplay(this.cachedCategoriesData);
+        } else {
+            console.log('🔄 Pas de cache, rechargement complet');
+            // Sinon on recharge tout
+            this.generateCategoriesGrid();
+        }
+    }
+    
+    /**
+     * Met à jour uniquement l'affichage des badges et compteurs
+     * @param {Array} categoriesWithLevels - Les données des catégories déjà chargées
+     */
+    updateCategoriesDisplay(categoriesWithLevels) {
+        console.log('🎨 updateCategoriesDisplay appelée avec', categoriesWithLevels?.length, 'catégories');
+        if (!this.categoriesGrid) {
+            console.log('❌ categoriesGrid non trouvé !');
+            return;
+        }
+        
+        // Récupérer les niveaux activés
+        const levelManager = this.app.getLevelManager();
+        const isEasyEnabled = levelManager ? levelManager.isLevelEnabled('easy') : true;
+        const isMediumEnabled = levelManager ? levelManager.isLevelEnabled('medium') : true;
+        const isHardEnabled = levelManager ? levelManager.isLevelEnabled('hard') : true;
+        
+        console.log('🎯 États des niveaux:', { isEasyEnabled, isMediumEnabled, isHardEnabled });
+        
+        // Mettre à jour chaque catégorie
+        const categoryItems = this.categoriesGrid.querySelectorAll('.category-item');
+        categoryItems.forEach((item, index) => {
+            if (index < categoriesWithLevels.length) {
+                const category = categoriesWithLevels[index];
+                
+                // Calculer les comptes
+                const easyCount = category.levels?.easy?.words?.length || 0;
+                const mediumCount = category.levels?.medium?.words?.length || 0;
+                const hardCount = category.levels?.hard?.words?.length || 0;
+                const totalCount = (isEasyEnabled ? easyCount : 0) + 
+                                  (isMediumEnabled ? mediumCount : 0) + 
+                                  (isHardEnabled ? hardCount : 0);
+                
+                // Mettre à jour le compte total
+                const countElement = item.querySelector('.category-count');
+                if (countElement) {
+                    countElement.textContent = `${totalCount} mots actifs`;
+                }
+                
+                // Mettre à jour les badges de niveau
+                const levelsContainer = item.querySelector('.category-levels');
+                if (levelsContainer) {
+                    // Mettre à jour chaque badge
+                    const easyBadge = levelsContainer.querySelector('.level-easy');
+                    if (easyBadge) {
+                        easyBadge.classList.toggle('level-disabled', !isEasyEnabled);
+                        easyBadge.title = `Facile${!isEasyEnabled ? ' (désactivé)' : ''}`;
+                    }
+                    
+                    const mediumBadge = levelsContainer.querySelector('.level-medium');
+                    if (mediumBadge) {
+                        mediumBadge.classList.toggle('level-disabled', !isMediumEnabled);
+                        mediumBadge.title = `Medium${!isMediumEnabled ? ' (désactivé)' : ''}`;
+                    }
+                    
+                    const hardBadge = levelsContainer.querySelector('.level-hard');
+                    if (hardBadge) {
+                        hardBadge.classList.toggle('level-disabled', !isHardEnabled);
+                        hardBadge.title = `Difficile${!isHardEnabled ? ' (désactivé)' : ''}`;
+                    }
+                }
+            }
+        });
+    }
     
     /**
      * Met à jour les checkboxes de la modal (pour compatibilité)

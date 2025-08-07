@@ -119,7 +119,7 @@ HAVING hard_count = 0;
 2. **Utiliser mode "merge"** pour ajouter sans écraser
 3. **Vérifier les niveaux** après import avec l'API : 
    ```bash
-   curl http://localhost:8090/api/categories-levels.php?levels=hard&format=legacy
+   curl http://localhost:8090/api/categories-levels.php?levels=hard
    ```
 4. **Équilibrer les niveaux** : Viser ~25% easy, ~50% medium, ~25% hard
 

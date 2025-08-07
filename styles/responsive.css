@@ -925,16 +925,53 @@ html, body {
         padding: var(--spacing-xs);
     }
     
+    /* Spécifique aux paramètres */
+    .settings-section .categories-grid {
+        grid-template-columns: 1fr;
+        max-height: 300px;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+    
     .category-item {
         padding: var(--spacing-xs);
     }
     
-    .category-name {
+    .settings-section .category-item {
+        padding: var(--spacing-xs);
+    }
+    
+    /* Styles spécifiques aux paramètres */
+    .settings-section .category-name {
         font-size: 0.95rem;
         gap: var(--spacing-xs);
     }
     
-    .category-count {
+    .settings-section .category-count {
+        font-size: 0.75rem;
+    }
+    
+    .settings-section .category-header {
+        flex-wrap: wrap;
+        gap: 0.2rem;
+    }
+    
+    .settings-section .category-levels {
+        gap: 0.3rem;
+        margin-top: 0.3rem;
+    }
+    
+    .settings-section .level-badge {
+        font-size: 0.7rem;
+        padding: 0.05rem 0.3rem;
+    }
+    
+    /* Styles spécifiques aux modals */
+    .modal-content .category-name {
+        font-size: 0.95rem;
+    }
+    
+    .modal-content .category-count {
         font-size: 0.8rem;
     }
     

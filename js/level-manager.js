@@ -339,6 +339,14 @@ class LevelManager {
         if (window.penduApp?.gameManager) {
             window.penduApp.gameManager.onLevelPreferencesChanged();
         }
+        
+        // Notifier le module des paramètres pour mettre à jour l'affichage
+        if (window.penduApp?.settingsModule) {
+            console.log('📞 LevelManager appelle settingsModule.onLevelPreferencesChanged()');
+            window.penduApp.settingsModule.onLevelPreferencesChanged();
+        } else {
+            console.log('❌ settingsModule non trouvé dans window.penduApp');
+        }
 
         console.log('🎯 Préférences de niveaux mises à jour:', this.getEnabledLevels());
     }

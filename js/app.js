@@ -174,7 +174,10 @@ class PenduApp {
         
         // Fermer le menu en cliquant à l'extérieur
         document.addEventListener('click', (e) => {
-            if (this.isMenuOpen && !this.navMenu.contains(e.target) && !this.hamburgerMenu.contains(e.target)) {
+            const navMenu = this.domManager.getById('navMenu');
+            const hamburgerMenu = this.domManager.getById('hamburgerMenu');
+            if (this.isMenuOpen && navMenu && hamburgerMenu && 
+                !navMenu.contains(e.target) && !hamburgerMenu.contains(e.target)) {
                 this.closeMenu();
             }
         });
@@ -645,6 +648,6 @@ document.addEventListener('DOMContentLoaded', function() {
         versionDisplay.textContent = PENDU_VERSION;
     }
     
-    // Créer l'instance de l'app
-    penduApp = new PenduApp();
+    // Créer l'instance de l'app et la rendre accessible globalement
+    window.penduApp = new PenduApp();
 });
