@@ -31,11 +31,11 @@
 }
 
 .category-title h2 {
-    font-size: 2rem;
+    font-size: 1.2rem; /* Réduit de ~40% (2rem → 1.2rem) */
     color: var(--primary-color);
     text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 20px var(--primary-shadow);
+    letter-spacing: 1px; /* Réduit aussi l'espacement des lettres */
+    text-shadow: 0 0 15px var(--primary-shadow);
     margin: 0;
 }
 

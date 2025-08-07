@@ -15,7 +15,7 @@
     }
     
     .fullscreen-mode .header-content {
-        padding: var(--spacing-xs);
+        padding: calc(var(--spacing-xs) * 0.8); /* Encore plus réduit en plein écran */
     }
     
     .fullscreen-mode .header-content h1 {
@@ -60,7 +60,7 @@
     }
     
     .fullscreen-mode .category-title h2 {
-        font-size: 1.1rem;
+        font-size: 0.9rem; /* Encore plus petit en plein écran */
         margin: 0;
     }
     
@@ -195,7 +195,7 @@
     }
     
     .fullscreen-mode .app-header {
-        padding: 2px var(--spacing-sm);
+        padding: 1px var(--spacing-sm); /* Très réduit pour petits écrans */
     }
     
     .fullscreen-mode .header-content h1 {
@@ -208,7 +208,7 @@
     }
     
     .fullscreen-mode .category-title h2 {
-        font-size: 0.9rem;
+        font-size: 0.8rem; /* Très petit sur les petits écrans */
     }
     
     .fullscreen-mode .category-icon {
@@ -484,7 +484,7 @@ html, body {
     
     /* === LAYOUT (depuis layout.css) === */
     .header-content {
-        padding: var(--spacing-md);
+        padding: var(--spacing-sm); /* Cohérent avec la réduction desktop */
     }
     
     /* Boutons header plus petits sur mobile */
@@ -516,8 +516,8 @@ html, body {
     }
     
     .category-title h2 {
-        font-size: 1.3rem;
-        letter-spacing: 1px;
+        font-size: 1.1rem; /* Cohérent avec la réduction desktop */
+        letter-spacing: 0.5px; /* Réduit aussi */
     }
     
     .category-title {
@@ -1170,7 +1170,7 @@ html, body {
     }
     
     .category-title h2 {
-        font-size: 1.8rem;
+        font-size: 1.3rem; /* Réduit de ~40% aussi (1.8rem → 1.3rem) */
     }
     
     .category-icon {
