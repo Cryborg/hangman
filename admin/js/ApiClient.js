@@ -51,7 +51,10 @@ class ApiClient {
     async login(credentials) {
         return this.request(`${this.adminBaseUrl}/auth.php`, {
             method: 'POST',
-            body: JSON.stringify(credentials)
+            body: JSON.stringify({
+                action: 'login',
+                ...credentials
+            })
         });
     }
 
@@ -61,7 +64,10 @@ class ApiClient {
 
     async logout() {
         return this.request(`${this.adminBaseUrl}/auth.php`, {
-            method: 'DELETE'
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'logout'
+            })
         });
     }
 
