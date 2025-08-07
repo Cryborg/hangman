@@ -9,22 +9,31 @@ error_reporting(E_ALL);
 
 echo "<h2>🔍 Debug Auth API</h2>";
 
-// 1. Tester l'inclusion de config.php
+// 1. Tester l'inclusion de config.php et auth.php
 echo "<h3>1. Test config.php</h3>";
 try {
     require_once __DIR__ . '/../config.php';
     echo "✅ config.php chargé<br>";
-    
-    $constants = ['ADMIN_ENABLED', 'ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DB_HOST'];
-    foreach ($constants as $const) {
-        if (defined($const)) {
-            echo "✅ $const défini : " . (in_array($const, ['ADMIN_PASSWORD']) ? '[MASQUÉ]' : constant($const)) . "<br>";
-        } else {
-            echo "❌ $const NON défini<br>";
-        }
-    }
 } catch (Exception $e) {
     echo "❌ Erreur config.php : " . $e->getMessage() . "<br>";
+}
+
+echo "<h3>1.5. Test auth.php</h3>";
+try {
+    require_once __DIR__ . '/auth.php';
+    echo "✅ auth.php chargé<br>";
+} catch (Exception $e) {
+    echo "❌ Erreur auth.php : " . $e->getMessage() . "<br>";
+}
+
+echo "<h3>1.6. Constantes</h3>";
+$constants = ['ADMIN_ENABLED', 'ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DB_HOST'];
+foreach ($constants as $const) {
+    if (defined($const)) {
+        echo "✅ $const défini : " . (in_array($const, ['ADMIN_PASSWORD']) ? '[MASQUÉ]' : constant($const)) . "<br>";
+    } else {
+        echo "❌ $const NON défini<br>";
+    }
 }
 
 // 2. Tester la réception JSON
