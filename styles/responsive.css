@@ -112,24 +112,22 @@
         min-height: 0;
     }
     
-    /* Pendu utilise toute la hauteur disponible */
+    /* Pendu utilise toute la hauteur disponible - vraiment flexible */
     .fullscreen-mode .hangman-container {
-        flex: 1;
+        flex: 1; /* Prend tout l'espace disponible */
         padding: var(--spacing-xs);
-        min-height: 180px; /* Hauteur minimale garantie */
         display: flex !important;
         align-items: center;
         justify-content: center;
         background: rgba(0, 0, 0, 0.2);
         border-radius: var(--radius-md);
+        /* Pas de min-height pour s'adapter à l'espace réel */
     }
     
     .fullscreen-mode #hangman {
         width: 100%;
         height: 100%;
-        min-width: 120px;
-        min-height: 120px;
-        /* Pas de max-height pour utiliser tout l'espace disponible */
+        /* Pas de contraintes de taille - s'adapte au container */
     }
     
     /* Mot bien visible */
@@ -229,16 +227,14 @@
         font-size: 1.2rem;
     }
     
-    /* Pendu utilise l'espace disponible même sur très petit écran */
+    /* Pendu vraiment flexible même sur très petit écran */
     .fullscreen-mode .hangman-container {
-        min-height: 140px; /* Réduit pour très petits écrans mais toujours flexible */
         padding: 4px;
+        /* Pas de contraintes de hauteur - laisse flex: 1 faire son travail */
     }
     
     .fullscreen-mode #hangman {
-        min-width: 100px;
-        min-height: 100px;
-        /* Suppression max pour utiliser tout l'espace */
+        /* Aucune contrainte - s'adapte complètement à l'espace disponible */
     }
     
     /* Mot plus petit */
