@@ -39,12 +39,6 @@ class WordManager {
             this.clearSearch();
         });
 
-        // Filtres de difficulté
-        this.domManager.getAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.setDifficultyFilter(e.target.dataset.difficulty);
-            });
-        });
 
         // Pagination
         this.domManager.getById('prevPageBtn')?.addEventListener('click', () => {
@@ -61,6 +55,21 @@ class WordManager {
         });
     }
 
+    setupFilterEventListeners() {
+        const filterBtns = this.domManager.getAll('.filter-btn');
+        
+        filterBtns.forEach(btn => {
+            // Éviter les doublons d'event listeners
+            const existingListener = btn.dataset.listenerAttached;
+            if (!existingListener) {
+                btn.addEventListener('click', (e) => {
+                    this.setDifficultyFilter(e.target.dataset.difficulty);
+                });
+                btn.dataset.listenerAttached = 'true';
+            }
+        });
+    }
+
     // =================
     // WORD CRUD
     // =================
@@ -73,6 +82,9 @@ class WordManager {
             // Changer de vue
             this.domManager.getById('categoriesListView').classList.remove('active');
             this.domManager.getById('categoryDetailView').classList.add('active');
+            
+            // Configurer les event listeners des filtres
+            this.setupFilterEventListeners();
         } catch (error) {
             this.uiManager.showToast('Erreur', 'Impossible de charger les mots: ' + error.message, 'error');
         } finally {
@@ -347,6 +359,16 @@ class WordManager {
             this.uiManager.showToast('Erreur', 'Aucune catégorie sélectionnée', 'error');
             return;
         }
+        
+        // Fermer toute modal existante avant d'en ouvrir une nouvelle
+        if (this.currentAddModalId) {
+            this.closeAddModal();
+        }
+        
+        // Nettoyer aussi toutes les modales orphelines
+        document.querySelectorAll('.admin-modal-overlay').forEach(modal => {
+            modal.remove();
+        });
 
         const content = `
             <form id="addWordForm">
@@ -374,10 +396,10 @@ class WordManager {
         `;
 
         const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('add-word-modal')">
+            <button class="btn btn-secondary" id="closeAddModalBtn">
                 Annuler
             </button>
-            <button class="btn btn-primary" onclick="wordManager.handleAddWordSubmit()">
+            <button class="btn btn-primary" id="submitAddModalBtn">
                 Ajouter le mot
             </button>
         `;
@@ -385,12 +407,30 @@ class WordManager {
         const modalId = this.uiManager.createModal('Nouveau mot', content, { actions });
         
         // Stocker l'ID pour la fermeture
+        this.currentAddModalId = modalId;
         this.domManager.getById('addWordForm').dataset.modalId = modalId;
+        
+        // Attacher les event listeners après création de la modal
+        setTimeout(() => {
+            const closeBtn = document.getElementById('closeAddModalBtn');
+            const submitBtn = document.getElementById('submitAddModalBtn');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    this.closeAddModal();
+                });
+            }
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => {
+                    this.handleAddWordSubmit();
+                });
+            }
+        }, 100);
     }
 
     async handleAddWordSubmit() {
         const formData = this.uiManager.getFormData('addWordForm');
-        const modalId = this.domManager.getById('addWordForm').dataset.modalId;
         
         if (!formData.word) {
             this.uiManager.showToast('Erreur', 'Le mot est requis', 'error');
@@ -399,13 +439,23 @@ class WordManager {
 
         try {
             await this.createWord(formData);
-            this.uiManager.closeModal(modalId);
+            this.closeAddModal();
         } catch (error) {
             // Erreur déjà gérée dans createWord
         }
     }
 
     showEditModal(wordId) {
+        // Fermer toute modal existante avant d'en ouvrir une nouvelle
+        if (this.currentEditModalId) {
+            this.closeEditModal();
+        }
+        
+        // Nettoyer toutes les modales orphelines
+        document.querySelectorAll('.admin-modal-overlay').forEach(modal => {
+            modal.remove();
+        });
+        
         const word = this.currentWords.find(w => w.id === wordId);
         if (!word) {
             this.uiManager.showToast('Erreur', 'Mot non trouvé', 'error');
@@ -445,10 +495,10 @@ class WordManager {
         `;
 
         const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('edit-word-modal')">
+            <button class="btn btn-secondary" id="closeEditModalBtn">
                 Annuler
             </button>
-            <button class="btn btn-primary" onclick="wordManager.handleEditWordSubmit()">
+            <button class="btn btn-primary" id="submitEditModalBtn">
                 Modifier
             </button>
         `;
@@ -456,12 +506,29 @@ class WordManager {
         const modalId = this.uiManager.createModal('Modifier le mot', content, { actions });
         
         // Stocker l'ID pour la fermeture
-        this.domManager.getById('editWordForm').dataset.modalId = modalId;
+        this.currentEditModalId = modalId;
+        
+        // Attacher les event listeners après création de la modal
+        setTimeout(() => {
+            const closeBtn = document.getElementById('closeEditModalBtn');
+            const submitBtn = document.getElementById('submitEditModalBtn');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    this.closeEditModal();
+                });
+            }
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => {
+                    this.handleEditWordSubmit();
+                });
+            }
+        }, 50);
     }
 
     async handleEditWordSubmit() {
         const formData = this.uiManager.getFormData('editWordForm');
-        const modalId = this.domManager.getById('editWordForm').dataset.modalId;
         
         if (!formData.word) {
             this.uiManager.showToast('Erreur', 'Le mot est requis', 'error');
@@ -476,9 +543,23 @@ class WordManager {
             formData.active = formData.active === 'on';
             
             await this.updateWord(wordId, formData);
-            this.uiManager.closeModal(modalId);
+            this.closeEditModal();
         } catch (error) {
             // Erreur déjà gérée dans updateWord
+        }
+    }
+
+    closeAddModal() {
+        if (this.currentAddModalId) {
+            this.uiManager.closeModal(this.currentAddModalId);
+            this.currentAddModalId = null;
+        }
+    }
+
+    closeEditModal() {
+        if (this.currentEditModalId) {
+            this.uiManager.closeModal(this.currentEditModalId);
+            this.currentEditModalId = null;
         }
     }
 

@@ -72,14 +72,20 @@ function handleGetWords($db) {
         $limit = (int) ($_GET['limit'] ?? 50);
         $offset = ($page - 1) * $limit;
         $search = $_GET['search'] ?? '';
+        $difficulty = $_GET['difficulty'] ?? '';
         
-        // Construction de la requête avec recherche optionnelle
+        // Construction de la requête avec recherche et filtrage optionnels
         $whereClause = "w.category_id = ? AND w.active = 1";
         $params = [$categoryId];
         
         if ($search) {
             $whereClause .= " AND w.word LIKE ?";
             $params[] = "%{$search}%";
+        }
+        
+        if ($difficulty && $difficulty !== 'all') {
+            $whereClause .= " AND w.difficulty = ?";
+            $params[] = $difficulty;
         }
         
         // Compter le total
@@ -157,7 +163,8 @@ function handleGetWords($db) {
                 'words_with_accents' => (int) $stats['words_with_accents'],
                 'words_with_numbers' => (int) $stats['words_with_numbers']
             ],
-            'search' => $search
+            'search' => $search,
+            'difficulty' => $difficulty
         ];
         
         sendSuccessResponse($response);
