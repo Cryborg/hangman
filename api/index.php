@@ -89,16 +89,6 @@ $documentation = [
                     'description' => 'Filtrer par longueur (format: min-max)',
                     'example' => '5-8'
                 ],
-                'accents' => [
-                    'type' => 'boolean',
-                    'required' => false,
-                    'description' => 'Filtrer les mots avec/sans accents'
-                ],
-                'numbers' => [
-                    'type' => 'boolean',
-                    'required' => false,
-                    'description' => 'Filtrer les mots avec/sans chiffres'
-                ],
                 'limit' => [
                     'type' => 'integer',
                     'required' => false,
@@ -111,7 +101,6 @@ $documentation = [
                 '/words.php?category=1&random=true' => 'Mot aléatoire de la catégorie 1',
                 '/words.php?category=1&difficulty=facile' => 'Mots faciles de la catégorie 1',
                 '/words.php?category=1&length=5-8' => 'Mots de 5 à 8 caractères',
-                '/words.php?category=1&accents=true' => 'Mots avec accents',
                 '/words.php?category=1&limit=10' => 'Maximum 10 mots'
             ]
         ],
@@ -183,9 +172,6 @@ $documentation = [
             'word' => 'string - The word to guess (uppercase)',
             'difficulty' => 'string - Difficulty level (easy/medium/hard)',
             'length' => 'integer - Number of characters',
-            'has_accents' => 'boolean - Presence of accents',
-            'has_numbers' => 'boolean - Presence of numbers',
-            'has_special_chars' => 'boolean - Presence of special characters',
             'popularity' => 'integer - Popularity score',
             'category_name' => 'string - Category name',
             'category_icon' => 'string - Category icon'

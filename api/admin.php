@@ -56,9 +56,8 @@ try {
     
     // Retrieve all words with category info
     $wordsQuery = "
-        SELECT w.id, w.word, w.category_id, w.difficulty, w.length, 
-               w.has_accents, w.has_numbers, w.has_special_chars, 
-               w.popularity, w.active, w.created_at, w.updated_at,
+        SELECT w.id, w.word, w.category_id, w.difficulty, 
+               w.active, w.created_at, w.updated_at,
                c.name as category_name, c.icon as category_icon
         FROM hangman_words w
         INNER JOIN hangman_categories c ON w.category_id = c.id
@@ -72,12 +71,8 @@ try {
     foreach ($words as &$word) {
         $word['id'] = (int) $word['id'];
         $word['category_id'] = (int) $word['category_id'];
-        $word['length'] = (int) $word['length'];
-        $word['popularity'] = (int) $word['popularity'];
         $word['active'] = (bool) $word['active'];
-        $word['has_accents'] = (bool) $word['has_accents'];
-        $word['has_numbers'] = (bool) $word['has_numbers'];
-        $word['has_special_chars'] = (bool) $word['has_special_chars'];
+        
     }
     
     // Retrieve all tags

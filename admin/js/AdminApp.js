@@ -236,7 +236,6 @@ class AdminApp {
                 this.updateMainStats(stats, analysis);
                 
                 // Mettre à jour les analyses
-                this.updateLengthDistribution(analysis.lengthDistribution, words.length);
                 this.updateDifficultyPie(analysis.difficulties);
                 
                 // Top catégories
@@ -259,17 +258,17 @@ class AdminApp {
             corrupted: 0,
             plain: 0,
             difficulties: { easy: 0, medium: 0, hard: 0 },
-            lengthDistribution: { '3-5': 0, '6-8': 0, '9-12': 0, '13+': 0 },
             issues: []
         };
 
         words.forEach(word => {
-            // Analyse des caractères
-            if (frenchAccentsPattern.test(word.word)) {
+            // Analyse des caractères (détection dynamique)
+            const wordText = word.word || '';
+            if (frenchAccentsPattern.test(wordText)) {
                 analysis.accents++;
-            } else if (word.has_numbers) {
+            } else if (/[0-9]/.test(wordText)) {
                 analysis.numbers++;
-            } else if (word.has_accents) { // Caractères corrompus
+            } else if (/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9\s-']/i.test(wordText)) {
                 analysis.corrupted++;
             } else {
                 analysis.plain++;
@@ -280,17 +279,6 @@ class AdminApp {
                 analysis.difficulties[word.difficulty]++;
             }
             
-            // Analyse de la longueur
-            const length = word.length || word.word.length;
-            if (length <= 5) {
-                analysis.lengthDistribution['3-5']++;
-            } else if (length <= 8) {
-                analysis.lengthDistribution['6-8']++;
-            } else if (length <= 12) {
-                analysis.lengthDistribution['9-12']++;
-            } else {
-                analysis.lengthDistribution['13+']++;
-            }
         });
 
         // Détecter les problèmes
@@ -332,18 +320,6 @@ class AdminApp {
             stats.active_categories > 0 ? `${Math.round((stats.active_tags / stats.active_categories) * 100) / 10} par cat.` : '-';
     }
 
-    updateLengthDistribution(distribution, total) {
-        Object.keys(distribution).forEach(range => {
-            const count = distribution[range];
-            const percentage = total > 0 ? (count / total) * 100 : 0;
-            
-            const fillElement = document.getElementById(`length${range.replace('-', '').replace('+', 'plus')}`);
-            const countElement = document.getElementById(`count${range.replace('-', '').replace('+', 'plus')}`);
-            
-            if (fillElement) fillElement.style.width = `${percentage}%`;
-            if (countElement) countElement.textContent = count;
-        });
-    }
 
     updateDifficultyPie(difficulties) {
         const total = Object.values(difficulties).reduce((a, b) => a + b, 0);

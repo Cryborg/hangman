@@ -5,8 +5,8 @@
  */
 class ApiClient {
     constructor() {
-        this.baseUrl = '../api';
-        this.adminBaseUrl = '../api/admin';
+        this.baseUrl = 'api';
+        this.adminBaseUrl = 'api/admin';
     }
 
     /**
@@ -76,7 +76,7 @@ class ApiClient {
     // =================
     
     async getAdminData() {
-        return this.request(`../api/admin.php`);
+        return this.request(`${this.baseUrl}/admin.php`);
     }
 
     // =================

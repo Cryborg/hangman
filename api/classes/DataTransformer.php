@@ -18,12 +18,7 @@ class DataTransformer {
             'word' => $word['word'],
             'category_id' => (int) ($word['category_id'] ?? 0),
             'difficulty' => $word['difficulty'] ?? 'medium',
-            'length' => (int) ($word['length'] ?? mb_strlen($word['word'], 'UTF-8')),
-            'popularity' => (int) ($word['popularity'] ?? 0),
             'active' => (bool) ($word['active'] ?? true),
-            'has_accents' => (bool) ($word['has_accents'] ?? false),
-            'has_numbers' => (bool) ($word['has_numbers'] ?? false),
-            'has_special_chars' => (bool) ($word['has_special_chars'] ?? false),
             'created_at' => $word['created_at'] ?? null,
             'updated_at' => $word['updated_at'] ?? null
         ];
@@ -109,11 +104,7 @@ class DataTransformer {
             'total_words' => (int) ($stats['total_words'] ?? 0),
             'easy_words' => (int) ($stats['easy_words'] ?? 0),
             'medium_words' => (int) ($stats['medium_words'] ?? 0),
-            'hard_words' => (int) ($stats['hard_words'] ?? 0),
-            'words_with_accents' => (int) ($stats['words_with_accents'] ?? 0),
-            'words_with_numbers' => (int) ($stats['words_with_numbers'] ?? 0),
-            'words_with_special_chars' => (int) ($stats['words_with_special_chars'] ?? 0),
-            'average_word_length' => (float) ($stats['average_word_length'] ?? 0)
+            'hard_words' => (int) ($stats['hard_words'] ?? 0)
         ];
     }
     

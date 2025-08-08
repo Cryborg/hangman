@@ -253,15 +253,25 @@ class WordManager {
     }
 
     renderWordCharacteristics(word) {
-        const characteristics = [`${word.length} lettres`];
+        const characteristics = [];
         
-        if (word.has_accents) characteristics.push('<span class="word-char-badge accent">Accents</span>');
-        if (word.has_numbers) characteristics.push('<span class="word-char-badge number">Chiffres</span>');
-        if (word.has_special_chars) characteristics.push('<span class="word-char-badge special">Spéciaux</span>');
+        // Dynamic detection for display (JavaScript replaces server-side analysis)
+        const wordText = word.word || '';
+        if (/[ÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ]/i.test(wordText)) {
+            characteristics.push('<span class="word-char-badge accent">Accents</span>');
+        }
+        if (/[0-9]/.test(wordText)) {
+            characteristics.push('<span class="word-char-badge number">Chiffres</span>');
+        }
+        if (/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9\s-']/i.test(wordText)) {
+            characteristics.push('<span class="word-char-badge special">Spéciaux</span>');
+        }
         
-        return characteristics.map(char => 
-            char.startsWith('<span') ? char : `<span class="word-char-badge">${char}</span>`
-        ).join('');
+        if (characteristics.length === 0) {
+            characteristics.push('<span class="word-char-badge">Standard</span>');
+        }
+        
+        return characteristics.join('');
     }
 
     updatePagination(pagination) {
@@ -386,10 +396,6 @@ class WordManager {
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <label for="wordPopularity">Popularité (0-100)</label>
-                    <input type="number" id="wordPopularity" name="popularity" min="0" max="100" value="0" class="form-input">
-                </div>
                 
                 <input type="hidden" name="category_id" value="${this.currentCategory.id}">
             </form>
@@ -480,10 +486,6 @@ class WordManager {
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <label for="editWordPopularity">Popularité (0-100)</label>
-                    <input type="number" id="editWordPopularity" name="popularity" min="0" max="100" value="${word.popularity}" class="form-input">
-                </div>
                 
                 <div class="form-group">
                     <label>

@@ -100,9 +100,8 @@ function handleGetWords($db) {
         // Récupérer les mots
         $wordsStmt = $db->prepare("
             SELECT 
-                w.id, w.word, w.difficulty, w.length,
-                w.has_accents, w.has_numbers, w.has_special_chars,
-                w.popularity, w.active, w.created_at, w.updated_at
+                w.id, w.word, w.difficulty,
+                w.active, w.created_at, w.updated_at
             FROM hangman_words w 
             WHERE {$whereClause}
             ORDER BY w.word ASC
@@ -116,12 +115,7 @@ function handleGetWords($db) {
         // Post-traitement des données
         foreach ($words as &$word) {
             $word['id'] = (int) $word['id'];
-            $word['length'] = (int) $word['length'];
-            $word['popularity'] = (int) $word['popularity'];
             $word['active'] = (bool) $word['active'];
-            $word['has_accents'] = (bool) $word['has_accents'];
-            $word['has_numbers'] = (bool) $word['has_numbers'];
-            $word['has_special_chars'] = (bool) $word['has_special_chars'];
         }
         
         // Statistiques de la catégorie
@@ -130,9 +124,7 @@ function handleGetWords($db) {
                 COUNT(*) as total_words,
                 COUNT(CASE WHEN difficulty = 'easy' THEN 1 END) as easy_words,
                 COUNT(CASE WHEN difficulty = 'medium' THEN 1 END) as medium_words,
-                COUNT(CASE WHEN difficulty = 'hard' THEN 1 END) as hard_words,
-                COUNT(CASE WHEN has_accents = 1 THEN 1 END) as words_with_accents,
-                COUNT(CASE WHEN has_numbers = 1 THEN 1 END) as words_with_numbers
+                COUNT(CASE WHEN difficulty = 'hard' THEN 1 END) as hard_words
             FROM hangman_words 
             WHERE category_id = ? AND active = 1
         ");
@@ -159,9 +151,7 @@ function handleGetWords($db) {
                 'total_words' => (int) $stats['total_words'],
                 'easy_words' => (int) $stats['easy_words'],
                 'medium_words' => (int) $stats['medium_words'],
-                'hard_words' => (int) $stats['hard_words'],
-                'words_with_accents' => (int) $stats['words_with_accents'],
-                'words_with_numbers' => (int) $stats['words_with_numbers']
+                'hard_words' => (int) $stats['hard_words']
             ],
             'search' => $search,
             'difficulty' => $difficulty
@@ -217,7 +207,7 @@ function handleAddWord($db) {
         
         // Récupérer le mot créé avec toutes ses métadonnées
         $newWordStmt = $db->prepare("
-            SELECT id, word, difficulty, length, has_accents, has_numbers, has_special_chars, popularity, active
+            SELECT id, word, difficulty, active
             FROM hangman_words 
             WHERE id = ?
         ");
@@ -226,12 +216,7 @@ function handleAddWord($db) {
         
         // Post-traitement
         $newWord['id'] = (int) $newWord['id'];
-        $newWord['length'] = (int) $newWord['length'];
-        $newWord['popularity'] = (int) $newWord['popularity'];
         $newWord['active'] = (bool) $newWord['active'];
-        $newWord['has_accents'] = (bool) $newWord['has_accents'];
-        $newWord['has_numbers'] = (bool) $newWord['has_numbers'];
-        $newWord['has_special_chars'] = (bool) $newWord['has_special_chars'];
         
         sendSuccessResponse([
             'word' => $newWord,
@@ -281,10 +266,6 @@ function handleUpdateWord($db) {
             $params[] = $input['difficulty'];
         }
         
-        if (isset($input['popularity'])) {
-            $updates[] = "popularity = ?";
-            $params[] = (int) $input['popularity'];
-        }
         
         if (isset($input['active'])) {
             $updates[] = "active = ?";
@@ -308,7 +289,7 @@ function handleUpdateWord($db) {
         
         // Récupérer le mot mis à jour
         $updatedStmt = $db->prepare("
-            SELECT id, word, difficulty, length, has_accents, has_numbers, has_special_chars, popularity, active
+            SELECT id, word, difficulty, active
             FROM hangman_words 
             WHERE id = ?
         ");
@@ -317,12 +298,7 @@ function handleUpdateWord($db) {
         
         // Post-traitement
         $updatedWord['id'] = (int) $updatedWord['id'];
-        $updatedWord['length'] = (int) $updatedWord['length'];
-        $updatedWord['popularity'] = (int) $updatedWord['popularity'];
         $updatedWord['active'] = (bool) $updatedWord['active'];
-        $updatedWord['has_accents'] = (bool) $updatedWord['has_accents'];
-        $updatedWord['has_numbers'] = (bool) $updatedWord['has_numbers'];
-        $updatedWord['has_special_chars'] = (bool) $updatedWord['has_special_chars'];
         
         sendSuccessResponse([
             'word' => $updatedWord,

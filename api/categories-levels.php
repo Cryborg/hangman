@@ -70,7 +70,7 @@ try {
     $categoryPlaceholders = implode(',', array_fill(0, count($categoryIds), '?'));
     
     $wordsQuery = "
-        SELECT w.word, w.category_id, w.difficulty, w.has_accents, w.has_numbers, w.has_special_chars
+        SELECT w.word, w.category_id, w.difficulty
         FROM hangman_words w 
         WHERE w.active = 1 
         AND w.category_id IN ($categoryPlaceholders)

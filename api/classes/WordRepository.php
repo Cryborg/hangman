@@ -41,9 +41,8 @@ class WordRepository {
         // Récupérer les mots
         $wordsStmt = $this->db->prepare("
             SELECT 
-                w.id, w.word, w.difficulty, w.length,
-                w.has_accents, w.has_numbers, w.has_special_chars,
-                w.popularity, w.active, w.created_at, w.updated_at
+                w.id, w.word, w.difficulty,
+                w.active, w.created_at, w.updated_at
             FROM hangman_words w 
             WHERE {$whereClause}
             ORDER BY w.word ASC
@@ -64,9 +63,8 @@ class WordRepository {
      */
     public function findById(int $id): ?array {
         $stmt = $this->db->prepare("
-            SELECT id, word, category_id, difficulty, length, 
-                   has_accents, has_numbers, has_special_chars, 
-                   popularity, active, created_at, updated_at
+            SELECT id, word, category_id, difficulty, 
+                   active, created_at, updated_at
             FROM hangman_words 
             WHERE id = ?
         ");
@@ -98,25 +96,17 @@ class WordRepository {
      * Crée un nouveau mot
      */
     public function create(array $wordData): int {
-        $analysis = WordAnalyzer::analyze($wordData['word']);
-        
         $stmt = $this->db->prepare("
             INSERT INTO hangman_words (
-                word, category_id, difficulty, length,
-                has_accents, has_numbers, has_special_chars,
-                popularity, active
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                word, category_id, difficulty,
+                active
+            ) VALUES (?, ?, ?, ?)
         ");
         
         $stmt->execute([
             StringUtility::cleanWord($wordData['word']),
             $wordData['category_id'],
-            $wordData['difficulty'] ?? $analysis['difficulty'],
-            $analysis['length'],
-            $analysis['has_accents'] ? 1 : 0,
-            $analysis['has_numbers'] ? 1 : 0,
-            $analysis['has_special_chars'] ? 1 : 0,
-            $wordData['popularity'] ?? 0,
+            $wordData['difficulty'] ?? 'medium',
             $wordData['active'] ?? 1
         ]);
         
@@ -127,25 +117,15 @@ class WordRepository {
      * Met à jour un mot
      */
     public function update(int $id, array $updateData): bool {
-        $allowedFields = ['word', 'difficulty', 'popularity', 'active'];
+        $allowedFields = ['word', 'difficulty', 'active'];
         $updates = [];
         $params = [];
         
         foreach ($allowedFields as $field) {
             if (isset($updateData[$field])) {
                 if ($field === 'word') {
-                    // Si on modifie le mot, recalculer les métadonnées
-                    $analysis = WordAnalyzer::analyze($updateData[$field]);
                     $updates[] = "word = ?";
                     $params[] = StringUtility::cleanWord($updateData[$field]);
-                    $updates[] = "length = ?";
-                    $params[] = $analysis['length'];
-                    $updates[] = "has_accents = ?";
-                    $params[] = $analysis['has_accents'] ? 1 : 0;
-                    $updates[] = "has_numbers = ?";
-                    $params[] = $analysis['has_numbers'] ? 1 : 0;
-                    $updates[] = "has_special_chars = ?";
-                    $params[] = $analysis['has_special_chars'] ? 1 : 0;
                 } else {
                     $updates[] = "{$field} = ?";
                     if ($field === 'active') {
@@ -190,10 +170,6 @@ class WordRepository {
                 COUNT(CASE WHEN difficulty = 'easy' THEN 1 END) as easy_words,
                 COUNT(CASE WHEN difficulty = 'medium' THEN 1 END) as medium_words,
                 COUNT(CASE WHEN difficulty = 'hard' THEN 1 END) as hard_words,
-                COUNT(CASE WHEN has_accents = 1 THEN 1 END) as words_with_accents,
-                COUNT(CASE WHEN has_numbers = 1 THEN 1 END) as words_with_numbers,
-                COUNT(CASE WHEN has_special_chars = 1 THEN 1 END) as words_with_special_chars,
-                ROUND(AVG(length), 2) as average_word_length
             FROM hangman_words 
             WHERE category_id = ? AND active = 1
         ");
@@ -243,9 +219,8 @@ class WordRepository {
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO hangman_words (
-                    word, category_id, difficulty, length,
-                    has_accents, has_numbers, has_special_chars
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    word, category_id, difficulty
+                ) VALUES (?, ?, ?)
                 ON DUPLICATE KEY UPDATE 
                 difficulty = VALUES(difficulty)
             ");
@@ -253,16 +228,11 @@ class WordRepository {
             foreach ($words as $wordData) {
                 try {
                     $wordText = is_string($wordData) ? $wordData : ($wordData['word'] ?? '');
-                    $analysis = WordAnalyzer::analyze($wordText);
                     
                     $stmt->execute([
                         StringUtility::cleanWord($wordText),
                         $categoryId,
-                        is_array($wordData) ? ($wordData['difficulty'] ?? $analysis['difficulty']) : $analysis['difficulty'],
-                        $analysis['length'],
-                        $analysis['has_accents'] ? 1 : 0,
-                        $analysis['has_numbers'] ? 1 : 0,
-                        $analysis['has_special_chars'] ? 1 : 0
+                        is_array($wordData) ? ($wordData['difficulty'] ?? 'medium') : 'medium'
                     ]);
                     
                     $imported++;

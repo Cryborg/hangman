@@ -84,9 +84,7 @@ function handleGet($db) {
             $word['id'] = (int) $word['id'];
             $word['category_id'] = (int) $word['category_id'];
             $word['length'] = (int) $word['length'];
-            $word['has_accents'] = (bool) $word['has_accents'];
-            $word['has_numbers'] = (bool) $word['has_numbers'];
-            $word['has_special_chars'] = (bool) $word['has_special_chars'];
+            
         }
         
         // Compter le total pour la pagination
@@ -160,25 +158,17 @@ function handlePost($db) {
             return;
         }
         
-        // Analyze the word
-        $analysis = analyzeWord($word);
-        
-        // Insert the word
+        // Insert the word (triggers will calculate length automatically)
         $stmt = $db->prepare("
             INSERT INTO hangman_words (
-                word, category_id, difficulty, length,
-                has_accents, has_numbers, has_special_chars
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                word, category_id, difficulty
+            ) VALUES (?, ?, ?)
         ");
         
         $stmt->execute([
             $word,
             $categoryId,
-            $difficulty,
-            $analysis['length'],
-            $analysis['has_accents'],
-            $analysis['has_numbers'],
-            $analysis['has_special_chars']
+            $difficulty
         ]);
         
         $wordId = $db->lastInsertId();
@@ -201,9 +191,7 @@ function handlePost($db) {
         $word['id'] = (int) $word['id'];
         $word['category_id'] = (int) $word['category_id'];
         $word['length'] = (int) $word['length'];
-        $word['has_accents'] = (bool) $word['has_accents'];
-        $word['has_numbers'] = (bool) $word['has_numbers'];
-        $word['has_special_chars'] = (bool) $word['has_special_chars'];
+        
         
         sendSuccessResponse($word, [
             'message' => 'Mot créé avec succès',
@@ -280,20 +268,13 @@ function handlePut($db) {
             return;
         }
         
-        // Analyze the word
-        $analysis = analyzeWord($word);
-        
-        // Update the word
+        // Update the word (triggers will calculate length automatically)
         $stmt = $db->prepare("
             UPDATE hangman_words 
             SET 
                 word = ?, 
                 category_id = ?, 
                 difficulty = ?,
-                length = ?,
-                has_accents = ?,
-                has_numbers = ?,
-                has_special_chars = ?,
                 updated_at = NOW()
             WHERE id = ?
         ");
@@ -302,10 +283,6 @@ function handlePut($db) {
             $word,
             $categoryId,
             $difficulty,
-            $analysis['length'],
-            $analysis['has_accents'],
-            $analysis['has_numbers'],
-            $analysis['has_special_chars'],
             $id
         ]);
         
@@ -356,31 +333,5 @@ function handleDelete($db) {
     }
 }
 
-/**
- * Analyse d'un mot pour extraire ses caractéristiques
- */
-function analyzeWord($mot) {
-    $mot = strtoupper($mot);
-    $longueur = mb_strlen($mot, 'UTF-8');
-    
-    // Détection des accents
-    $hasAccents = preg_match('/[ÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ]/u', $mot);
-    
-    // Détection des chiffres
-    $hasNumbers = preg_match('/[0-9]/', $mot);
-    
-    // Détection des caractères spéciaux (hors lettres, accents, chiffres)
-    $hasSpecialChars = preg_match('/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9]/u', $mot);
-    
-    // Comptage des voyelles et consonnes
-    $voyelles = preg_match_all('/[AEIOUYÀÂÄÉÈÊËÏÎÔÖÙÛÜŸ]/u', $mot);
-    $consonnes = preg_match_all('/[BCDFGHJKLMNPQRSTVWXZÇ]/u', $mot);
-    
-    return [
-        'length' => $longueur,
-        'has_accents' => $hasAccents ? 1 : 0,
-        'has_numbers' => $hasNumbers ? 1 : 0,
-        'has_special_chars' => $hasSpecialChars ? 1 : 0
-    ];
-}
+// analyzeWord function removed - metadata now handled by JavaScript game dynamically
 ?>

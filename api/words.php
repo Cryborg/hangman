@@ -7,8 +7,6 @@
  * GET /api/words.php?random=true&category=1 - Mot aléatoire d'une catégorie
  * GET /api/words.php?difficulty=facile&category=1 - Mots par difficulté
  * GET /api/words.php?length=5-8&category=1 - Mots par longueur (min-max)
- * GET /api/words.php?accents=true&category=1 - Filtrer par accents
- * GET /api/words.php?numbers=true&category=1 - Filtrer par chiffres
  * GET /api/words.php?limit=10&category=1 - Limiter le nombre de résultats
  * 
  * @version 1.0.0
@@ -27,8 +25,6 @@ try {
     $random = isset($_GET['random']) && $_GET['random'] === 'true';
     $difficulty = isset($_GET['difficulty']) ? sanitizeString($_GET['difficulty']) : null;
     $lengthRange = isset($_GET['length']) ? sanitizeString($_GET['length']) : null;
-    $withAccents = isset($_GET['accents']) ? ($_GET['accents'] === 'true') : null;
-    $withNumbers = isset($_GET['numbers']) ? ($_GET['numbers'] === 'true') : null;
     $limit = isset($_GET['limit']) ? sanitizeInt($_GET['limit'], 1, 1000) : null;
     
     // Déterminer si la catégorie est un ID ou un slug
@@ -51,8 +47,7 @@ try {
     }
     
     // Construction de la requête SQL
-    $sql = "SELECT w.id, w.word, w.difficulty, w.length, w.has_accents, w.has_numbers, 
-                   w.has_special_chars, w.popularity, c.name as category_name, c.icon as category_icon
+    $sql = "SELECT w.id, w.word, w.difficulty, w.length, w.popularity, c.name as category_name, c.icon as category_icon
             FROM hangman_words w
             INNER JOIN hangman_categories c ON w.category_id = c.id
             WHERE w.category_id = :category_id AND w.active = 1 AND c.active = 1";
@@ -88,15 +83,6 @@ try {
         }
     }
     
-    if ($withAccents !== null) {
-        $sql .= " AND w.has_accents = :with_accents";
-        $params['with_accents'] = $withAccents ? 1 : 0;
-    }
-    
-    if ($withNumbers !== null) {
-        $sql .= " AND w.has_numbers = :with_numbers";
-        $params['with_numbers'] = $withNumbers ? 1 : 0;
-    }
     
     // Ordre et limitation
     if ($random) {
@@ -139,11 +125,6 @@ try {
         $word['id'] = (int) $word['id'];
         $word['length'] = (int) $word['length'];
         $word['popularity'] = (int) $word['popularity'];
-        
-        // Convert booleans
-        $word['has_accents'] = (bool) $word['has_accents'];
-        $word['has_numbers'] = (bool) $word['has_numbers'];
-        $word['has_special_chars'] = (bool) $word['has_special_chars'];
     }
     
     // Préparer les métadonnées
@@ -158,14 +139,6 @@ try {
     
     if ($lengthRange) {
         $meta['filters_applied']['length_range'] = $lengthRange;
-    }
-    
-    if ($withAccents !== null) {
-        $meta['filters_applied']['with_accents'] = $withAccents;
-    }
-    
-    if ($withNumbers !== null) {
-        $meta['filters_applied']['with_numbers'] = $withNumbers;
     }
     
     if ($random) {

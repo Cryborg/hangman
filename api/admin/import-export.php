@@ -88,9 +88,6 @@ function handleExport($db) {
                         $word['id'] = (int) $word['id'];
                         $word['category_id'] = (int) $word['category_id'];
                         $word['length'] = (int) $word['length'];
-                        $word['has_accents'] = (bool) $word['has_accents'];
-                        $word['has_numbers'] = (bool) $word['has_numbers'];
-                        $word['has_special_chars'] = (bool) $word['has_special_chars'];
                     }
                     
                     $category['words'] = $words;
@@ -310,13 +307,12 @@ function handleImport($db) {
                         try {
                             // Support pour les mots en string simple ou en objet
                             $wordText = is_string($wordData) ? $wordData : ($wordData['word'] ?? '');
-                            $analysis = analyzeWord($wordText);
+                            $length = mb_strlen($wordText, 'UTF-8');
                             
                             $stmt = $db->prepare("
                                 INSERT INTO hangman_words (
-                                    word, category_id, difficulty, length,
-                                    has_accents, has_numbers, has_special_chars
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                                    word, category_id, difficulty, length
+                                ) VALUES (?, ?, ?, ?)
                                 ON DUPLICATE KEY UPDATE 
                                 difficulty = VALUES(difficulty)
                             ");
@@ -325,10 +321,7 @@ function handleImport($db) {
                                 $wordText,
                                 $categoryId,
                                 is_array($wordData) ? ($wordData['difficulty'] ?? 'medium') : 'medium',
-                                $analysis['length'],
-                                $analysis['has_accents'],
-                                $analysis['has_numbers'],
-                                $analysis['has_special_chars']
+                                $length
                             ]);
                             
                             $importStats['words_imported']++;
@@ -406,31 +399,4 @@ function generateSlug($name) {
     return $slug;
 }
 
-/**
- * Analyse d'un mot pour extraire ses caractéristiques
- */
-function analyzeWord($word) {
-    $word = strtoupper($word);
-    $length = mb_strlen($word, 'UTF-8');
-    
-    // Accent detection
-    $hasAccents = preg_match('/[ÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ]/u', $word);
-    
-    // Number detection
-    $hasNumbers = preg_match('/[0-9]/', $word);
-    
-    // Special character detection (excluding letters, accents, numbers)
-    $hasSpecialChars = preg_match('/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9]/u', $word);
-    
-    // Vowel and consonant count (not needed in the current schema)
-    // $vowels = preg_match_all('/[AEIOUYÀÂÄÉÈÊËÏÎÔÖÙÛÜŸ]/u', $word);
-    // $consonants = preg_match_all('/[BCDFGHJKLMNPQRSTVWXZÇ]/u', $word);
-    
-    return [
-        'length' => $length,
-        'has_accents' => $hasAccents ? 1 : 0,
-        'has_numbers' => $hasNumbers ? 1 : 0,
-        'has_special_chars' => $hasSpecialChars ? 1 : 0
-    ];
-}
 ?>
