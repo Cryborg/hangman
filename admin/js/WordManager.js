@@ -63,7 +63,9 @@ class WordManager {
             const existingListener = btn.dataset.listenerAttached;
             if (!existingListener) {
                 btn.addEventListener('click', (e) => {
-                    this.setDifficultyFilter(e.target.dataset.difficulty);
+                    // Toujours utiliser le bouton, même si on clique sur un enfant (span)
+                    const button = e.currentTarget;
+                    this.setDifficultyFilter(button.dataset.difficulty);
                 });
                 btn.dataset.listenerAttached = 'true';
             }
@@ -77,6 +79,10 @@ class WordManager {
     async showCategoryWords(categoryId) {
         try {
             this.uiManager.showLoading(true, 'Chargement des mots...');
+            
+            // Réinitialiser les filtres avant de charger la nouvelle catégorie
+            this.resetFilters();
+            
             await this.loadCategoryWords(categoryId);
             
             // Changer de vue
@@ -241,11 +247,6 @@ class WordManager {
                     <span class="difficulty-badge ${word.difficulty}">${this.getDifficultyLabel(word.difficulty)}</span>
                 </td>
                 <td>
-                    <div class="word-characteristics">
-                        ${this.renderWordCharacteristics(word)}
-                    </div>
-                </td>
-                <td>
                     <div class="action-buttons">
                         <button class="btn btn-small btn-secondary" onclick="wordManager.showEditModal(${word.id})" title="Modifier">
                             ✏️
@@ -259,27 +260,6 @@ class WordManager {
         `).join('');
     }
 
-    renderWordCharacteristics(word) {
-        const characteristics = [];
-        
-        // Dynamic detection for display (JavaScript replaces server-side analysis)
-        const wordText = word.word || '';
-        if (/[ÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ]/i.test(wordText)) {
-            characteristics.push('<span class="word-char-badge accent">Accents</span>');
-        }
-        if (/[0-9]/.test(wordText)) {
-            characteristics.push('<span class="word-char-badge number">Chiffres</span>');
-        }
-        if (/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9\s-']/i.test(wordText)) {
-            characteristics.push('<span class="word-char-badge special">Spéciaux</span>');
-        }
-        
-        if (characteristics.length === 0) {
-            characteristics.push('<span class="word-char-badge">Standard</span>');
-        }
-        
-        return characteristics.join('');
-    }
 
     updatePagination(pagination) {
         const container = this.domManager.getById('wordsPagination');
@@ -317,12 +297,23 @@ class WordManager {
     }
 
     setDifficultyFilter(difficulty) {
+        // Validation de l'entrée
+        if (!difficulty || !this.currentCategory) {
+            console.warn('setDifficultyFilter called with invalid parameters:', { difficulty, currentCategory: this.currentCategory });
+            return;
+        }
+        
         // Mettre à jour les boutons visuels
-        this.domManager.getAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
+        const filterBtns = this.domManager.getAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            const isActive = btn.dataset.difficulty === difficulty;
+            btn.classList.toggle('active', isActive);
         });
 
+        // Mettre à jour l'état et recharger
         this.currentDifficulty = difficulty;
+        this.currentPage = 1; // Reset à la première page lors du changement de filtre
+        
         this.loadCategoryWords(this.currentCategory.id);
     }
 
@@ -359,12 +350,25 @@ class WordManager {
         this.currentDifficulty = 'all';
         this.currentPage = 1;
         
+        // Réinitialiser le champ de recherche
         const searchInput = this.domManager.getById('wordsSearchInput');
-        if (searchInput) searchInput.value = '';
+        if (searchInput) {
+            searchInput.value = '';
+        }
         
-        this.domManager.getAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.difficulty === 'all');
-        });
+        // Réinitialiser les boutons de filtres (avec une vérification d'existence)
+        const filterBtns = this.domManager.getAll('.filter-btn');
+        if (filterBtns.length > 0) {
+            filterBtns.forEach(btn => {
+                const isAllFilter = btn.dataset.difficulty === 'all';
+                btn.classList.toggle('active', isAllFilter);
+                
+                // Debug: s'assurer que le data attribute existe
+                if (!btn.dataset.difficulty) {
+                    console.warn('Button without difficulty data attribute found:', btn);
+                }
+            });
+        }
     }
 
     // =================
@@ -414,12 +418,6 @@ class WordManager {
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" id="allowDuplicates" name="allowDuplicates" style="margin-right: 8px;">
-                        Ignorer les doublons (continuer si un mot existe déjà)
-                    </label>
-                </div>
                 
                 <input type="hidden" name="category_id" value="${this.currentCategory.id}">
             </form>
@@ -469,12 +467,10 @@ class WordManager {
         // Récupération directe des valeurs du formulaire
         const textarea = form.querySelector('#bulkWordInput');
         const difficultySelect = form.querySelector('#bulkWordDifficulty');
-        const allowDuplicatesCheckbox = form.querySelector('#allowDuplicates');
         const categoryIdInput = form.querySelector('input[name="category_id"]');
         
         const wordsText = textarea ? textarea.value.trim() : '';
         const difficulty = difficultySelect ? difficultySelect.value : 'medium';
-        const allowDuplicates = allowDuplicatesCheckbox ? allowDuplicatesCheckbox.checked : false;
         const categoryId = categoryIdInput ? categoryIdInput.value : this.currentCategory?.id;
         
         if (!wordsText) {
@@ -501,8 +497,7 @@ class WordManager {
             const result = await this.apiClient.createBulkWords({
                 words: words,
                 category_id: categoryId,
-                difficulty: difficulty,
-                allow_duplicates: allowDuplicates
+                difficulty: difficulty
             });
 
             this.uiManager.showLoading(false);
@@ -511,20 +506,14 @@ class WordManager {
                 const data = result.data;
                 const successCount = data.success_count || 0;
                 const errorCount = data.error_count || 0;
-                const duplicatesCount = data.duplicates ? data.duplicates.length : 0;
 
                 // Construire le message de succès
                 let message = '';
                 if (successCount > 0) {
                     message = `${successCount} mot${successCount > 1 ? 's' : ''} ajouté${successCount > 1 ? 's' : ''} avec succès`;
-                    if (duplicatesCount > 0) {
-                        message += `, ${duplicatesCount} doublon${duplicatesCount > 1 ? 's' : ''} ignoré${duplicatesCount > 1 ? 's' : ''}`;
-                    }
                     if (errorCount > 0) {
                         message += `, ${errorCount} erreur${errorCount > 1 ? 's' : ''}`;
                     }
-                } else if (duplicatesCount > 0) {
-                    message = `Tous les mots existent déjà (${duplicatesCount} doublon${duplicatesCount > 1 ? 's' : ''})`;
                 } else {
                     message = 'Aucun mot n\'a pu être ajouté';
                 }
@@ -532,8 +521,6 @@ class WordManager {
                 // Afficher le toast approprié
                 if (successCount > 0) {
                     this.uiManager.showToast('Succès', message, 'success');
-                } else if (duplicatesCount > 0 && errorCount === 0) {
-                    this.uiManager.showToast('Information', message, 'info');
                 } else {
                     this.uiManager.showToast('Erreur', message, 'error');
                 }

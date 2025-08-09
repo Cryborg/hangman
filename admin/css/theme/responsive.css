@@ -8,10 +8,21 @@
     
     /* Bouton nouveau mot même taille et forme que bouton clear sur mobile */
     #addWordToCategoryBtn {
-        min-width: auto;
-        padding: var(--spacing-md);
-        width: auto;
-        height: auto;
+        min-width: auto !important;
+        width: 48px !important;
+        height: 48px !important;
+        padding: 0 !important;
+        border-radius: var(--radius-md) !important;
+        flex-shrink: 0;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* S'assurer que les boutons de la search-box ont la même forme */
+    .search-box .btn {
+        min-width: auto !important;
+        flex-shrink: 0;
     }
     
     /* Utilisation de vw pour une meilleure adaptation */
