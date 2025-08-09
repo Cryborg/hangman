@@ -6,11 +6,12 @@
         display: none !important;
     }
     
-    /* Bouton nouveau mot même taille que bouton clear sur mobile */
+    /* Bouton nouveau mot même taille et forme que bouton clear sur mobile */
     #addWordToCategoryBtn {
         min-width: auto;
         padding: var(--spacing-md);
-        aspect-ratio: 1;
+        width: auto;
+        height: auto;
     }
     
     /* Utilisation de vw pour une meilleure adaptation */
