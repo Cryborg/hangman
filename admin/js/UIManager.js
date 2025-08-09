@@ -235,25 +235,39 @@ class UIManager {
     // =================
     
     confirm(title, message, onConfirm, onCancel = null) {
+        // Créer d'abord la modal sans les actions
         const modalId = this.createModal(title, `<p>${message}</p>`, { 
             actions: `
-                <button class="btn btn-secondary" onclick="uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}">
+                <button class="btn btn-secondary" id="confirmCancelBtn">
                     Annuler
                 </button>
-                <button class="btn btn-danger" onclick="uiManager.closeModal('${modalId}'); ${onConfirm}()">
+                <button class="btn btn-danger" id="confirmBtn">
                     Confirmer
                 </button>
             `,
             width: '400px'
         });
         
-        // Mise à jour des boutons avec le vrai modalId
+        // Ajouter les event listeners après création
         setTimeout(() => {
             const modal = this.domManager.getById(modalId);
             if (modal) {
-                const buttons = modal.querySelectorAll('.btn');
-                buttons[0].setAttribute('onclick', `uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}`);
-                buttons[1].setAttribute('onclick', `uiManager.closeModal('${modalId}'); ${onConfirm}()`);
+                const cancelBtn = modal.querySelector('#confirmCancelBtn');
+                const confirmBtn = modal.querySelector('#confirmBtn');
+                
+                if (cancelBtn) {
+                    cancelBtn.onclick = () => {
+                        this.closeModal(modalId);
+                        if (onCancel) onCancel();
+                    };
+                }
+                
+                if (confirmBtn) {
+                    confirmBtn.onclick = () => {
+                        this.closeModal(modalId);
+                        if (window[onConfirm]) window[onConfirm]();
+                    };
+                }
             }
         }, 10);
         
