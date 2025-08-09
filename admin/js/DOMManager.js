@@ -86,10 +86,6 @@ class AdminDOMManager {
 
         // Navigation
         this.logoutBtn = this.getById('logoutBtn');
-        this.mobileLogoutBtn = this.getById('mobileLogoutBtn');
-        this.mobileNavToggle = this.getById('mobileNavToggle');
-        this.mobileNav = this.getById('mobileNav');
-        this.adminUsername = this.getById('adminUsername');
 
         // Sections
         this.dashboard = this.getById('dashboard');

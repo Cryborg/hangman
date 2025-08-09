@@ -122,22 +122,22 @@ class CategoryManager {
             
             return `
                 <tr>
-                    <td style="font-size: 1.5rem; text-align: center;">${category.icon || '📁'}</td>
                     <td>
-                        <strong>${this.uiManager.escapeHtml(category.name)}</strong>
-                    </td>
-                    <td class="hide-mobile">
-                        <button class="btn btn-primary btn-small" onclick="categoryManager.showCategoryDetail(${category.id})" title="Gérer les mots">
-                            ${category.total_words || 0} mot${(category.total_words || 0) > 1 ? 's' : ''} →
-                        </button>
-                    </td>
-                    <td class="hide-mobile">
-                        <div class="tags-list">
-                            ${tagsHtml}
+                        <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
+                            <span style="font-size: 1.5rem;">${category.icon || '📁'}</span>
+                            <div style="flex: 1;">
+                                <div>
+                                    <strong>${this.uiManager.escapeHtml(category.name)}</strong>
+                                </div>
+                                ${tagsHtml ? `<div class="tags-list" style="margin-top: var(--spacing-xs);">${tagsHtml}</div>` : ''}
+                            </div>
                         </div>
                     </td>
                     <td>
-                        <div class="action-buttons">
+                        <div class="action-buttons" style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-small" onclick="categoryManager.showCategoryDetail(${category.id})" title="Gérer les mots">
+                                ${category.total_words || 0} mot${(category.total_words || 0) > 1 ? 's' : ''} →
+                            </button>
                             <button class="btn btn-small btn-secondary" onclick="categoryManager.showEditModal(${category.id})" title="Modifier">
                                 ✏️
                             </button>
