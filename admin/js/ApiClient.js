@@ -35,7 +35,8 @@ class ApiClient {
             const result = await response.json();
             
             if (!response.ok) {
-                throw new Error(result.message || `HTTP error! status: ${response.status}`);
+                const errorMessage = result.error?.message || result.message || `HTTP error! status: ${response.status}`;
+                throw new Error(errorMessage);
             }
             
             return result;
@@ -152,7 +153,6 @@ class ApiClient {
                 words: wordsData.words,
                 category_id: wordsData.category_id,
                 difficulty: wordsData.difficulty,
-                allow_duplicates: wordsData.allow_duplicates || false
             })
         });
     }
