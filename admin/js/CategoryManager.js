@@ -124,9 +124,9 @@ class CategoryManager {
                 <tr>
                     <td>
                         <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                            <span style="font-size: 1.5rem;">${category.icon || '📁'}</span>
-                            <div style="flex: 1;">
-                                <div>
+                            <span style="font-size: 1.5rem; flex-shrink: 0;">${category.icon || '📁'}</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="word-wrap: break-word; overflow-wrap: break-word;">
                                     <strong>${this.uiManager.escapeHtml(category.name)}</strong>
                                 </div>
                                 ${tagsHtml ? `<div class="tags-list" style="margin-top: var(--spacing-xs);">${tagsHtml}</div>` : ''}
@@ -134,9 +134,9 @@ class CategoryManager {
                         </div>
                     </td>
                     <td>
-                        <div class="action-buttons" style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap;">
+                        <div class="action-buttons" style="display: flex; gap: var(--spacing-xs); white-space: nowrap;">
                             <button class="btn btn-primary btn-small" onclick="categoryManager.showCategoryDetail(${category.id})" title="Gérer les mots">
-                                ${category.total_words || 0} mot${(category.total_words || 0) > 1 ? 's' : ''} →
+                                📝 ${category.total_words || 0}
                             </button>
                             <button class="btn btn-small btn-secondary" onclick="categoryManager.showEditModal(${category.id})" title="Modifier">
                                 ✏️

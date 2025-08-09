@@ -150,21 +150,24 @@ class IconSelector {
         this.currentCallback = callback;
         this.currentInput = inputElement;
         
-        // Reset de la sélection
-        this.modal.querySelectorAll('.icon-item').forEach(item => {
-            item.classList.remove('selected');
-            if (currentIcon && item.dataset.icon === currentIcon) {
-                item.classList.add('selected');
-                this.updateConfirmButton(currentIcon);
-            }
-        });
+        // Afficher la modal d'abord
+        this.modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
         
         // Reset de la recherche
         document.getElementById('iconSearchInput').value = '';
         this.showCategory(Object.keys(this.icons)[0]);
         
-        this.modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+        // Sélectionner l'icône actuelle après affichage
+        setTimeout(() => {
+            this.modal.querySelectorAll('.icon-item').forEach(item => {
+                item.classList.remove('selected');
+                if (currentIcon && item.dataset.icon === currentIcon) {
+                    item.classList.add('selected');
+                    this.updateConfirmButton(currentIcon);
+                }
+            });
+        }, 10);
     }
     
     /**
