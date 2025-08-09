@@ -1,33 +1,125 @@
 /* ===== ADMIN THEME - RESPONSIVE ===== */
 
 @media (max-width: 768px) {
-    .admin-header-content {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .admin-nav {
-        display: none;
-    }
-    
-    .admin-nav-mobile {
-        display: block !important;
+    /* Utilisation de vw pour une meilleure adaptation */
+    html, body {
+        overflow-x: hidden;
+        width: 100vw;
+        max-width: 100vw;
     }
     
     .admin-header {
-        position: relative; /* Pour que .mobile-nav soit positionné correctement */
+        width: 100vw;
+        max-width: 100vw;
+        padding-left: 2vw;
+        padding-right: 2vw;
+        box-sizing: border-box;
+    }
+    
+    .admin-header-content {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        width: 100%;
+        max-width: 96vw; /* Laisse 4vw de marge */
+        padding: 0;
+        margin: 0 auto;
+    }
+    
+    .admin-nav {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        flex-wrap: wrap;
+        gap: 2vw;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 colonnes */
+        grid-template-rows: 1fr 1fr; /* 2 lignes */
+    }
+    
+    .nav-btn {
+        width: 100%;
+        text-align: center;
+        font-size: 0.8rem; /* Plus grand texte */
+        padding: 3vw 2vw; /* Padding plus généreux */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-radius: var(--radius-md);
+        line-height: 1.3;
+        box-sizing: border-box;
+        min-height: 50px; /* Hauteur minimum pour faciliter le touch */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    
+    .admin-user {
+        width: 100%;
+        justify-content: center;
     }
     
     .admin-main {
-        padding: var(--spacing-lg);
+        padding: 2vw;
+        width: 100vw;
+        max-width: 100vw;
+        overflow-x: hidden;
+        box-sizing: border-box;
     }
     
+    .admin-section {
+        width: 96vw; /* Laisse 4vw de marge totale */
+        max-width: 96vw;
+        margin: 0 auto;
+        overflow-x: hidden;
+    }
+    
+    /* Textes et titres */
+    h1, h2, h3, h4, h5, h6, p, div {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+    
+    /* Dashboard responsive avec vw */
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 2vw;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .dashboard-card {
+        padding: 3vw 2vw;
+        min-height: auto;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    
+    .card-number {
+        font-size: 2rem; /* Plus petit sur mobile */
+    }
+    
+    .card-label {
+        font-size: var(--font-xs);
+        line-height: 1.2;
+    }
+    
+    .card-details {
+        font-size: var(--font-xs);
+        margin-top: var(--spacing-xs);
     }
     
     .dashboard-charts {
         grid-template-columns: 1fr;
+        margin-top: var(--spacing-lg);
+    }
+    
+    .chart-card {
+        min-width: 100%;
     }
     
     .admin-grid {
@@ -44,15 +136,59 @@
     }
     
     .modal-content {
-        margin: var(--spacing-lg);
+        margin: 4vw;
         max-width: none;
-        width: calc(100% - 2rem);
+        width: 92vw; /* 100vw - 8vw de marge */
     }
     
     .section-header {
         flex-direction: column;
         align-items: flex-start;
         text-align: center;
+    }
+}
+
+/* Très petits écrans (mobiles en mode portrait) */
+@media (max-width: 480px) {
+    .admin-header-content {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .admin-nav {
+        gap: var(--spacing-xs);
+    }
+    
+    .admin-nav {
+        gap: 1.5vw; /* Gap plus serré sur très petits écrans */
+    }
+    
+    .nav-btn {
+        font-size: 0.7rem;
+        padding: 2.5vw 1.5vw; /* Padding adaptatif mais toujours confortable */
+        min-height: 45px; /* Un peu plus petit sur très petits écrans */
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Une seule colonne sur très petits écrans */
+        gap: 1.5vw;
+    }
+    
+    .dashboard-card {
+        padding: 3vw;
+        text-align: center;
+    }
+    
+    .card-number {
+        font-size: 6vw; /* Proportionnel à l'écran */
+    }
+    
+    .admin-main {
+        padding: 3vw;
+    }
+    
+    .admin-logo h1 {
+        font-size: 4vw; /* Titre adaptatif */
+        min-font-size: 1rem; /* Minimum de lisibilité */
     }
     
     .section-actions {

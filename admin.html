@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     
     <!-- CSS modulaire admin refactorisé -->
-    <link rel="stylesheet" href="admin/css/admin.css">
+    <link rel="stylesheet" href="admin/css/admin.css?v=1.1.0">
 </head>
 <body class="admin-body">
     <!-- Page de connexion -->
@@ -51,9 +51,8 @@
         <header class="admin-header">
             <div class="admin-header-content">
                 <div class="admin-logo">
-                    <h1>🎲 Administration Pendu</h1>
+                    <h1 id="adminPageTitle">📊 Tableau de bord</h1>
                 </div>
-                
                 
                 <div class="admin-nav">
                     <button class="nav-btn active" data-section="dashboard">
@@ -71,84 +70,62 @@
                 </div>
                 
                 <div class="admin-user">
-                    <span id="adminUsername">Admin</span>
                     <button class="btn btn-secondary btn-small" id="logoutBtn">
                         🚪 Déconnexion
                     </button>
                 </div>
+                
             </div>
             
-            <!-- Navigation mobile -->
-            <div class="admin-nav-mobile">
-                <button class="mobile-nav-btn" id="mobileNavToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            
-            <nav class="mobile-nav" id="mobileNav">
-                <a href="#dashboard" class="mobile-nav-link active">📊 Dashboard</a>
-                <a href="#categories" class="mobile-nav-link">📁 Catégories & Mots</a>
-                <a href="#tags" class="mobile-nav-link">🏷️ Tags</a>
-                <a href="#data" class="mobile-nav-link">💾 Données</a>
-                <div class="mobile-nav-user">
-                    <button class="btn btn-secondary" id="mobileLogoutBtn">🚪 Déconnexion</button>
-                </div>
-            </nav>
         </header>
         
         <!-- Contenu principal -->
         <main class="admin-main">
             <!-- Section Tableau de bord -->
             <section id="dashboard" class="admin-section active">
-                <div class="section-header">
-                    <h2>📊 Tableau de bord</h2>
-                    <p>Vue d'ensemble complète de votre base de données</p>
-                </div>
                 
                 <!-- Stats principales -->
-                <div class="stats-overview">
-                    <div class="stat-card large">
-                        <div class="stat-icon">📝</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="totalWords">-</div>
-                            <div class="stat-label">Mots Total</div>
-                            <div class="stat-subtitle">Dans <span id="totalCategories">-</span> catégories</div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-icon">📝</div>
+                        <div class="card-content">
+                            <h3 id="totalWords">-</h3>
+                            <p>Mots Total</p>
+                            <small>Dans <span id="totalCategories">-</span> catégories</small>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon">✨</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="accentWordsCount">-</div>
-                            <div class="stat-label">Avec Accents</div>
-                            <div class="stat-percentage" id="accentPercentage">-</div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">✨</div>
+                        <div class="card-content">
+                            <h3 id="accentWordsCount">-</h3>
+                            <p>Avec Accents</p>
+                            <small id="accentPercentage">-</small>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon">🔢</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="numberWordsCount">-</div>
-                            <div class="stat-label">Avec Chiffres</div>
-                            <div class="stat-percentage" id="numberPercentage">-</div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">🔢</div>
+                        <div class="card-content">
+                            <h3 id="numberWordsCount">-</h3>
+                            <p>Avec Chiffres</p>
+                            <small id="numberPercentage">-</small>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon">🏷️</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="totalTags">-</div>
-                            <div class="stat-label">Tags</div>
-                            <div class="stat-percentage" id="tagsPercentage">-</div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">🏷️</div>
+                        <div class="card-content">
+                            <h3 id="totalTags">-</h3>
+                            <p>Tags</p>
+                            <small id="tagsPercentage">-</small>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Analyse par difficulté -->
-                <div class="analysis-grid">
-                    <div class="analysis-card">
+                <div class="dashboard-charts">
+                    <div class="chart-card">
                         <h3>🎯 Répartition par difficulté</h3>
                         <div class="difficulty-pie" id="difficultyPie">
                             <div class="pie-chart">
@@ -182,19 +159,11 @@
                     </div>
                 </div>
                 
-                <!-- Problèmes détectés -->
-                <div class="issues-section" id="issuesSection" style="display: none;">
-                    <h3>🔍 Problèmes Détectés</h3>
-                    <div class="issues-list" id="issuesList">
-                        <!-- Généré dynamiquement -->
-                    </div>
-                </div>
             </section>
             
             <!-- Section Catégories -->
             <section id="categories" class="admin-section">
                 <div class="section-header">
-                    <h2>📁 Gestion des Catégories & Mots</h2>
                     <button class="btn btn-primary" id="addCategoryBtn">
                         ➕ Nouvelle catégorie
                     </button>
@@ -239,13 +208,6 @@
                         </div>
                     </div>
                     
-                    <!-- Statistiques rapides -->
-                    <div class="category-quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-value" id="totalWordsCount">0</div>
-                            <div class="stat-label">Total mots</div>
-                        </div>
-                    </div>
                     
                     <!-- Recherche et filtres -->
                     <div class="words-filters">
@@ -279,7 +241,6 @@
                                 <tr>
                                     <th>Mot</th>
                                     <th>Difficulté</th>
-                                    <th>Caractéristiques</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -302,7 +263,6 @@
             <!-- Section Tags -->
             <section id="tags" class="admin-section">
                 <div class="section-header">
-                    <h2>🏷️ Gestion des Tags</h2>
                     <button class="btn btn-primary" id="addTagBtn">
                         ➕ Nouveau tag
                     </button>
@@ -313,8 +273,6 @@
                         <thead>
                             <tr>
                                 <th>Nom</th>
-                                <th class="hide-mobile">Slug</th>
-                                <th class="hide-mobile">Couleur</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -328,7 +286,6 @@
             <!-- Section Import/Export -->
             <section id="data" class="admin-section">
                 <div class="section-header">
-                    <h2>💾 Import/Export des données</h2>
                     <p>Sauvegardez ou importez vos données au format JSON</p>
                 </div>
                 

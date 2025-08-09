@@ -109,7 +109,7 @@ class TagManager {
         }
 
         if (!this.tags || this.tags.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Aucun tag trouvé</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="2" class="text-center">Aucun tag trouvé</td></tr>';
             return;
         }
 
@@ -117,14 +117,7 @@ class TagManager {
             return `
                 <tr>
                     <td>
-                        <strong style="color: ${tag.color || '#f39c12'}">${this.uiManager.escapeHtml(tag.name || 'Sans nom')}</strong>
-                    </td>
-                    <td class="hide-mobile">${tag.slug || 'N/A'}</td>
-                    <td class="hide-mobile">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="color-preview" style="width: 20px; height: 20px; background: ${tag.color || '#f39c12'}; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);"></div>
-                            <span>${tag.color || '#f39c12'}</span>
-                        </div>
+                        <strong>${this.uiManager.escapeHtml(tag.name || 'Sans nom')}</strong>
                     </td>
                     <td class="action-buttons">
                         <button onclick="editTag(${tag.id})" class="btn btn-small btn-secondary" title="Modifier">✏️</button>
@@ -145,10 +138,6 @@ class TagManager {
                 <div class="form-group">
                     <label for="tagName">Nom du tag *</label>
                     <input type="text" id="tagName" name="name" required class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="tagColor">Couleur</label>
-                    <input type="color" id="tagColor" name="color" value="#f39c12" class="form-input">
                 </div>
             </form>
         `;
@@ -182,10 +171,6 @@ class TagManager {
                 <div class="form-group">
                     <label for="editTagName">Nom du tag *</label>
                     <input type="text" id="editTagName" name="name" value="${this.uiManager.escapeHtml(tag.name || '')}" required class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="editTagColor">Couleur</label>
-                    <input type="color" id="editTagColor" name="color" value="${tag.color || '#f39c12'}" class="form-input">
                 </div>
             </form>
         `;

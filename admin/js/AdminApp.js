@@ -108,13 +108,7 @@ class AdminApp {
         this.domManager.setVisible('loginPage', false);
         this.domManager.setVisible('adminPage', true);
         
-        // Mettre à jour le nom d'utilisateur
-        const usernameEls = this.domManager.getAll('#adminUsername');
-        usernameEls.forEach(el => {
-            if (this.userData?.username) {
-                el.textContent = this.userData.username;
-            }
-        });
+        // Le nom d'utilisateur a été supprimé du HTML - plus besoin de cette logique
 
         // Charger les données initiales
         await this.loadInitialData();
@@ -161,9 +155,8 @@ class AdminApp {
             });
         }
 
-        // Logout buttons
+        // Logout button
         document.getElementById('logoutBtn')?.addEventListener('click', () => this.logout());
-        document.getElementById('mobileLogoutBtn')?.addEventListener('click', () => this.logout());
 
         // Navigation buttons
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -176,34 +169,6 @@ class AdminApp {
             });
         });
 
-        // Mobile nav toggle
-        document.getElementById('mobileNavToggle')?.addEventListener('click', (e) => {
-            const mobileNav = document.getElementById('mobileNav');
-            const hamburgerBtn = document.getElementById('mobileNavToggle');
-            mobileNav?.classList.toggle('active');
-            hamburgerBtn?.classList.toggle('active');
-        });
-
-        // Mobile nav links
-        document.querySelectorAll('.mobile-nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = e.target.getAttribute('href');
-                const section = href.replace('#', '');
-                this.uiManager.showSection(section);
-                this.handleSectionChange(section);
-                
-                // Fermer le menu mobile après clic
-                const mobileNav = document.getElementById('mobileNav');
-                const hamburgerBtn = document.getElementById('mobileNavToggle');
-                mobileNav?.classList.remove('active');
-                hamburgerBtn?.classList.remove('active');
-                
-                // Mettre à jour les états actifs
-                document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
-            });
-        });
 
         // Add buttons
         document.getElementById('addCategoryBtn')?.addEventListener('click', () => {
@@ -264,8 +229,6 @@ class AdminApp {
                 // Top catégories
                 this.updateTopCategories(categories);
                 
-                // Détecter les problèmes
-                this.updateIssuesSection(analysis.issues);
             }
         } catch (error) {
             console.error('Erreur lors de la mise à jour des stats:', error);
@@ -386,26 +349,6 @@ class AdminApp {
         `).join('');
     }
 
-    updateIssuesSection(issues) {
-        const section = document.getElementById('issuesSection');
-        const list = document.getElementById('issuesList');
-        
-        if (!section || !list) return;
-        
-        if (issues.length === 0) {
-            section.style.display = 'none';
-            return;
-        }
-        
-        section.style.display = 'block';
-        list.innerHTML = issues.map(issue => `
-            <div class="issue-item">
-                <div class="issue-icon">${issue.icon}</div>
-                <div class="issue-text">${issue.text}</div>
-                <div class="issue-count">${issue.count}</div>
-            </div>
-        `).join('');
-    }
 
 
     // =================
