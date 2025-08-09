@@ -200,7 +200,7 @@ function handlePost($db) {
         
     } catch (PDOException $e) {
         $db->rollBack();
-        error_log("PDOException in handlePost (words.php): " . $e->getMessage()); // Temporary log
+        error_log("PDOException in handlePost (words.php): " . $e->getMessage());
         sendErrorResponse(500, 'Erreur lors de la création', $e->getMessage());
     }
 }

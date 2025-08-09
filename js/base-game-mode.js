@@ -75,7 +75,6 @@ class BaseGameMode {
      */
     scheduleNextWord(nextWordCallback, delay = 3000) {
         if (typeof nextWordCallback !== 'function') {
-            console.warn('⚠️ scheduleNextWord: callback invalide');
             return;
         }
         

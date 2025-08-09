@@ -42,14 +42,4 @@ class StringUtility {
         return !empty(trim($str));
     }
     
-    /**
-     * Tronque une chaîne à une longueur donnée avec ellipsis
-     */
-    public static function truncate(string $str, int $length, string $suffix = '...'): string {
-        if (mb_strlen($str, 'UTF-8') <= $length) {
-            return $str;
-        }
-        
-        return mb_substr($str, 0, $length - mb_strlen($suffix, 'UTF-8'), 'UTF-8') . $suffix;
-    }
 }

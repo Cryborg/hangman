@@ -251,8 +251,6 @@ class DOMManager {
      * Debug : affiche le contenu du cache
      */
     debugCache() {
-        console.log('DOMManager Cache:', this.cache);
-        console.log('DOMManager Listeners:', this.listeners);
     }
 }
 

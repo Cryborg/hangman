@@ -12,7 +12,6 @@ class BaseGameModeWithSave extends BaseGameMode {
     }
     
     initialize(skipSaveCheck = false) {
-        console.log(`🎲 Initialisation du mode ${this.name}`);
         this.setupUI();
         if (!skipSaveCheck) {
             this.saveManager.checkForSavedGame();
@@ -66,7 +65,6 @@ class BaseGameModeWithSave extends BaseGameMode {
         // Redessiner le hangman avec les erreurs déjà commises
         this.gameEngine.refreshHangman();
         
-        console.log('🔄 Partie reprise', gameState);
         
         // Toast de confirmation simple
         if (this.app.getUIModule()) {
@@ -82,7 +80,6 @@ class BaseGameModeWithSave extends BaseGameMode {
     }
     
     cleanup() {
-        console.log(`🧹 Nettoyage du mode ${this.name}`);
         // Sauvegarder avant de nettoyer
         this.saveGameState();
     }

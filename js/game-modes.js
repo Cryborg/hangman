@@ -15,4 +15,3 @@
 // Note: En ES5/navigateur, on ne peut pas utiliser import/export
 // Les classes sont chargées via <script> dans index.html dans l'ordre de dépendance
 
-console.log('🎮 Modes de jeu chargés: BaseGameMode, BaseGameModeWithSave, StandardMode, TimeAttackGameMode, CategoryMode');

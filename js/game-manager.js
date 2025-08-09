@@ -33,7 +33,6 @@ class PenduGameManager {
     }
     
     async initialize() {
-        console.log('🚀 Initialisation du Game Manager');
         
         // Créer le moteur de jeu
         this.gameEngine = new PenduGameEngine(this.app);
@@ -52,21 +51,18 @@ class PenduGameManager {
         this.setGameMode('standard');
         
         this.isInitialized = true;
-        console.log('✅ Game Manager initialisé');
     }
     
     /**
      * Méthode appelée quand les préférences de niveaux changent
      */
     async onLevelPreferencesChanged() {
-        console.log('🎯 Préférences de niveaux modifiées, rechargement des catégories...');
         
         if (this.gameEngine) {
             await this.gameEngine.loadCategories();
             
             // Si il y a une partie en cours, on peut choisir de l'arrêter ou la continuer
             if (this.currentMode && this.gameEngine.gameActive) {
-                console.log('⚠️ Partie en cours détectée lors du changement de niveaux');
                 // Pour l'instant on laisse la partie continuer
             }
         }
@@ -78,7 +74,6 @@ class PenduGameManager {
         this.gameModes.timeattack = new TimeAttackGameMode(this.app, this.gameEngine);
         this.gameModes.category = new CategoryMode(this.app, this.gameEngine);
         
-        console.log('🎮 Modes de jeu créés:', Object.keys(this.gameModes));
     }
     
     // ===== GESTION DES MODES ===== //
@@ -111,7 +106,6 @@ class PenduGameManager {
             this.currentMode.setCategory(options.categoryName);
         }
         
-        console.log(`🎯 Mode de jeu activé: ${modeName}`, options);
         return true;
     }
     
@@ -190,7 +184,6 @@ class PenduGameManager {
                 break;
         }
         
-        console.warn('⚠️ Impossible de redémarrer avec les derniers paramètres');
         // Fallback mode standard avec clearSave = true
         this.clearCurrentModeSave('standard');
         this.setGameMode('standard');
@@ -212,9 +205,7 @@ class PenduGameManager {
         if (saveKey) {
             try {
                 localStorage.removeItem(saveKey);
-                console.log(`🗑️ Sauvegarde du mode ${modeName} supprimée pour redémarrage manuel`);
             } catch (error) {
-                console.warn(`⚠️ Erreur lors de la suppression de la sauvegarde ${modeName}:`, error.message);
             }
         }
     }
@@ -269,7 +260,6 @@ class PenduGameManager {
             }
         });
         
-        console.log('🧹 Game Manager nettoyé');
     }
     
     // ===== MÉTHODES DE COMPATIBILITÉ ===== //

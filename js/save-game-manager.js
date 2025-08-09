@@ -28,7 +28,6 @@ class SaveGameManager {
         try {
             localStorage.setItem(this.saveKey, JSON.stringify(stateWithTimestamp));
         } catch (error) {
-            console.warn('⚠️ Impossible de sauvegarder la partie:', error.message);
         }
     }
     
@@ -143,7 +142,6 @@ class SaveGameManager {
         try {
             localStorage.removeItem(this.saveKey);
         } catch (error) {
-            console.warn('⚠️ Impossible de supprimer la sauvegarde:', error.message);
         }
     }
     

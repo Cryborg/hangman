@@ -62,7 +62,6 @@ class FullscreenManager {
         
         this.updateButtonState();
         
-        console.log('🖼️ Gestionnaire plein écran initialisé');
     }
     
     /**
@@ -118,7 +117,6 @@ class FullscreenManager {
                 element.msRequestFullscreen();
             }
             
-            console.log('🖼️ Passage en plein écran...');
         } catch (error) {
             console.error('🖼️ Erreur lors du passage en plein écran:', error);
             this.showToast('Impossible de passer en plein écran', 'error');
@@ -140,7 +138,6 @@ class FullscreenManager {
                 document.msExitFullscreen();
             }
             
-            console.log('🖼️ Sortie du plein écran...');
         } catch (error) {
             console.error('🖼️ Erreur lors de la sortie du plein écran:', error);
             this.showToast('Impossible de sortir du plein écran', 'error');
@@ -155,7 +152,6 @@ class FullscreenManager {
         this.updateButtonState();
         
         if (this.isFullscreen) {
-            console.log('🖼️ Plein écran activé');
             this.showToast('Mode plein écran activé', 'success');
             document.body.classList.add('fullscreen-mode');
             
@@ -166,7 +162,6 @@ class FullscreenManager {
                 }, 100);
             }
         } else {
-            console.log('🖼️ Plein écran désactivé');
             this.showToast('Mode plein écran désactivé', 'info');
             document.body.classList.remove('fullscreen-mode');
             
@@ -200,7 +195,6 @@ class FullscreenManager {
         if (window.penduApp && window.penduApp.uiModule) {
             window.penduApp.uiModule.showToast(message, type);
         } else {
-            console.log(`🍞 Toast: ${message}`);
         }
     }
     

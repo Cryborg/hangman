@@ -103,7 +103,6 @@ class PenduSettings {
                 this.initializeDefaultCategories();
             }
         } catch (error) {
-            console.warn('⚠️ Erreur lors du chargement des paramètres:', error.message);
             this.initializeDefaultCategories();
         }
         
@@ -417,23 +416,16 @@ class PenduSettings {
      * Met à jour l'affichage en temps réel sans recharger depuis l'API
      */
     onLevelPreferencesChanged() {
-        console.log('🔄 PenduSettings.onLevelPreferencesChanged() appelée');
-        console.log('📋 Vue actuelle:', this.app.currentView);
-        console.log('📋 Données en cache disponibles:', !!this.cachedCategoriesData);
-        console.log('📋 categoriesGrid exists:', !!this.categoriesGrid);
         
         // Ne mettre à jour que si on est dans la vue paramètres
         if (this.app.currentView !== 'settings') {
-            console.log('⏭️ Pas dans la vue paramètres, pas de mise à jour');
             return;
         }
         
         // Si on a déjà les données, on met juste à jour l'affichage
         if (this.cachedCategoriesData) {
-            console.log('✅ Utilisation du cache pour mise à jour');
             this.updateCategoriesDisplay(this.cachedCategoriesData);
         } else {
-            console.log('🔄 Pas de cache, rechargement complet');
             // Sinon on recharge tout
             this.generateCategoriesGrid();
         }
@@ -444,9 +436,7 @@ class PenduSettings {
      * @param {Array} categoriesWithLevels - Les données des catégories déjà chargées
      */
     updateCategoriesDisplay(categoriesWithLevels) {
-        console.log('🎨 updateCategoriesDisplay appelée avec', categoriesWithLevels?.length, 'catégories');
         if (!this.categoriesGrid) {
-            console.log('❌ categoriesGrid non trouvé !');
             return;
         }
         
@@ -456,7 +446,6 @@ class PenduSettings {
         const isMediumEnabled = levelManager ? levelManager.isLevelEnabled('medium') : true;
         const isHardEnabled = levelManager ? levelManager.isLevelEnabled('hard') : true;
         
-        console.log('🎯 États des niveaux:', { isEasyEnabled, isMediumEnabled, isHardEnabled });
         
         // Mettre à jour chaque catégorie
         const categoryItems = this.categoriesGrid.querySelectorAll('.category-item');

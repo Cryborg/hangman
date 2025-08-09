@@ -63,7 +63,6 @@ class LevelManager {
             });
             
             localStorage.setItem('pendu_level_preferences', JSON.stringify(preferences));
-            console.log('🎯 Préférences de niveaux sauvegardées:', preferences);
         } catch (error) {
             console.error('Erreur lors de la sauvegarde des préférences:', error);
         }
@@ -342,23 +341,16 @@ class LevelManager {
         
         // Notifier le module des paramètres pour mettre à jour l'affichage
         if (window.penduApp?.settingsModule) {
-            console.log('📞 LevelManager appelle settingsModule.onLevelPreferencesChanged()');
             window.penduApp.settingsModule.onLevelPreferencesChanged();
         } else {
-            console.log('❌ settingsModule non trouvé dans window.penduApp');
         }
 
-        console.log('🎯 Préférences de niveaux mises à jour:', this.getEnabledLevels());
     }
 
     /**
      * Debug : affiche l'état actuel des niveaux
      */
     debug() {
-        console.log('=== LevelManager Debug ===');
-        console.log('Niveaux:', this.levels);
-        console.log('Niveaux activés:', this.getEnabledLevels());
-        console.log('Query param:', this.getLevelsQueryParam());
     }
 }
 

@@ -15,7 +15,6 @@ class TimeAttackGameMode extends BaseGameMode {
     }
     
     initialize() {
-        console.log('⏱️ Initialisation du mode Time Attack');
         this.setupUI();
     }
     
@@ -202,6 +201,5 @@ class TimeAttackGameMode extends BaseGameMode {
             this.timer = null;
         }
         this.isActive = false;
-        console.log('🧹 Nettoyage du mode Time Attack');
     }
 }

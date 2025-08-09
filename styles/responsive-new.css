@@ -1,7 +1,0 @@
-/* ===== RESPONSIVE - MEDIA QUERIES MODULAIRES ===== */
-
-/* Import des modules CSS par breakpoint */
-@import url('./responsive/base.css');
-@import url('./responsive/mobile.css');
-@import url('./responsive/desktop.css');
-@import url('./responsive/small-screens.css');

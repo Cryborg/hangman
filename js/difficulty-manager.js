@@ -244,16 +244,12 @@ class DifficultyManager {
             window.penduApp.uiModule.createVirtualKeyboard();
         }
         
-        console.log('🎯 Options de difficulté mises à jour:', this.options);
     }
 
     /**
      * Debug : affiche les options actuelles
      */
     debug() {
-        console.log('DifficultyManager Options:', this.options);
-        console.log('Accents required:', this.areAccentsRequired());
-        console.log('Numbers hidden:', this.areNumbersHidden());
     }
 }
 

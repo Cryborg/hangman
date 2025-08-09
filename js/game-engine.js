@@ -102,11 +102,9 @@ class PenduGameEngine {
     
     async loadCategories() {
         try {
-            console.log('📡 Chargement des catégories avec niveaux depuis l\'API MySQL...');
             
             // Obtenir les niveaux activés par l'utilisateur
             const enabledLevels = this.app.getLevelManager().getEnabledLevels();
-            console.log('🎯 Niveaux activés:', enabledLevels);
             
             // Utiliser l'API moderne avec format structuré par niveaux
             const response = await window.HangmanAPI.getCategoriesWithLevels(enabledLevels);
@@ -115,7 +113,6 @@ class PenduGameEngine {
             this.categories = this.transformModernToFlat(response.categories || response, enabledLevels);
             this.totalWords = this.categories.reduce((total, cat) => total + (cat.words?.length || 0), 0);
             
-            console.log(`✅ Chargé ${this.categories.length} catégories avec ${this.totalWords} mots (niveaux: ${enabledLevels.join(', ')})`);
             return true;
             
         } catch (error) {

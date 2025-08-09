@@ -32,13 +32,11 @@ class HangmanAPIClient {
         if (this.cache.has(cacheKey)) {
             const cached = this.cache.get(cacheKey);
             if (Date.now() - cached.timestamp < this.cacheTTL) {
-                console.log('📦 Données récupérées du cache:', endpoint);
                 return cached.data;
             }
         }
         
         try {
-            console.log('🌐 Requête API:', url.toString());
             const response = await fetch(url);
             
             if (!response.ok) {
@@ -122,7 +120,6 @@ class HangmanAPIClient {
             stats: includeStats ? 'true' : 'false'
         };
         
-        console.log('🎯 Requête catégories avec niveaux:', params);
         return this.makeRequest('categories-levels.php', params);
     }
     
@@ -194,7 +191,6 @@ class HangmanAPIClient {
      */
     clearCache() {
         this.cache.clear();
-        console.log('🗑️ Cache API vidé');
     }
     
     
@@ -204,7 +200,6 @@ class HangmanAPIClient {
     async testConnection() {
         try {
             await this.makeRequest('index.php');
-            console.log('✅ API accessible');
             return true;
         } catch (error) {
             console.error('❌ API non accessible:', error.message);

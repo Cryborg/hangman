@@ -94,62 +94,8 @@ class Validator {
         return htmlspecialchars(strip_tags(trim($str)), ENT_QUOTES, 'UTF-8');
     }
     
-    /**
-     * Valide une couleur hexadécimale
-     */
-    public static function validateHexColor(string $color): array {
-        $color = trim($color);
-        
-        if (!preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
-            return [
-                'value' => null,
-                'errors' => ["Format de couleur invalide. Utilisez le format hexadécimal (#123456)"]
-            ];
-        }
-        
-        return ['value' => $color, 'errors' => []];
-    }
     
-    /**
-     * Valide un slug (identifiant URL-friendly)
-     */
-    public static function validateSlug(string $slug): array {
-        $slug = trim($slug);
-        $errors = [];
-        
-        if (empty($slug)) {
-            $errors[] = "Le slug ne peut pas être vide";
-        }
-        
-        if (!preg_match('/^[a-z0-9\-]+$/', $slug)) {
-            $errors[] = "Le slug ne peut contenir que des lettres minuscules, chiffres et tirets";
-        }
-        
-        if (strlen($slug) > 100) {
-            $errors[] = "Le slug ne peut pas dépasser 100 caractères";
-        }
-        
-        return [
-            'value' => empty($errors) ? $slug : null,
-            'errors' => $errors
-        ];
-    }
     
-    /**
-     * Valide une adresse email
-     */
-    public static function validateEmail(string $email): array {
-        $cleanEmail = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
-        
-        if ($cleanEmail === false) {
-            return [
-                'value' => null,
-                'errors' => ["Adresse email invalide"]
-            ];
-        }
-        
-        return ['value' => $cleanEmail, 'errors' => []];
-    }
     
     /**
      * Valide les données JSON d'entrée
@@ -171,21 +117,6 @@ class Validator {
         return ['data' => $input, 'errors' => []];
     }
     
-    /**
-     * Valide une URL
-     */
-    public static function validateUrl(string $url): array {
-        $cleanUrl = filter_var(trim($url), FILTER_VALIDATE_URL);
-        
-        if ($cleanUrl === false) {
-            return [
-                'value' => null,
-                'errors' => ["URL invalide"]
-            ];
-        }
-        
-        return ['value' => $cleanUrl, 'errors' => []];
-    }
     
     /**
      * Valide un nom (catégorie, tag, etc.)

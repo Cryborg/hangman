@@ -48,7 +48,6 @@ class VirtualKeyboard {
     initializeDOMReferences() {
         this.container = document.getElementById(this.containerId);
         if (!this.container) {
-            console.warn(`⚠️ Conteneur clavier '${this.containerId}' non trouvé`);
         }
     }
     
@@ -104,7 +103,6 @@ class VirtualKeyboard {
             this.createKeyboardRow(rowData);
         });
         
-        console.log('🎹 Clavier virtuel créé - affichage géré par CSS pur');
     }
     
     createKeyboardRow(rowData) {

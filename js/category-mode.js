@@ -115,15 +115,8 @@ class CategoryMode extends BaseGameModeWithSave {
     
     loadCategoryWords() {
         // Charger tous les mots de la catégorie sélectionnée
-        console.log('🔍 loadCategoryWords() appelé');
-        console.log('📊 État:', {
-            gameEngine: !!this.gameEngine,
-            categories: this.gameEngine ? this.gameEngine.categories?.length : 'N/A',
-            selectedCategory: this.selectedCategory
-        });
         
         if (this.gameEngine && this.gameEngine.categories) {
-            console.log(`🔍 Recherche de la catégorie: "${this.selectedCategory}"`);
             
             const category = this.gameEngine.categories.find(cat => cat.name === this.selectedCategory);
             if (category) {
@@ -163,7 +156,6 @@ class CategoryMode extends BaseGameModeWithSave {
         this.currentIndex = 0;
         this.isSecondPass = true;
         
-        console.log(`🔄 2ème passage : ${this.categoryWords.length} mots à refaire`);
         
         if (this.app.getUIModule()) {
             this.app.getUIModule().showToast(
@@ -282,7 +274,6 @@ class CategoryMode extends BaseGameModeWithSave {
             this.app.getUIModule().showToast(message, 'category-complete', 6000);
         }
         
-        console.log(`📊 Catégorie terminée : ${percentage}% (${this.wordsFound}/${this.totalWords})`);
     }
     
     setupUI() {

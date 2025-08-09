@@ -173,7 +173,6 @@ class ModalManager {
         }
         
         this.app.showView('game');
-        console.log('🎲 Démarrage du mode Standard');
     }
     
     startTimeAttackMode() {
@@ -184,7 +183,6 @@ class ModalManager {
         }
         
         this.app.showView('game');
-        console.log(`⏱️ Démarrage du Time Attack ${this.selectedTimeAttackDuration}min`);
     }
     
     startCategoryMode(categoryName) {
@@ -193,7 +191,6 @@ class ModalManager {
         }
         
         this.app.showView('game');
-        console.log(`📚 Démarrage du mode Catégorie: ${categoryName}`);
     }
     
     // ===== GESTION TIME ATTACK ===== //
@@ -212,7 +209,6 @@ class ModalManager {
         // Mettre à jour l'affichage du record
         this.updateTimeAttackHighscore();
         
-        console.log(`⏱️ Durée sélectionnée: ${minutes} minutes`);
     }
     
     updateTimeAttackHighscore() {
@@ -260,7 +256,6 @@ class ModalManager {
             this.app.gameManager.engine.updateDisplay();
         }
         
-        console.log('🔥 Options de difficulté mises à jour');
     }
     
     getDifficultyOptions() {
@@ -273,7 +268,6 @@ class ModalManager {
     saveDifficultyOptions() {
         const options = this.getDifficultyOptions();
         localStorage.setItem('pendu_difficulty_options', JSON.stringify(options));
-        console.log('💾 Options de difficulté sauvegardées:', options);
     }
     
     loadDifficultyOptions() {
@@ -289,11 +283,9 @@ class ModalManager {
                 if (accentCheckbox) accentCheckbox.checked = options.accents || false;
                 if (numberCheckbox) numberCheckbox.checked = options.numbers || false;
                 
-                console.log('📂 Options de difficulté chargées:', options);
                 return options;
             }
         } catch (error) {
-            console.warn('⚠️ Erreur lors du chargement des options de difficulté:', error);
         }
         
         return { accents: false, numbers: false };

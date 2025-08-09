@@ -35,7 +35,6 @@ class OrientationManager {
             screen.orientation.addEventListener('change', this.handleOrientationChange.bind(this));
         }
         
-        console.log('📱 Gestionnaire d\'orientation initialisé');
     }
     
     /**
@@ -49,7 +48,6 @@ class OrientationManager {
         try {
             await screen.orientation.lock(this.targetOrientation);
             this.isLocked = true;
-            console.log('📱 Orientation verrouillée en mode portrait');
             this.showToast('Mode portrait activé', 'success');
             return true;
             
@@ -64,7 +62,6 @@ class OrientationManager {
             
             // Sur certains navigateurs, le verrouillage ne fonctionne qu'en plein écran
             if (error.message.includes('fullscreen') || error.message.includes('Fullscreen')) {
-                console.log('📱 Verrouillage disponible uniquement en plein écran');
                 this.showToast('Verrouillage portrait disponible en plein écran', 'info');
             }
             
@@ -83,7 +80,6 @@ class OrientationManager {
         try {
             screen.orientation.unlock();
             this.isLocked = false;
-            console.log('📱 Orientation déverrouillée');
             this.showToast('Rotation libre activée', 'info');
             return true;
             
@@ -109,11 +105,9 @@ class OrientationManager {
      */
     handleOrientationChange(event) {
         const orientation = screen.orientation;
-        console.log(`📱 Orientation changée: ${orientation.type} (${orientation.angle}°)`);
         
         // Vérifier si on est toujours en portrait
         if (this.isLocked && !orientation.type.includes('portrait')) {
-            console.log('📱 Tentative de maintien du mode portrait...');
             // On pourrait retenter le verrouillage ici si nécessaire
         }
     }
@@ -156,7 +150,6 @@ class OrientationManager {
             await screen.orientation.lock(this.targetOrientation);
             this.isLocked = true;
             
-            console.log('📱 Orientation verrouillée en mode portrait + plein écran');
             this.showToast('Mode portrait plein écran activé', 'success');
             return true;
             
@@ -174,7 +167,6 @@ class OrientationManager {
         if (window.penduApp && window.penduApp.uiModule) {
             window.penduApp.uiModule.showToast(message, type);
         } else {
-            console.log(`🍞 Toast: ${message}`);
         }
     }
     
@@ -198,19 +190,10 @@ class OrientationManager {
      */
     debugInfo() {
         console.group('📱 Informations d\'orientation');
-        console.log('Support API:', this.isSupported);
-        console.log('État actuel:', this.getState());
         
         if (screen.orientation) {
-            console.log('Type d\'orientation:', screen.orientation.type);
-            console.log('Angle:', screen.orientation.angle);
         }
         
-        console.log('Dimensions fenêtre:', {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            ratio: (window.innerHeight / window.innerWidth).toFixed(2)
-        });
         
         console.groupEnd();
     }

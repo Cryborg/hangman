@@ -27,7 +27,6 @@ class PenduApp {
     }
     
     async init() {
-        console.log('🎲 Initialisation du Jeu du Pendu');
         
         // Attendre que le DOM soit chargé
         if (document.readyState === 'loading') {
@@ -64,7 +63,7 @@ class PenduApp {
             // Afficher la vue par défaut
             this.showView('menu');
             
-            console.log('✅ Application initialisée avec succès');
+            // Application initialisée
             
         } catch (error) {
             console.error('❌ Erreur lors de l\'initialisation:', error);
@@ -285,7 +284,7 @@ class PenduApp {
             case 'game':
                 if (this.gameManager) {
                     // Le GameManager s'initialise automatiquement
-                    console.log('✅ GameManager prêt');
+                    // GameManager prêt
                     
                     // Ne rien faire automatiquement - laisser l'utilisateur sur la vue jeu
                     // La modal sera ouverte uniquement par les boutons explicites
@@ -293,7 +292,7 @@ class PenduApp {
                 // Créer le clavier virtuel si on est sur mobile
                 if (this.uiModule) {
                     this.uiModule.createVirtualKeyboard();
-                    console.log('🎹 Clavier virtuel initialisé');
+                    // Clavier virtuel initialisé
                 }
                 break;
             case 'stats':
@@ -374,7 +373,6 @@ class PenduApp {
     showNextWordButton() {
         // Afficher le bouton du header
         this.domManager.setVisible('nextWordHeaderBtn', true);
-        console.log('🎯 Bouton Passer affiché dans le header');
         
         // Masquer les anciens boutons dans la zone de jeu (sécurité)
         this.domManager.setVisible('nextWordSection', false);
@@ -384,7 +382,6 @@ class PenduApp {
     hideNextWordButton() {
         // Masquer le bouton du header
         this.domManager.setVisible('nextWordHeaderBtn', false);
-        console.log('🎯 Bouton Passer masqué du header');
         
         // Masquer aussi les anciens boutons par sécurité
         this.domManager.setVisible('nextWordSection', false);
@@ -457,7 +454,6 @@ class PenduApp {
         // Aller à la vue jeu et démarrer
         this.showView('game');
         
-        console.log(`🔄 Redémarrage en mode ${settings.mode}`);
     }
     
     showRestartConfirmation() {
@@ -525,7 +521,6 @@ class PenduApp {
             if (success) {
                 // S'assurer qu'on est sur la vue jeu
                 this.showView('game');
-                console.log(`🔄 Redémarrage avec les paramètres sauvegardés`);
             } else {
                 console.error('❌ Échec du redémarrage, ouverture de la modal de sélection');
                 // Fallback : ouvrir la modal si le redémarrage échoue
@@ -581,7 +576,7 @@ class PenduApp {
             return null;
             
         } catch (error) {
-            console.warn('Impossible de vérifier le mode maintenance:', error);
+            // Impossible de vérifier le mode maintenance
             return null;
         }
     }
