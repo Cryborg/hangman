@@ -124,8 +124,7 @@ class CategoryManager {
                 <tr>
                     <td style="font-size: 1.5rem; text-align: center;">${category.icon || '📁'}</td>
                     <td>
-                        <strong>${this.uiManager.escapeHtml(category.name)}</strong><br>
-                        <small style="color: var(--text-secondary);">${this.uiManager.escapeHtml(category.slug)}</small>
+                        <strong>${this.uiManager.escapeHtml(category.name)}</strong>
                     </td>
                     <td class="hide-mobile">
                         <button class="btn btn-primary btn-small" onclick="categoryManager.showCategoryDetail(${category.id})" title="Gérer les mots">
