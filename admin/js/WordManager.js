@@ -89,6 +89,9 @@ class WordManager {
             this.domManager.getById('categoriesListView').classList.remove('active');
             this.domManager.getById('categoryDetailView').classList.add('active');
             
+            // Cacher le bouton "Nouvelle catégorie" quand on est dans les mots
+            this.domManager.setVisible('addCategoryBtn', false);
+            
             // Configurer les event listeners des filtres
             this.setupFilterEventListeners();
         } catch (error) {
@@ -343,6 +346,9 @@ class WordManager {
         this.currentCategory = null;
         this.currentWords = [];
         this.resetFilters();
+        
+        // Remettre le bouton "Nouvelle catégorie" au retour à la liste
+        this.domManager.setVisible('addCategoryBtn', true);
     }
 
     resetFilters() {
