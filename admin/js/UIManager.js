@@ -235,20 +235,29 @@ class UIManager {
     // =================
     
     confirm(title, message, onConfirm, onCancel = null) {
-        const modalId = 'confirm-modal-' + Date.now();
-        const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}">
-                Annuler
-            </button>
-            <button class="btn btn-danger" onclick="uiManager.closeModal('${modalId}'); ${onConfirm}()">
-                Confirmer
-            </button>
-        `;
-        
-        return this.createModal(title, `<p>${message}</p>`, { 
-            actions,
+        const modalId = this.createModal(title, `<p>${message}</p>`, { 
+            actions: `
+                <button class="btn btn-secondary" onclick="uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}">
+                    Annuler
+                </button>
+                <button class="btn btn-danger" onclick="uiManager.closeModal('${modalId}'); ${onConfirm}()">
+                    Confirmer
+                </button>
+            `,
             width: '400px'
         });
+        
+        // Mise à jour des boutons avec le vrai modalId
+        setTimeout(() => {
+            const modal = this.domManager.getById(modalId);
+            if (modal) {
+                const buttons = modal.querySelectorAll('.btn');
+                buttons[0].setAttribute('onclick', `uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}`);
+                buttons[1].setAttribute('onclick', `uiManager.closeModal('${modalId}'); ${onConfirm}()`);
+            }
+        }, 10);
+        
+        return modalId;
     }
 
     // =================
@@ -313,6 +322,23 @@ class UIManager {
         
         if (targetBtn) {
             targetBtn.classList.add('active');
+        }
+
+        // Mettre à jour le titre dans la barre de navigation
+        this.updatePageTitle(sectionId);
+    }
+
+    updatePageTitle(sectionId) {
+        const titles = {
+            'dashboard': '📊 Tableau de bord',
+            'categories': '📁 Catégories & Mots',
+            'tags': '🏷️ Tags',
+            'data': '💾 Import/Export'
+        };
+        
+        const titleElement = this.domManager.getById('adminPageTitle');
+        if (titleElement && titles[sectionId]) {
+            titleElement.textContent = titles[sectionId];
         }
     }
 
