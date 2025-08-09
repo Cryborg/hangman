@@ -33,7 +33,6 @@ class DataTransformer {
             'name' => $category['name'],
             'slug' => $category['slug'],
             'icon' => $category['icon'] ?? '📁',
-            'display_order' => (int) ($category['display_order'] ?? 0),
             'active' => (bool) ($category['active'] ?? true),
             'word_count' => (int) ($category['word_count'] ?? 0),
             'created_at' => $category['created_at'] ?? null,
@@ -50,7 +49,6 @@ class DataTransformer {
             'name' => $tag['name'],
             'slug' => $tag['slug'],
             'color' => $tag['color'] ?? '#3498db',
-            'display_order' => (int) ($tag['display_order'] ?? 0),
             'created_at' => $tag['created_at'] ?? null,
             'updated_at' => $tag['updated_at'] ?? null
         ];

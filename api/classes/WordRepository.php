@@ -15,6 +15,74 @@ class WordRepository {
     }
     
     /**
+     * Récupère tous les mots (pour l'admin)
+     */
+    public function findAll(): array {
+        $stmt = $this->db->query("
+            SELECT 
+                w.id, w.word, w.difficulty, w.active,
+                w.created_at, w.updated_at,
+                c.name as category_name, c.id as category_id
+            FROM hangman_words w 
+            LEFT JOIN hangman_categories c ON w.category_id = c.id
+            WHERE w.active = 1
+            ORDER BY c.name ASC, w.word ASC
+        ");
+        
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Récupère tous les mots avec pagination (pour l'admin)
+     */
+    public function findWithPagination(int $page = 1, int $limit = 50, string $search = ''): array {
+        $offset = ($page - 1) * $limit;
+        
+        // Construction de la requête avec recherche optionnelle
+        $whereClause = "w.active = 1";
+        $params = [];
+        
+        if (!empty($search)) {
+            $whereClause .= " AND (w.word LIKE ? OR c.name LIKE ?)";
+            $params[] = "%{$search}%";
+            $params[] = "%{$search}%";
+        }
+        
+        // Compter le total
+        $countStmt = $this->db->prepare("
+            SELECT COUNT(*) 
+            FROM hangman_words w 
+            LEFT JOIN hangman_categories c ON w.category_id = c.id
+            WHERE {$whereClause}
+        ");
+        $countStmt->execute($params);
+        $total = $countStmt->fetchColumn();
+        
+        // Récupérer les mots
+        $wordsStmt = $this->db->prepare("
+            SELECT 
+                w.id, w.word, w.difficulty, w.active,
+                w.created_at, w.updated_at,
+                c.name as category_name, c.id as category_id
+            FROM hangman_words w 
+            LEFT JOIN hangman_categories c ON w.category_id = c.id
+            WHERE {$whereClause}
+            ORDER BY c.name ASC, w.word ASC
+            LIMIT ? OFFSET ?
+        ");
+        $params[] = $limit;
+        $params[] = $offset;
+        $wordsStmt->execute($params);
+        
+        return [
+            'items' => $wordsStmt->fetchAll(),
+            'total' => (int) $total,
+            'page' => $page,
+            'limit' => $limit
+        ];
+    }
+    
+    /**
      * Récupère les mots d'une catégorie avec pagination
      */
     public function findByCategoryWithPagination(int $categoryId, int $page = 1, int $limit = 50, string $search = ''): array {

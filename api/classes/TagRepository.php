@@ -23,7 +23,7 @@ class TagRepository {
             FROM hangman_tags t
             LEFT JOIN hangman_category_tag ct ON t.id = ct.tag_id
             GROUP BY t.id
-            ORDER BY t.display_order ASC, t.name ASC
+            ORDER BY t.name ASC
         ");
         
         return $stmt->fetchAll();
@@ -122,15 +122,14 @@ class TagRepository {
      */
     public function create(array $tagData): int {
         $stmt = $this->db->prepare("
-            INSERT INTO hangman_tags (name, slug, color, display_order) 
-            VALUES (?, ?, ?, ?)
+            INSERT INTO hangman_tags (name, slug, color) 
+            VALUES (?, ?, ?)
         ");
         
         $stmt->execute([
             $tagData['name'],
             $tagData['slug'] ?? StringUtility::generateSlug($tagData['name']),
-            $tagData['color'] ?? '#3498db',
-            $tagData['display_order'] ?? 0
+            $tagData['color'] ?? '#3498db'
         ]);
         
         return $this->db->lastInsertId();
@@ -140,7 +139,7 @@ class TagRepository {
      * Met à jour un tag
      */
     public function update(int $id, array $updateData): bool {
-        $allowedFields = ['name', 'slug', 'color', 'display_order'];
+        $allowedFields = ['name', 'slug', 'color'];
         $updates = [];
         $params = [];
         
@@ -170,23 +169,12 @@ class TagRepository {
      * Supprime un tag et ses associations
      */
     public function delete(int $id): bool {
-        $this->db->beginTransaction();
+        // Supprimer les associations tags-catégories
+        $this->db->prepare("DELETE FROM hangman_category_tag WHERE tag_id = ?")->execute([$id]);
         
-        try {
-            // Supprimer les associations tags-catégories
-            $this->db->prepare("DELETE FROM hangman_category_tag WHERE tag_id = ?")->execute([$id]);
-            
-            // Supprimer le tag
-            $stmt = $this->db->prepare("DELETE FROM hangman_tags WHERE id = ?");
-            $result = $stmt->execute([$id]);
-            
-            $this->db->commit();
-            return $result;
-            
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw $e;
-        }
+        // Supprimer le tag
+        $stmt = $this->db->prepare("DELETE FROM hangman_tags WHERE id = ?");
+        return $stmt->execute([$id]);
     }
     
     /**
@@ -198,7 +186,7 @@ class TagRepository {
             FROM hangman_categories c
             JOIN hangman_category_tag ct ON c.id = ct.category_id
             WHERE ct.tag_id = ? AND c.active = 1
-            ORDER BY c.display_order ASC, c.name ASC
+            ORDER BY c.name ASC
         ");
         $stmt->execute([$tagId]);
         
@@ -219,8 +207,7 @@ class TagRepository {
         return $this->create(array_merge([
             'name' => $name,
             'slug' => StringUtility::generateSlug($name),
-            'color' => '#f39c12', // Couleur par défaut
-            'display_order' => 0
+            'color' => '#f39c12' // Couleur par défaut
         ], $defaultData));
     }
     
@@ -233,12 +220,11 @@ class TagRepository {
         
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO hangman_tags (name, slug, color, display_order) 
-                VALUES (?, ?, ?, ?)
+                INSERT INTO hangman_tags (name, slug, color) 
+                VALUES (?, ?, ?)
                 ON DUPLICATE KEY UPDATE 
                 name = VALUES(name),
-                color = VALUES(color),
-                display_order = VALUES(display_order)
+                color = VALUES(color)
             ");
             
             foreach ($tags as $tagData) {
@@ -246,8 +232,7 @@ class TagRepository {
                     $stmt->execute([
                         $tagData['name'] ?? '',
                         $tagData['slug'] ?? StringUtility::generateSlug($tagData['name'] ?? ''),
-                        $tagData['color'] ?? '#3498db',
-                        $tagData['display_order'] ?? 0
+                        $tagData['color'] ?? '#3498db'
                     ]);
                     
                     $imported++;

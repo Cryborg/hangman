@@ -18,6 +18,20 @@ class WordController extends BaseAdminController {
         $this->repository = new WordRepository($db);
     }
     
+    // ===== SURCHARGE POUR GESTION BULK =====
+    
+    protected function handlePost(): void {
+        // Vérifier si c'est un ajout en lot (bulk)
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (isset($input['bulk']) && $input['bulk'] === true && isset($input['words'])) {
+            $this->handleBulkCreate($input);
+        } else {
+            // Appeler la méthode parent pour l'ajout normal
+            parent::handlePost();
+        }
+    }
+    
     // ===== IMPLÉMENTATION DES MÉTHODES ABSTRAITES =====
     
     protected function findById(int $id): ?array {
@@ -27,9 +41,9 @@ class WordController extends BaseAdminController {
     protected function findWithPagination(array $params): array {
         // Utilise les paramètres pour la recherche et filtrage
         return $this->repository->findWithPagination(
-            $params['page'], 
-            $params['limit'], 
-            $params['search']
+            $params['page'] ?? 1, 
+            $params['limit'] ?? 50, 
+            $params['search'] ?? ''
         );
     }
     
@@ -46,12 +60,20 @@ class WordController extends BaseAdminController {
     }
     
     protected function update(int $id, array $data): bool {
+        // Récupérer le mot actuel d'abord
+        $currentWord = $this->repository->findById($id);
+        if (!$currentWord) {
+            throw new InvalidArgumentException('Word not found');
+        }
+        
         // Nettoyer le mot si fourni
         if (isset($data['word'])) {
             $data['word'] = StringUtility::cleanWord($data['word']);
             
+            $categoryId = $data['category_id'] ?? $currentWord['category_id'];
+            
             // Vérifier l'unicité dans la catégorie (sauf pour le mot actuel)
-            if ($this->repository->existsInCategory($data['word'], $data['category_id'], $id)) {
+            if ($this->repository->existsInCategory($data['word'], $categoryId, $id)) {
                 throw new InvalidArgumentException('This word already exists in this category');
             }
         }
@@ -106,6 +128,7 @@ class WordController extends BaseAdminController {
         $errors = [];
         $validData = [];
         
+        
         // Validation du mot (optionnel en update)
         if (isset($data['word'])) {
             $word = trim($data['word']);
@@ -157,5 +180,84 @@ class WordController extends BaseAdminController {
             'created_at' => $item['created_at'] ?? null,
             'updated_at' => $item['updated_at'] ?? null
         ];
+    }
+    
+    // ===== AJOUT EN LOT =====
+    
+    private function handleBulkCreate(array $input): void {
+        try {
+            $this->db->beginTransaction();
+            
+            $results = [
+                'success_count' => 0,
+                'error_count' => 0,
+                'created_words' => [],
+                'errors' => [],
+                'duplicates' => []
+            ];
+            
+            $words = $input['words'] ?? [];
+            $defaultData = [
+                'category_id' => $input['category_id'] ?? null,
+                'difficulty' => $input['difficulty'] ?? 'medium',
+                'active' => $input['active'] ?? true
+            ];
+            $allowDuplicates = $input['allow_duplicates'] ?? false;
+            
+            // Validation des données communes
+            $validation = $this->validateForCreate($defaultData);
+            if (!empty($validation['errors'])) {
+                $this->response->badRequest('Validation failed', $validation['errors']);
+                return;
+            }
+            $defaultData = $validation['data'];
+            
+            foreach ($words as $wordText) {
+                $wordText = trim($wordText);
+                if (empty($wordText)) continue;
+                
+                try {
+                    $wordData = array_merge($defaultData, ['word' => $wordText]);
+                    $wordData['word'] = StringUtility::cleanWord($wordData['word']);
+                    
+                    // Vérifier l'unicité dans la catégorie
+                    if ($this->repository->existsInCategory($wordData['word'], $wordData['category_id'])) {
+                        if ($allowDuplicates) {
+                            $results['duplicates'][] = $wordData['word'];
+                            continue;
+                        } else {
+                            $results['errors'][] = "'{$wordData['word']}' already exists in this category";
+                            $results['error_count']++;
+                            continue;
+                        }
+                    }
+                    
+                    $id = $this->repository->create($wordData);
+                    $createdWord = $this->repository->findById($id);
+                    
+                    $results['created_words'][] = $this->transformForResponse($createdWord);
+                    $results['success_count']++;
+                    
+                } catch (Exception $e) {
+                    $results['errors'][] = "'{$wordText}': " . $e->getMessage();
+                    $results['error_count']++;
+                }
+            }
+            
+            $this->db->commit();
+            
+            $message = sprintf(
+                'Bulk operation completed: %d created, %d errors, %d duplicates', 
+                $results['success_count'], 
+                $results['error_count'],
+                count($results['duplicates'])
+            );
+            
+            $this->response->success($results, ['message' => $message]);
+            
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            $this->response->error(500, 'Bulk operation failed', $e->getMessage());
+        }
     }
 }

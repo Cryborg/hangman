@@ -162,8 +162,6 @@ $documentation = [
             'name' => 'string - Category name',
             'icon' => 'string - Emoji representing the category',
             'slug' => 'string - URL-friendly slug',
-            'description' => 'string|null - Optional description',
-            'display_order' => 'integer - Display order',
             'tags' => 'array - List of associated tags',
             'words' => 'array - List of words (if included)'
         ],

@@ -11,7 +11,11 @@
     }
     
     .admin-nav-mobile {
-        display: block;
+        display: block !important;
+    }
+    
+    .admin-header {
+        position: relative; /* Pour que .mobile-nav soit positionné correctement */
     }
     
     .admin-main {

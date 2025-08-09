@@ -22,14 +22,14 @@ class ModalManager {
     }
     
     initializeDOMReferences() {
-        this.gameModeModal = document.getElementById('gameModeModal');
-        this.categoryModal = document.getElementById('categoryModal');
-        this.categoriesGrid = document.getElementById('categoriesGrid');
+        this.gameModeModal = window.domManager.getById('gameModeModal');
+        this.categoryModal = window.domManager.getById('categoryModal');
+        this.categoriesGrid = window.domManager.getById('categoriesGrid');
     }
     
     initializeEventListeners() {
         // Boutons de sélection de mode
-        document.querySelectorAll('.select-mode-btn').forEach(btn => {
+        window.domManager.getAll('.select-mode-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const mode = e.target.dataset.mode;
                 this.handleModeSelection(mode);
@@ -37,27 +37,27 @@ class ModalManager {
         });
         
         // Boutons de sélection de temps (Time Attack)
-        document.querySelectorAll('.time-btn').forEach(btn => {
+        window.domManager.getAll('.time-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 this.selectTimeAttackDuration(parseInt(e.target.dataset.time));
             });
         });
         
         // Boutons de fermeture des modals
-        document.querySelector('.close-modal-btn')?.addEventListener('click', () => {
+        window.domManager.get('.close-modal-btn')?.addEventListener('click', () => {
             this.hideGameModeModal();
         });
         
         // Événements pour les options de difficulté
-        document.getElementById('accentDifficulty')?.addEventListener('change', () => {
+        window.domManager.getById('accentDifficulty')?.addEventListener('change', () => {
             this.onDifficultyOptionChange();
         });
         
-        document.getElementById('numberDifficulty')?.addEventListener('change', () => {
+        window.domManager.getById('numberDifficulty')?.addEventListener('change', () => {
             this.onDifficultyOptionChange();
         });
         
-        document.querySelector('.close-category-modal-btn')?.addEventListener('click', () => {
+        window.domManager.get('.close-category-modal-btn')?.addEventListener('click', () => {
             this.hideCategoryModal();
             this.showGameModeModal();
         });
@@ -199,7 +199,7 @@ class ModalManager {
         this.selectedTimeAttackDuration = minutes;
         
         // Mettre à jour l'affichage des boutons
-        document.querySelectorAll('.time-btn').forEach(btn => {
+        window.domManager.getAll('.time-btn').forEach(btn => {
             btn.classList.remove('active');
             if (parseInt(btn.dataset.time) === minutes) {
                 btn.classList.add('active');
@@ -212,7 +212,7 @@ class ModalManager {
     }
     
     updateTimeAttackHighscore() {
-        const highscoreDisplay = document.getElementById('timeAttackHighscore');
+        const highscoreDisplay = window.domManager.getById('timeAttackHighscore');
         if (highscoreDisplay) {
             const key = `timeattack_highscore_${this.selectedTimeAttackDuration}min`;
             const highscore = localStorage.getItem(key) || '0';
@@ -260,8 +260,8 @@ class ModalManager {
     
     getDifficultyOptions() {
         return {
-            accents: document.getElementById('accentDifficulty')?.checked || false,
-            numbers: document.getElementById('numberDifficulty')?.checked || false
+            accents: window.domManager.getById('accentDifficulty')?.checked || false,
+            numbers: window.domManager.getById('numberDifficulty')?.checked || false
         };
     }
     
@@ -277,8 +277,8 @@ class ModalManager {
                 const options = JSON.parse(saved);
                 
                 // Appliquer les options aux checkboxes
-                const accentCheckbox = document.getElementById('accentDifficulty');
-                const numberCheckbox = document.getElementById('numberDifficulty');
+                const accentCheckbox = window.domManager.getById('accentDifficulty');
+                const numberCheckbox = window.domManager.getById('numberDifficulty');
                 
                 if (accentCheckbox) accentCheckbox.checked = options.accents || false;
                 if (numberCheckbox) numberCheckbox.checked = options.numbers || false;

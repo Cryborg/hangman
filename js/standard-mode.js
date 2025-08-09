@@ -38,8 +38,8 @@ class StandardMode extends BaseGameModeWithSave {
             remainingTries: this.gameEngine.remainingTries,
             // Sauvegarder les options de difficulté
             difficultyOptions: {
-                accents: document.getElementById('accentDifficulty')?.checked || false,
-                numbers: document.getElementById('numberDifficulty')?.checked || false
+                accents: window.domManager.getById('accentDifficulty')?.checked || false,
+                numbers: window.domManager.getById('numberDifficulty')?.checked || false
             }
         };
     }
@@ -47,8 +47,8 @@ class StandardMode extends BaseGameModeWithSave {
     restoreModeSpecificState(gameState) {
         // Restaurer les options de difficulté si elles sont sauvegardées
         if (gameState.difficultyOptions) {
-            const accentCheckbox = document.getElementById('accentDifficulty');
-            const numberCheckbox = document.getElementById('numberDifficulty');
+            const accentCheckbox = window.domManager.getById('accentDifficulty');
+            const numberCheckbox = window.domManager.getById('numberDifficulty');
             
             if (accentCheckbox) {
                 accentCheckbox.checked = gameState.difficultyOptions.accents;
@@ -154,14 +154,14 @@ class StandardMode extends BaseGameModeWithSave {
     
     setupUI() {
         // Masquer les éléments spécifiques aux autres modes
-        const timeAttackCard = document.getElementById('timeAttackCard');
+        const timeAttackCard = window.domManager.getById('timeAttackCard');
         if (timeAttackCard) {
             timeAttackCard.classList.add('hidden');
         }
         
         // Afficher les éléments du mode standard
-        const progressCard = document.getElementById('progressCard');
-        const streakCard = document.getElementById('streakCard');
+        const progressCard = window.domManager.getById('progressCard');
+        const streakCard = window.domManager.getById('streakCard');
         
         if (progressCard) progressCard.classList.remove('hidden');
         if (streakCard) streakCard.classList.remove('hidden');

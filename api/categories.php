@@ -31,13 +31,13 @@ try {
         $params = [];
     } else {
         // Requête simple 
-        $baseQuery = "SELECT c.id, c.name, c.icon, c.slug, c.description, c.display_order,
-                             GROUP_CONCAT(t.name ORDER BY t.display_order ASC SEPARATOR ',') as tags";
+        $baseQuery = "SELECT c.id, c.name, c.icon, c.slug,
+                             GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tags";
         $fromJoin = " FROM hangman_categories c 
                      LEFT JOIN hangman_category_tag ct ON c.id = ct.category_id  
                      LEFT JOIN hangman_tags t ON ct.tag_id = t.id AND t.active = 1";
         $whereConditions = ["c.active = 1"];
-        $groupBy = " GROUP BY c.id, c.name, c.icon, c.slug, c.description, c.display_order";
+        $groupBy = " GROUP BY c.id, c.name, c.icon, c.slug";
         $params = [];
     }
     
@@ -69,13 +69,13 @@ try {
         if (!empty($whereConditions)) {
             $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
-        $sql .= " ORDER BY display_order ASC, name ASC";
+        $sql .= " ORDER BY name ASC";
     } else {
         $sql = $baseQuery . $fromJoin;
         if (!empty($whereConditions)) {
             $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
-        $sql .= $groupBy . " ORDER BY c.display_order ASC, c.name ASC";
+        $sql .= $groupBy . " ORDER BY c.name ASC";
     }
     
     // Limiter les résultats si on ne recherche qu'une catégorie
@@ -114,7 +114,6 @@ try {
         
         // Convertir les valeurs numériques
         $category['id'] = (int) $category['id'];
-        $category['display_order'] = (int) $category['display_order'];
         
         // Convertir les statistiques en entiers si présentes
         if ($includeStats) {

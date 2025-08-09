@@ -21,16 +21,13 @@ CREATE TABLE `hangman_categories` (
   `name` varchar(100) NOT NULL COMMENT 'Category name (e.g., "Animals")',
   `icon` varchar(10) NOT NULL DEFAULT '📂' COMMENT 'Category emoji icon',
   `slug` varchar(100) NOT NULL COMMENT 'URL-friendly slug (e.g., "animals")',
-  `description` text NULL COMMENT 'Optional category description',
-  `display_order` int(11) NOT NULL DEFAULT 0 COMMENT 'Display order',
   `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Category is active (1) or disabled (0)',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_name` (`name`),
   UNIQUE KEY `unique_slug` (`slug`),
-  KEY `idx_active` (`active`),
-  KEY `idx_display_order` (`display_order`)
+  KEY `idx_active` (`active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Hangman game word categories';
 
 -- =============================================================================
@@ -62,16 +59,13 @@ CREATE TABLE `hangman_tags` (
   `name` varchar(50) NOT NULL COMMENT 'Tag name (e.g., "kids", "nature", "retro")',
   `slug` varchar(50) NOT NULL COMMENT 'URL-friendly slug (e.g., "kids")',
   `color` varchar(7) DEFAULT '#f39c12' COMMENT 'Tag hex color',
-  `description` text NULL COMMENT 'Tag description',
-  `display_order` int(11) NOT NULL DEFAULT 0 COMMENT 'Display order',
   `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Tag is active (1) or disabled (0)',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_name` (`name`),
   UNIQUE KEY `unique_slug` (`slug`),
-  KEY `idx_active` (`active`),
-  KEY `idx_display_order` (`display_order`)
+  KEY `idx_active` (`active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tags for categorizing categories';
 
 -- =============================================================================
@@ -108,21 +102,19 @@ SELECT
     c.name,
     c.icon,
     c.slug,
-    c.description,
-    c.display_order,
     c.active,
     COUNT(m.id) as total_words,
     COUNT(CASE WHEN m.difficulty = 'easy' THEN 1 END) as easy_words,
     COUNT(CASE WHEN m.difficulty = 'medium' THEN 1 END) as medium_words,
     COUNT(CASE WHEN m.difficulty = 'hard' THEN 1 END) as hard_words,
-    GROUP_CONCAT(t.name ORDER BY t.display_order ASC SEPARATOR ',') as tags
+    GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as tags
 FROM `hangman_categories` c
 LEFT JOIN `hangman_words` m ON c.id = m.category_id AND m.active = 1
 LEFT JOIN `hangman_category_tag` ct ON c.id = ct.category_id  
 LEFT JOIN `hangman_tags` t ON ct.tag_id = t.id AND t.active = 1
 WHERE c.active = 1
-GROUP BY c.id, c.name, c.icon, c.slug, c.description, c.display_order, c.active
-ORDER BY c.display_order ASC, c.name ASC;
+GROUP BY c.id, c.name, c.icon, c.slug, c.active
+ORDER BY c.name ASC;
 
 -- View to retrieve words with their categories and tags
 CREATE VIEW `v_hangman_words_complete` AS
@@ -134,14 +126,14 @@ SELECT
     c.name as category_name,
     c.icon as category_icon,
     c.slug as category_slug,
-    GROUP_CONCAT(t.name ORDER BY t.display_order ASC SEPARATOR ',') as category_tags
+    GROUP_CONCAT(t.name ORDER BY t.name ASC SEPARATOR ',') as category_tags
 FROM `hangman_words` m
 INNER JOIN `hangman_categories` c ON m.category_id = c.id
 LEFT JOIN `hangman_category_tag` ct ON c.id = ct.category_id  
 LEFT JOIN `hangman_tags` t ON ct.tag_id = t.id AND t.active = 1
 WHERE m.active = 1 AND c.active = 1
 GROUP BY m.id, m.word, m.difficulty, m.active, c.name, c.icon, c.slug
-ORDER BY c.display_order ASC, m.word ASC;
+ORDER BY c.name ASC, m.word ASC;
 
 -- =============================================================================
 -- PERFORMANCE INDEXES
@@ -149,8 +141,8 @@ ORDER BY c.display_order ASC, m.word ASC;
 
 -- Composite index for frequent queries
 CREATE INDEX `idx_words_category_active_difficulty` ON `hangman_words` (`category_id`, `active`, `difficulty`);
-CREATE INDEX `idx_categories_active_display_order` ON `hangman_categories` (`active`, `display_order`);
-CREATE INDEX `idx_tags_active_display_order` ON `hangman_tags` (`active`, `display_order`);
+CREATE INDEX `idx_categories_active_name` ON `hangman_categories` (`active`, `name`);
+CREATE INDEX `idx_tags_active_name` ON `hangman_tags` (`active`, `name`);
 
 -- =============================================================================
 -- END COMMENTS

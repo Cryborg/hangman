@@ -55,7 +55,7 @@ class PenduGameEngine {
         this.streakDisplay = domManager.getById('streakDisplay');
         
         // Cache des éléments du hangman pour optimiser les performances
-        this.hangmanParts = document.querySelectorAll('#hangman .part');
+        this.hangmanParts = domManager.getAll('#hangman .part');
     }
     
     initializeEventListeners() {
@@ -144,7 +144,6 @@ class PenduGameEngine {
                 name: category.name,
                 icon: category.icon,
                 slug: category.slug,
-                description: category.description,
                 tags: category.tags || [],
                 words: allWords,
                 word_count: allWords.length,
@@ -313,14 +312,14 @@ class PenduGameEngine {
         }
         // Accents français (si la difficulté accents est activée)
         else if (/^[ÀÂÉÈÊÏÎÔÙÛÇ]$/.test(letter)) {
-            const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
+            const accentDifficulty = window.domManager.getById('accentDifficulty')?.checked || false;
             if (accentDifficulty) {
                 isValidInput = true;
             }
         }
         // Chiffres (si la difficulté chiffres est activée)
         else if (/^[0-9]$/.test(key)) {
-            const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+            const numberDifficulty = window.domManager.getById('numberDifficulty')?.checked || false;
             if (numberDifficulty) {
                 letter = key; // Garder le chiffre tel quel
                 isValidInput = true;
@@ -335,8 +334,8 @@ class PenduGameEngine {
     
     isWordComplete() {
         // Récupérer les options de difficulté
-        const accentDifficulty = document.getElementById('accentDifficulty')?.checked || false;
-        const numberDifficulty = document.getElementById('numberDifficulty')?.checked || false;
+        const accentDifficulty = window.domManager.getById('accentDifficulty')?.checked || false;
+        const numberDifficulty = window.domManager.getById('numberDifficulty')?.checked || false;
         
         // Filtrer les caractères à deviner selon les options de difficulté
         const wordLetters = this.currentWord.toUpperCase().split('').filter(letter => {
@@ -426,7 +425,7 @@ class PenduGameEngine {
             this.categoryDisplay.textContent = this.currentCategory;
             
             // Mettre à jour l'icône de la catégorie
-            const categoryIcon = document.querySelector('.category-icon');
+            const categoryIcon = window.domManager.get('.category-icon');
             if (categoryIcon && this.categories.length > 0) {
                 const category = this.categories.find(cat => cat.name === this.currentCategory);
                 if (category && category.icon) {
@@ -493,7 +492,7 @@ class PenduGameEngine {
     }
     
     showErrorMessage(customMessage = null) {
-        const container = document.querySelector('.container');
+        const container = window.domManager.get('.container');
         if (container) {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';

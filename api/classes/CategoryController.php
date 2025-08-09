@@ -25,7 +25,13 @@ class CategoryController extends BaseAdminController {
     }
     
     protected function findWithPagination(array $params): array {
-        return $this->repository->findAll(); // Pour simplifier, on retourne tout pour l'instant
+        $items = $this->repository->findAll();
+        return [
+            'items' => $items,
+            'total' => count($items),
+            'page' => $params['page'] ?? 1,
+            'limit' => $params['limit'] ?? count($items)
+        ];
     }
     
     protected function create(array $data): int {
@@ -86,11 +92,6 @@ class CategoryController extends BaseAdminController {
         // Validation de l'icône
         $validData['icon'] = !empty($data['icon']) ? Validator::sanitizeString($data['icon']) : '📁';
         
-        // Validation de l'ordre d'affichage
-        if (isset($data['display_order'])) {
-            $orderValidation = Validator::validateInt($data['display_order'], 0, 9999);
-            $validData['display_order'] = $orderValidation['value'] ?? 0;
-        }
         
         // Tags (optionnel)
         if (!empty($data['tags'])) {
@@ -114,7 +115,6 @@ class CategoryController extends BaseAdminController {
             'name' => $item['name'],
             'slug' => $item['slug'],
             'icon' => $item['icon'] ?? '📁',
-            'display_order' => (int) ($item['display_order'] ?? 0),
             'active' => (bool) ($item['active'] ?? true),
             'words_count' => (int) ($item['words_count'] ?? 0),
             'tags' => $item['tags'] ?? [],

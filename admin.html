@@ -236,9 +236,6 @@
                             <span class="category-stats" id="categoryStats">0 mots</span>
                         </div>
                         <div class="category-actions">
-                            <button class="btn btn-primary" id="addWordToCategoryBtn">
-                                ➕ Nouveau mot
-                            </button>
                         </div>
                     </div>
                     
@@ -248,22 +245,6 @@
                             <div class="stat-value" id="totalWordsCount">0</div>
                             <div class="stat-label">Total mots</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="easyWordsCount">0</div>
-                            <div class="stat-label">Facile</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="mediumWordsCount">0</div>
-                            <div class="stat-label">Moyen</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="hardWordsCount">0</div>
-                            <div class="stat-label">Difficile</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="accentsWordsCount">0</div>
-                            <div class="stat-label">Avec accents</div>
-                        </div>
                     </div>
                     
                     <!-- Recherche et filtres -->
@@ -271,12 +252,23 @@
                         <div class="search-box">
                             <input type="text" id="wordsSearchInput" placeholder="Rechercher un mot..." class="form-input">
                             <button class="btn btn-secondary" id="clearSearchBtn">✖️</button>
+                            <button class="btn btn-primary" id="addWordToCategoryBtn">
+                                ➕ Nouveau mot
+                            </button>
                         </div>
                         <div class="filter-buttons">
-                            <button class="filter-btn active" data-difficulty="all">Tous</button>
-                            <button class="filter-btn" data-difficulty="easy">Facile</button>
-                            <button class="filter-btn" data-difficulty="medium">Moyen</button>
-                            <button class="filter-btn" data-difficulty="hard">Difficile</button>
+                            <button class="filter-btn active" data-difficulty="all">
+                                Tous <span class="filter-count" id="allWordsCount">(0)</span>
+                            </button>
+                            <button class="filter-btn" data-difficulty="easy">
+                                Facile <span class="filter-count" id="easyWordsCount">(0)</span>
+                            </button>
+                            <button class="filter-btn" data-difficulty="medium">
+                                Moyen <span class="filter-count" id="mediumWordsCount">(0)</span>
+                            </button>
+                            <button class="filter-btn" data-difficulty="hard">
+                                Difficile <span class="filter-count" id="hardWordsCount">(0)</span>
+                            </button>
                         </div>
                     </div>
                     

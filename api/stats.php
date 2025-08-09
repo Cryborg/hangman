@@ -104,7 +104,7 @@ try {
                                 LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
                                 WHERE c.active = 1
                                 GROUP BY c.id, c.name, c.icon, c.slug
-                                ORDER BY c.display_order ASC, c.name ASC";
+                                ORDER BY c.name ASC";
         
         $categoriesStatsStmt = $db->prepare($categoriesStatsQuery);
         $categoriesStatsStmt->execute();
@@ -138,7 +138,7 @@ try {
                           LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
                           WHERE t.active = 1
                           GROUP BY t.id, t.name, t.slug, t.color
-                          ORDER BY t.display_order ASC, t.name ASC";
+                          ORDER BY t.name ASC";
         
         $tagsStatsStmt = $db->prepare($tagsStatsQuery);
         $tagsStatsStmt->execute();

@@ -17,7 +17,8 @@ class ApiClient {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            }
+            },
+            credentials: 'include'
         };
 
         const finalOptions = {
@@ -140,6 +141,19 @@ class ApiClient {
     async deleteWord(wordId) {
         return this.request(`${this.adminBaseUrl}/category-words.php?id=${wordId}`, {
             method: 'DELETE'
+        });
+    }
+    
+    async createBulkWords(wordsData) {
+        return this.request(`${this.adminBaseUrl}/words.php`, {
+            method: 'POST',
+            body: JSON.stringify({
+                bulk: true,
+                words: wordsData.words,
+                category_id: wordsData.category_id,
+                difficulty: wordsData.difficulty,
+                allow_duplicates: wordsData.allow_duplicates || false
+            })
         });
     }
 

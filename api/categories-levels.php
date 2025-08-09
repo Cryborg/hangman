@@ -32,8 +32,8 @@ try {
     
     // Construction de la requête principale pour les catégories
     $categoryQuery = "
-        SELECT c.id, c.name, c.icon, c.slug, c.description, c.display_order,
-               GROUP_CONCAT(DISTINCT t.name ORDER BY t.display_order ASC SEPARATOR ',') as tags
+        SELECT c.id, c.name, c.icon, c.slug,
+               GROUP_CONCAT(DISTINCT t.name ORDER BY t.name ASC SEPARATOR ',') as tags
         FROM hangman_categories c 
         LEFT JOIN hangman_category_tag ct ON c.id = ct.category_id  
         LEFT JOIN hangman_tags t ON ct.tag_id = t.id AND t.active = 1
@@ -52,8 +52,8 @@ try {
         $params['slug'] = $categorySlug;
     }
     
-    $categoryQuery .= " GROUP BY c.id, c.name, c.icon, c.slug, c.description, c.display_order
-                       ORDER BY c.display_order ASC, c.name ASC";
+    $categoryQuery .= " GROUP BY c.id, c.name, c.icon, c.slug
+                       ORDER BY c.name ASC";
     
     $categoryStmt = $db->prepare($categoryQuery);
     $categoryStmt->execute($params);
@@ -131,7 +131,6 @@ try {
                 'name' => $category['name'],
                 'icon' => $category['icon'],
                 'slug' => $category['slug'],
-                'description' => $category['description'],
                 'tags' => $category['tags'] ? explode(',', $category['tags']) : [],
                 'levels' => []
             ];

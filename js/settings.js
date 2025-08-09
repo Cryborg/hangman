@@ -499,8 +499,8 @@ class PenduSettings {
      */
     syncWithModalCheckboxes() {
         // Synchroniser avec les anciennes checkboxes de la modal si elles existent encore
-        const modalAccentCheckbox = document.querySelector('#gameModeModal #accentDifficulty');
-        const modalNumberCheckbox = document.querySelector('#gameModeModal #numberDifficulty');
+        const modalAccentCheckbox = window.domManager.get('#gameModeModal #accentDifficulty');
+        const modalNumberCheckbox = window.domManager.get('#gameModeModal #numberDifficulty');
         
         if (modalAccentCheckbox) {
             modalAccentCheckbox.checked = this.settings.difficulty.accents;

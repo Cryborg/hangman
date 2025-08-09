@@ -119,6 +119,9 @@ abstract class BaseAdminController {
                 ['message' => ucfirst($this->resourceName) . ' created successfully']
             );
             
+        } catch (InvalidArgumentException $e) {
+            $this->db->rollBack();
+            $this->response->badRequest($e->getMessage());
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
@@ -166,6 +169,9 @@ abstract class BaseAdminController {
                 ['message' => ucfirst($this->resourceName) . ' updated successfully']
             );
             
+        } catch (InvalidArgumentException $e) {
+            $this->db->rollBack();
+            $this->response->badRequest($e->getMessage());
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;

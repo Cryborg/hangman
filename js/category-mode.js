@@ -278,9 +278,9 @@ class CategoryMode extends BaseGameModeWithSave {
     
     setupUI() {
         // Configuration spécifique au mode catégorie
-        const timeAttackCard = document.getElementById('timeAttackCard');
-        const progressCard = document.getElementById('progressCard');
-        const streakCard = document.getElementById('streakCard');
+        const timeAttackCard = window.domManager.getById('timeAttackCard');
+        const progressCard = window.domManager.getById('progressCard');
+        const streakCard = window.domManager.getById('streakCard');
         
         if (timeAttackCard) timeAttackCard.classList.add('hidden');
         if (progressCard) progressCard.classList.remove('hidden');
@@ -292,13 +292,13 @@ class CategoryMode extends BaseGameModeWithSave {
     
     updateDisplay() {
         // Mettre à jour la progression
-        const progressDisplay = document.getElementById('wordsProgress');
+        const progressDisplay = window.domManager.getById('wordsProgress');
         if (progressDisplay) {
             progressDisplay.textContent = `${this.wordsFound}/${this.totalWords}`;
         }
         
         // Optionnel : afficher la catégorie actuelle
-        const categoryDisplay = document.getElementById('categoryName');
+        const categoryDisplay = window.domManager.getById('categoryName');
         if (categoryDisplay && this.selectedCategory) {
             categoryDisplay.textContent = this.selectedCategory;
         }

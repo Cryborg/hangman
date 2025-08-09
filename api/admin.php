@@ -19,12 +19,12 @@ try {
     
     // Retrieve all categories with stats
     $categoriesQuery = "
-        SELECT c.id, c.name, c.icon, c.slug, c.display_order, c.active,
+        SELECT c.id, c.name, c.icon, c.slug, c.active,
                COUNT(w.id) as total_words
         FROM hangman_categories c
         LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
-        GROUP BY c.id, c.name, c.icon, c.slug, c.display_order, c.active
-        ORDER BY c.display_order ASC, c.name ASC
+        GROUP BY c.id, c.name, c.icon, c.slug, c.active
+        ORDER BY c.name ASC
     ";
     $categoriesStmt = $db->prepare($categoriesQuery);
     $categoriesStmt->execute();
@@ -33,7 +33,6 @@ try {
     // Post-process categories
     foreach ($categories as &$category) {
         $category['id'] = (int) $category['id'];
-        $category['display_order'] = (int) $category['display_order'];
         $category['active'] = (bool) $category['active'];
         $category['total_words'] = (int) $category['total_words'];
         
@@ -43,7 +42,7 @@ try {
             FROM hangman_tags t
             INNER JOIN hangman_category_tag ct ON t.id = ct.tag_id
             WHERE ct.category_id = ? AND t.active = 1
-            ORDER BY t.display_order ASC, t.name ASC
+            ORDER BY t.name ASC
         ";
         $categoryTagsStmt = $db->prepare($categoryTagsQuery);
         $categoryTagsStmt->execute([$category['id']]);
@@ -61,7 +60,7 @@ try {
                c.name as category_name, c.icon as category_icon
         FROM hangman_words w
         INNER JOIN hangman_categories c ON w.category_id = c.id
-        ORDER BY c.display_order ASC, c.name ASC, w.word ASC
+        ORDER BY c.name ASC, w.word ASC
     ";
     $wordsStmt = $db->prepare($wordsQuery);
     $wordsStmt->execute();
@@ -77,9 +76,9 @@ try {
     
     // Retrieve all tags
     $tagsQuery = "
-        SELECT id, name, slug, color, description, display_order, active
+        SELECT id, name, slug, color, active
         FROM hangman_tags
-        ORDER BY display_order ASC, name ASC
+        ORDER BY name ASC
     ";
     $tagsStmt = $db->prepare($tagsQuery);
     $tagsStmt->execute();
@@ -88,7 +87,6 @@ try {
     // Post-process tags
     foreach ($tags as &$tag) {
         $tag['id'] = (int) $tag['id'];
-        $tag['display_order'] = (int) $tag['display_order'];
         $tag['active'] = (bool) $tag['active'];
     }
     

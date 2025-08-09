@@ -200,15 +200,22 @@ class WordManager {
     updateCategoryStats(stats) {
         const elements = {
             'totalWordsCount': stats.total_words,
+            'allWordsCount': stats.total_words,
             'easyWordsCount': stats.easy_words,
             'mediumWordsCount': stats.medium_words,
-            'hardWordsCount': stats.hard_words,
-            'accentsWordsCount': stats.words_with_accents
+            'hardWordsCount': stats.hard_words
         };
 
         Object.entries(elements).forEach(([id, value]) => {
             const el = this.domManager.getById(id);
-            if (el) el.textContent = value;
+            if (el) {
+                // Pour les comptes dans les filtres, ajouter les parenthèses
+                if (id !== 'totalWordsCount') {
+                    el.textContent = `(${value})`;
+                } else {
+                    el.textContent = value;
+                }
+            }
         });
     }
 
@@ -376,26 +383,43 @@ class WordManager {
         }
         
         // Nettoyer aussi toutes les modales orphelines
-        document.querySelectorAll('.admin-modal-overlay').forEach(modal => {
+        this.domManager.getAll('.admin-modal-overlay').forEach(modal => {
             modal.remove();
         });
 
         const content = `
             <form id="addWordForm">
                 <div class="form-group">
-                    <label for="wordText">Mot *</label>
-                    <input type="text" id="wordText" name="word" required class="form-input" placeholder="Entrez le mot (il sera automatiquement en majuscules)">
+                    <label for="bulkWordInput">Mots à ajouter (un par ligne) *</label>
+                    <textarea 
+                        id="bulkWordInput" 
+                        name="words" 
+                        required 
+                        class="form-input" 
+                        rows="6" 
+                        placeholder="Entrez les mots, un par ligne :&#10;CHEVAL&#10;VOITURE&#10;MAISON"
+                        style="resize: vertical; min-height: 120px;"
+                    ></textarea>
+                    <small style="color: var(--text-secondary); font-size: 0.85em;">
+                        💡 Astuce : Collez une liste de mots depuis un fichier texte
+                    </small>
                 </div>
                 
                 <div class="form-group">
-                    <label for="wordDifficulty">Difficulté</label>
-                    <select id="wordDifficulty" name="difficulty" class="form-select">
+                    <label for="bulkWordDifficulty">Difficulté pour tous les mots</label>
+                    <select id="bulkWordDifficulty" name="difficulty" class="form-select">
                         <option value="easy">Facile</option>
                         <option value="medium" selected>Moyen</option>
                         <option value="hard">Difficile</option>
                     </select>
                 </div>
                 
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="allowDuplicates" name="allowDuplicates" style="margin-right: 8px;">
+                        Ignorer les doublons (continuer si un mot existe déjà)
+                    </label>
+                </div>
                 
                 <input type="hidden" name="category_id" value="${this.currentCategory.id}">
             </form>
@@ -406,11 +430,11 @@ class WordManager {
                 Annuler
             </button>
             <button class="btn btn-primary" id="submitAddModalBtn">
-                Ajouter le mot
+                ➕ Ajouter les mots
             </button>
         `;
 
-        const modalId = this.uiManager.createModal('Nouveau mot', content, { actions });
+        const modalId = this.uiManager.createModal('Nouveaux mots', content, { actions });
         
         // Stocker l'ID pour la fermeture
         this.currentAddModalId = modalId;
@@ -436,18 +460,104 @@ class WordManager {
     }
 
     async handleAddWordSubmit() {
-        const formData = this.uiManager.getFormData('addWordForm');
+        const form = this.domManager.getById('addWordForm');
+        if (!form) {
+            this.uiManager.showToast('Erreur', 'Formulaire introuvable', 'error');
+            return;
+        }
         
-        if (!formData.word) {
-            this.uiManager.showToast('Erreur', 'Le mot est requis', 'error');
+        // Récupération directe des valeurs du formulaire
+        const textarea = form.querySelector('#bulkWordInput');
+        const difficultySelect = form.querySelector('#bulkWordDifficulty');
+        const allowDuplicatesCheckbox = form.querySelector('#allowDuplicates');
+        const categoryIdInput = form.querySelector('input[name="category_id"]');
+        
+        const wordsText = textarea ? textarea.value.trim() : '';
+        const difficulty = difficultySelect ? difficultySelect.value : 'medium';
+        const allowDuplicates = allowDuplicatesCheckbox ? allowDuplicatesCheckbox.checked : false;
+        const categoryId = categoryIdInput ? categoryIdInput.value : this.currentCategory?.id;
+        
+        if (!wordsText) {
+            this.uiManager.showToast('Erreur', 'Veuillez saisir au moins un mot', 'error');
             return;
         }
 
+        // Parser les mots depuis le textarea
+        const words = wordsText
+            .split('\n')
+            .map(word => word.trim().toUpperCase())
+            .filter(word => word.length > 0);
+            
+        if (words.length === 0) {
+            this.uiManager.showToast('Erreur', 'Aucun mot valide trouvé', 'error');
+            return;
+        }
+
+        // Afficher un loading spécial pour le traitement en lot
+        this.uiManager.showLoading(true, `Ajout de ${words.length} mot${words.length > 1 ? 's' : ''}...`);
+
         try {
-            await this.createWord(formData);
+            // Appel API bulk en une seule fois
+            const result = await this.apiClient.createBulkWords({
+                words: words,
+                category_id: categoryId,
+                difficulty: difficulty,
+                allow_duplicates: allowDuplicates
+            });
+
+            this.uiManager.showLoading(false);
+
+            if (result.success) {
+                const data = result.data;
+                const successCount = data.success_count || 0;
+                const errorCount = data.error_count || 0;
+                const duplicatesCount = data.duplicates ? data.duplicates.length : 0;
+
+                // Construire le message de succès
+                let message = '';
+                if (successCount > 0) {
+                    message = `${successCount} mot${successCount > 1 ? 's' : ''} ajouté${successCount > 1 ? 's' : ''} avec succès`;
+                    if (duplicatesCount > 0) {
+                        message += `, ${duplicatesCount} doublon${duplicatesCount > 1 ? 's' : ''} ignoré${duplicatesCount > 1 ? 's' : ''}`;
+                    }
+                    if (errorCount > 0) {
+                        message += `, ${errorCount} erreur${errorCount > 1 ? 's' : ''}`;
+                    }
+                } else if (duplicatesCount > 0) {
+                    message = `Tous les mots existent déjà (${duplicatesCount} doublon${duplicatesCount > 1 ? 's' : ''})`;
+                } else {
+                    message = 'Aucun mot n\'a pu être ajouté';
+                }
+
+                // Afficher le toast approprié
+                if (successCount > 0) {
+                    this.uiManager.showToast('Succès', message, 'success');
+                } else if (duplicatesCount > 0 && errorCount === 0) {
+                    this.uiManager.showToast('Information', message, 'info');
+                } else {
+                    this.uiManager.showToast('Erreur', message, 'error');
+                }
+
+                // Afficher les erreurs détaillées si il y en a (mais pas trop)
+                if (data.errors && data.errors.length > 0 && data.errors.length <= 5) {
+                    setTimeout(() => {
+                        this.uiManager.showToast('Détail des erreurs', data.errors.join('\n'), 'warning', 8000);
+                    }, 1000);
+                }
+
+                // Recharger la liste des mots si des ajouts ont réussi
+                if (successCount > 0) {
+                    await this.loadCategoryWords(this.currentCategory.id, false);
+                }
+
+            } else {
+                throw new Error(result.message || 'Erreur lors de l\'ajout des mots');
+            }
+
             this.closeAddModal();
         } catch (error) {
-            // Erreur déjà gérée dans createWord
+            this.uiManager.showLoading(false);
+            this.uiManager.showToast('Erreur', 'Erreur lors de l\'ajout des mots: ' + error.message, 'error');
         }
     }
 

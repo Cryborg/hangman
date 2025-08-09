@@ -15,6 +15,24 @@ class CategoryRepository {
     }
     
     /**
+     * Récupère toutes les catégories (pour l'admin)
+     */
+    public function findAll(): array {
+        $stmt = $this->db->query("
+            SELECT 
+                c.*,
+                COUNT(DISTINCT w.id) as words_count
+            FROM hangman_categories c
+            LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
+            WHERE c.active = 1
+            GROUP BY c.id
+            ORDER BY c.name ASC
+        ");
+        
+        return $stmt->fetchAll();
+    }
+    
+    /**
      * Récupère toutes les catégories avec leurs tags
      */
     public function findAllWithTags(): array {
@@ -29,7 +47,7 @@ class CategoryRepository {
             LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
             WHERE c.active = 1
             GROUP BY c.id
-            ORDER BY c.display_order ASC, c.name ASC
+            ORDER BY c.name ASC
         ");
         
         return $stmt->fetchAll();
@@ -70,6 +88,24 @@ class CategoryRepository {
     }
     
     /**
+     * Vérifie si une catégorie existe par slug
+     */
+    public function existsBySlug(string $slug, ?int $excludeId = null): bool {
+        $sql = "SELECT id FROM hangman_categories WHERE slug = ?";
+        $params = [$slug];
+        
+        if ($excludeId) {
+            $sql .= " AND id != ?";
+            $params[] = $excludeId;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        
+        return $stmt->fetch() !== false;
+    }
+    
+    /**
      * Vérifie si une catégorie existe par nom ou slug
      */
     public function existsByNameOrSlug(string $name, string $slug, ?int $excludeId = null): bool {
@@ -92,15 +128,14 @@ class CategoryRepository {
      */
     public function create(array $categoryData): int {
         $stmt = $this->db->prepare("
-            INSERT INTO hangman_categories (name, slug, icon, display_order, active) 
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO hangman_categories (name, slug, icon, active) 
+            VALUES (?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $categoryData['name'],
             $categoryData['slug'] ?? StringUtility::generateSlug($categoryData['name']),
             $categoryData['icon'] ?? '📁',
-            $categoryData['display_order'] ?? 0,
             $categoryData['active'] ?? 1
         ]);
         
@@ -111,7 +146,7 @@ class CategoryRepository {
      * Met à jour une catégorie
      */
     public function update(int $id, array $updateData): bool {
-        $allowedFields = ['name', 'slug', 'icon', 'display_order', 'active'];
+        $allowedFields = ['name', 'slug', 'icon', 'active'];
         $updates = [];
         $params = [];
         
@@ -153,26 +188,15 @@ class CategoryRepository {
      * Supprime définitivement une catégorie et ses mots
      */
     public function delete(int $id): bool {
-        $this->db->beginTransaction();
+        // Supprimer les associations tags-catégorie
+        $this->db->prepare("DELETE FROM hangman_category_tag WHERE category_id = ?")->execute([$id]);
         
-        try {
-            // Supprimer les associations tags-catégorie
-            $this->db->prepare("DELETE FROM hangman_category_tag WHERE category_id = ?")->execute([$id]);
-            
-            // Supprimer les mots de la catégorie
-            $this->db->prepare("DELETE FROM hangman_words WHERE category_id = ?")->execute([$id]);
-            
-            // Supprimer la catégorie
-            $stmt = $this->db->prepare("DELETE FROM hangman_categories WHERE id = ?");
-            $result = $stmt->execute([$id]);
-            
-            $this->db->commit();
-            return $result;
-            
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw $e;
-        }
+        // Supprimer les mots de la catégorie
+        $this->db->prepare("DELETE FROM hangman_words WHERE category_id = ?")->execute([$id]);
+        
+        // Supprimer la catégorie
+        $stmt = $this->db->prepare("DELETE FROM hangman_categories WHERE id = ?");
+        return $stmt->execute([$id]);
     }
     
     /**
@@ -272,13 +296,43 @@ class CategoryRepository {
             LEFT JOIN hangman_words w ON c.id = w.category_id AND w.active = 1
             WHERE " . implode(' AND ', $whereConditions) . "
             GROUP BY c.id
-            ORDER BY c.display_order ASC, c.name ASC
+            ORDER BY c.name ASC
         ";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Vérifie si une catégorie contient des mots
+     */
+    public function hasWords(int $categoryId): bool {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count 
+            FROM hangman_words 
+            WHERE category_id = ? AND active = 1
+        ");
+        $stmt->execute([$categoryId]);
+        $result = $stmt->fetch();
+        
+        return $result['count'] > 0;
+    }
+    
+    /**
+     * Récupère le nombre de mots dans une catégorie
+     */
+    public function getWordsCount(int $categoryId): int {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count 
+            FROM hangman_words 
+            WHERE category_id = ? AND active = 1
+        ");
+        $stmt->execute([$categoryId]);
+        $result = $stmt->fetch();
+        
+        return (int) $result['count'];
     }
     
     /**
@@ -291,12 +345,11 @@ class CategoryRepository {
         
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO hangman_categories (name, slug, icon, display_order) 
-                VALUES (?, ?, ?, ?)
+                INSERT INTO hangman_categories (name, slug, icon) 
+                VALUES (?, ?, ?)
                 ON DUPLICATE KEY UPDATE 
                 name = VALUES(name),
-                icon = VALUES(icon),
-                display_order = VALUES(display_order)
+                icon = VALUES(icon)
             ");
             
             foreach ($categories as $categoryData) {
@@ -306,8 +359,7 @@ class CategoryRepository {
                     $stmt->execute([
                         $categoryData['name'] ?? '',
                         $slug,
-                        $categoryData['icon'] ?? '📁',
-                        $categoryData['display_order'] ?? 0
+                        $categoryData['icon'] ?? '📁'
                     ]);
                     
                     $imported++;

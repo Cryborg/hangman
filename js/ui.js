@@ -105,7 +105,7 @@ class PenduUI {
     // ===== GESTION DU HANGMAN ===== //
     
     showHangmanPart(partIndex) {
-        const parts = document.querySelectorAll('.body-part');
+        const parts = window.domManager.getAll('.body-part');
         if (parts[partIndex]) {
             parts[partIndex].classList.add('visible');
             
@@ -122,7 +122,7 @@ class PenduUI {
     }
     
     resetHangman() {
-        const parts = document.querySelectorAll('.body-part');
+        const parts = window.domManager.getAll('.body-part');
         parts.forEach(part => {
             part.classList.remove('visible');
             part.style.opacity = '';
@@ -131,7 +131,7 @@ class PenduUI {
         });
         
         // Rendre visible la structure de base
-        const baseParts = document.querySelectorAll('.part:not(.body-part)');
+        const baseParts = window.domManager.getAll('.part:not(.body-part)');
         baseParts.forEach(part => {
             part.classList.add('visible');
         });
@@ -223,7 +223,7 @@ class PenduUI {
     }
     
     revealLetter(letter) {
-        const spans = document.querySelectorAll('#wordDisplay span');
+        const spans = window.domManager.getAll('#wordDisplay span');
         let revealed = false;
         
         // Fonction supprimée - logique intégrée dans updateWordDisplay

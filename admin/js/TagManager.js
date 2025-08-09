@@ -117,7 +117,7 @@ class TagManager {
             return `
                 <tr>
                     <td>
-                        <strong style="color: ${tag.color || '#f39c12'}">${tag.name || 'Sans nom'}</strong>
+                        <strong style="color: ${tag.color || '#f39c12'}">${this.uiManager.escapeHtml(tag.name || 'Sans nom')}</strong>
                     </td>
                     <td class="hide-mobile">${tag.slug || 'N/A'}</td>
                     <td class="hide-mobile">
@@ -142,25 +142,13 @@ class TagManager {
     showAddModal() {
         const content = `
             <form id="createTagForm" onsubmit="submitCreateTag(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tagName">Nom du tag</label>
-                        <input type="text" id="tagName" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tagSlug">Slug (URL)</label>
-                        <input type="text" id="tagSlug" name="slug" placeholder="Auto-généré si vide">
-                    </div>
+                <div class="form-group">
+                    <label for="tagName">Nom du tag *</label>
+                    <input type="text" id="tagName" name="name" required class="form-input">
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tagColor">Couleur</label>
-                        <input type="color" id="tagColor" name="color" value="#f39c12">
-                    </div>
-                    <div class="form-group">
-                        <label for="tagOrder">Ordre d'affichage</label>
-                        <input type="number" id="tagOrder" name="order_index" min="0" value="0">
-                    </div>
+                <div class="form-group">
+                    <label for="tagColor">Couleur</label>
+                    <input type="color" id="tagColor" name="color" value="#f39c12" class="form-input">
                 </div>
             </form>
         `;
@@ -191,25 +179,13 @@ class TagManager {
         const content = `
             <form id="editTagForm" onsubmit="submitEditTag(event)">
                 <input type="hidden" name="id" value="${tag.id}">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editTagName">Nom du tag</label>
-                        <input type="text" id="editTagName" name="name" value="${tag.name || ''}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTagSlug">Slug (URL)</label>
-                        <input type="text" id="editTagSlug" name="slug" value="${tag.slug || ''}">
-                    </div>
+                <div class="form-group">
+                    <label for="editTagName">Nom du tag *</label>
+                    <input type="text" id="editTagName" name="name" value="${this.uiManager.escapeHtml(tag.name || '')}" required class="form-input">
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editTagColor">Couleur</label>
-                        <input type="color" id="editTagColor" name="color" value="${tag.color || '#f39c12'}">
-                    </div>
-                    <div class="form-group">
-                        <label for="editTagOrder">Ordre d'affichage</label>
-                        <input type="number" id="editTagOrder" name="order_index" min="0" value="${tag.order_index || 0}">
-                    </div>
+                <div class="form-group">
+                    <label for="editTagColor">Couleur</label>
+                    <input type="color" id="editTagColor" name="color" value="${tag.color || '#f39c12'}" class="form-input">
                 </div>
             </form>
         `;

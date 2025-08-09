@@ -177,9 +177,32 @@ class AdminApp {
         });
 
         // Mobile nav toggle
-        document.getElementById('mobileNavToggle')?.addEventListener('click', () => {
+        document.getElementById('mobileNavToggle')?.addEventListener('click', (e) => {
             const mobileNav = document.getElementById('mobileNav');
+            const hamburgerBtn = document.getElementById('mobileNavToggle');
             mobileNav?.classList.toggle('active');
+            hamburgerBtn?.classList.toggle('active');
+        });
+
+        // Mobile nav links
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.target.getAttribute('href');
+                const section = href.replace('#', '');
+                this.uiManager.showSection(section);
+                this.handleSectionChange(section);
+                
+                // Fermer le menu mobile après clic
+                const mobileNav = document.getElementById('mobileNav');
+                const hamburgerBtn = document.getElementById('mobileNavToggle');
+                mobileNav?.classList.remove('active');
+                hamburgerBtn?.classList.remove('active');
+                
+                // Mettre à jour les états actifs
+                document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+            });
         });
 
         // Add buttons
@@ -356,7 +379,7 @@ class AdminApp {
             <div class="category-card" onclick="categoryManager.showCategoryDetail(${category.id})">
                 <div class="category-icon">${category.icon || '📁'}</div>
                 <div class="category-info">
-                    <div class="category-name">${category.name}</div>
+                    <div class="category-name">${this.uiManager.escapeHtml(category.name)}</div>
                     <div class="category-count">${category.total_words || 0} mots</div>
                 </div>
             </div>

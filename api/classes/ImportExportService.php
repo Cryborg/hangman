@@ -144,8 +144,7 @@ class ImportExportService {
         $categoryInfo = [
             'name' => $nameValidation['value'],
             'slug' => $categoryData['slug'] ?? StringUtility::generateSlug($nameValidation['value']),
-            'icon' => $categoryData['icon'] ?? '📁',
-            'display_order' => $categoryData['display_order'] ?? 0
+            'icon' => $categoryData['icon'] ?? '📁'
         ];
         
         // Créer ou mettre à jour la catégorie

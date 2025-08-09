@@ -212,20 +212,6 @@ class CategoryManager {
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="categorySlug">Slug (généré automatiquement si vide)</label>
-                    <input type="text" id="categorySlug" name="slug" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                    <label for="categoryDescription">Description</label>
-                    <textarea id="categoryDescription" name="description" rows="3" class="form-input"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="categoryOrder">Ordre d'affichage</label>
-                    <input type="number" id="categoryOrder" name="display_order" value="0" class="form-input">
-                </div>
             </form>
         `;
 
@@ -296,20 +282,6 @@ class CategoryManager {
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="editCategorySlug">Slug</label>
-                    <input type="text" id="editCategorySlug" name="slug" value="${this.uiManager.escapeHtml(category.slug)}" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                    <label for="editCategoryDescription">Description</label>
-                    <textarea id="editCategoryDescription" name="description" rows="3" class="form-input">${category.description || ''}</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editCategoryOrder">Ordre d'affichage</label>
-                    <input type="number" id="editCategoryOrder" name="display_order" value="${category.display_order || 0}" class="form-input">
-                </div>
             </form>
         `;
 

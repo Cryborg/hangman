@@ -46,7 +46,7 @@ class VirtualKeyboard {
     // ===== INITIALISATION ===== //
     
     initializeDOMReferences() {
-        this.container = document.getElementById(this.containerId);
+        this.container = window.domManager.getById(this.containerId);
         if (!this.container) {
         }
     }
@@ -181,7 +181,7 @@ class VirtualKeyboard {
             const accentBtn = elementUnder?.closest('.accent-option');
             
             // Mettre à jour la sélection visuelle
-            document.querySelectorAll('.accent-option').forEach(btn => {
+            window.domManager.getAll('.accent-option').forEach(btn => {
                 btn.classList.remove('selected');
             });
             
@@ -291,7 +291,7 @@ class VirtualKeyboard {
         }
         
         // Fallback pour nettoyer d'anciens popups
-        const popup = document.getElementById('accentPopup');
+        const popup = window.domManager.getById('accentPopup');
         if (popup) {
             popup.remove();
         }
@@ -467,8 +467,8 @@ class VirtualKeyboard {
     
     getDifficultyOptions() {
         return {
-            accents: document.getElementById('accentDifficulty')?.checked || false,
-            numbers: document.getElementById('numberDifficulty')?.checked || false
+            accents: window.domManager.getById('accentDifficulty')?.checked || false,
+            numbers: window.domManager.getById('numberDifficulty')?.checked || false
         };
     }
 }

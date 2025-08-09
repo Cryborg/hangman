@@ -235,11 +235,12 @@ class UIManager {
     // =================
     
     confirm(title, message, onConfirm, onCancel = null) {
+        const modalId = 'confirm-modal-' + Date.now();
         const actions = `
-            <button class="btn btn-secondary" onclick="uiManager.closeModal('${Date.now()}'); ${onCancel ? onCancel + '()' : ''}">
+            <button class="btn btn-secondary" onclick="uiManager.closeModal('${modalId}'); ${onCancel ? onCancel + '()' : ''}">
                 Annuler
             </button>
-            <button class="btn btn-danger" onclick="uiManager.closeModal('${Date.now()}'); ${onConfirm}()">
+            <button class="btn btn-danger" onclick="uiManager.closeModal('${modalId}'); ${onConfirm}()">
                 Confirmer
             </button>
         `;

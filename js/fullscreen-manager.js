@@ -27,7 +27,7 @@ class FullscreenManager {
      * Initialise le gestionnaire
      */
     init() {
-        this.button = document.getElementById('fullscreenHeaderBtn');
+        this.button = window.domManager.getById('fullscreenHeaderBtn');
         this.orientationManager = null;
         
         if (!this.button) {

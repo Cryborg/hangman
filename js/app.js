@@ -108,7 +108,7 @@ class PenduApp {
         });
         
         // Liens de navigation
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = this.domManager.getAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const view = link.getAttribute('data-view');
@@ -124,7 +124,7 @@ class PenduApp {
         });
         
         // Bouton "Recommencer" spécial
-        const restartGameLink = document.getElementById('restartGameLink');
+        const restartGameLink = this.domManager.getById('restartGameLink');
         if (restartGameLink) {
             restartGameLink.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -146,8 +146,8 @@ class PenduApp {
         // Déjà géré ci-dessus
         
         // Boutons de retour au menu
-        const backToMenuBtn = document.getElementById('backToMenuBtn');
-        const backToMenuFromStatsBtn = document.getElementById('backToMenuFromStatsBtn');
+        const backToMenuBtn = this.domManager.getById('backToMenuBtn');
+        const backToMenuFromStatsBtn = this.domManager.getById('backToMenuFromStatsBtn');
         
         if (backToMenuBtn) {
             backToMenuBtn.addEventListener('click', () => this.showView('menu'));
@@ -157,7 +157,7 @@ class PenduApp {
             backToMenuFromStatsBtn.addEventListener('click', () => this.showView('menu'));
         }
         
-        const backToMenuFromChangelogBtn = document.getElementById('backToMenuFromChangelogBtn');
+        const backToMenuFromChangelogBtn = this.domManager.getById('backToMenuFromChangelogBtn');
         if (backToMenuFromChangelogBtn) {
             backToMenuFromChangelogBtn.addEventListener('click', () => this.showView('menu'));
         }
@@ -229,7 +229,7 @@ class PenduApp {
     
     showView(viewName) {
         // Cacher toutes les vues
-        const views = document.querySelectorAll('.view');
+        const views = this.domManager.getAll('.view');
         views.forEach(view => view.classList.remove('active'));
         
         // Afficher la vue demandée
@@ -247,7 +247,7 @@ class PenduApp {
     }
     
     updateNavigation(activeView) {
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = this.domManager.getAll('.nav-link');
         navLinks.forEach(link => {
             const linkView = link.getAttribute('data-view');
             if (linkView === activeView) {
@@ -503,13 +503,13 @@ class PenduApp {
         document.body.appendChild(toast);
         
         // Gestionnaires d'événements
-        document.getElementById('confirmRestartBtn').addEventListener('click', () => {
+        this.domManager.addEventListener('confirmRestartBtn', 'click', () => {
             document.body.removeChild(toast);
             // Redémarrer avec les mêmes paramètres
             this.restartGameWithSameSettings();
         });
         
-        document.getElementById('cancelRestartBtn').addEventListener('click', () => {
+        this.domManager.addEventListener('cancelRestartBtn', 'click', () => {
             document.body.removeChild(toast);
         });
     }
@@ -638,7 +638,7 @@ let penduApp;
 
 // Version display (pour compatibilité)
 document.addEventListener('DOMContentLoaded', function() {
-    const versionDisplay = document.getElementById('versionDisplay');
+    const versionDisplay = window.domManager.getById('versionDisplay');
     if (versionDisplay && typeof PENDU_VERSION !== 'undefined') {
         versionDisplay.textContent = PENDU_VERSION;
     }

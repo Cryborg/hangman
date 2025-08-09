@@ -27,7 +27,13 @@ class TagController extends BaseAdminController {
     protected function findWithPagination(array $params): array {
         // Pour les tags, on retourne simplement tous les tags
         // car ils ne sont généralement pas nombreux
-        return $this->repository->findAll();
+        $items = $this->repository->findAll();
+        return [
+            'items' => $items,
+            'total' => count($items),
+            'page' => $params['page'] ?? 1,
+            'limit' => $params['limit'] ?? count($items)
+        ];
     }
     
     protected function create(array $data): int {
@@ -115,11 +121,6 @@ class TagController extends BaseAdminController {
         }
         $validData['color'] = $color;
         
-        // Validation de l'ordre d'affichage
-        if (isset($data['display_order'])) {
-            $orderValidation = Validator::validateInt($data['display_order'], 0, 9999);
-            $validData['display_order'] = $orderValidation['value'] ?? 0;
-        }
         
         // Catégories (optionnel)
         if (!empty($data['categories'])) {
@@ -160,11 +161,6 @@ class TagController extends BaseAdminController {
             $validData['color'] = $color;
         }
         
-        // Validation de l'ordre d'affichage
-        if (isset($data['display_order'])) {
-            $orderValidation = Validator::validateInt($data['display_order'], 0, 9999);
-            $validData['display_order'] = $orderValidation['value'] ?? 0;
-        }
         
         // Catégories (optionnel)
         if (isset($data['categories'])) {
@@ -183,7 +179,6 @@ class TagController extends BaseAdminController {
             'name' => $item['name'],
             'slug' => $item['slug'],
             'color' => $item['color'] ?? '#3498db',
-            'display_order' => (int) ($item['display_order'] ?? 0),
             'category_count' => (int) ($item['category_count'] ?? 0),
             'categories' => $item['categories'] ?? [],
             'created_at' => $item['created_at'] ?? null,
@@ -197,33 +192,25 @@ class TagController extends BaseAdminController {
      * Met à jour les associations tag-catégories
      */
     private function updateTagCategories(int $tagId, array $categoryIds): void {
-        try {
-            $this->db->beginTransaction();
+        // Ne pas gérer les transactions ici car BaseAdminController s'en charge déjà
+        
+        // Supprimer les anciennes associations
+        $stmt = $this->db->prepare("DELETE FROM hangman_category_tag WHERE tag_id = ?");
+        $stmt->execute([$tagId]);
+        
+        // Ajouter les nouvelles associations
+        if (!empty($categoryIds)) {
+            $categoryStmt = $this->db->prepare("
+                INSERT INTO hangman_category_tag (category_id, tag_id) 
+                VALUES (?, ?)
+            ");
             
-            // Supprimer les anciennes associations
-            $stmt = $this->db->prepare("DELETE FROM hangman_category_tag WHERE tag_id = ?");
-            $stmt->execute([$tagId]);
-            
-            // Ajouter les nouvelles associations
-            if (!empty($categoryIds)) {
-                $categoryStmt = $this->db->prepare("
-                    INSERT INTO hangman_category_tag (category_id, tag_id) 
-                    VALUES (?, ?)
-                ");
-                
-                foreach ($categoryIds as $categoryId) {
-                    // Vérifier que la catégorie existe
-                    if ($this->categoryExists($categoryId)) {
-                        $categoryStmt->execute([$categoryId, $tagId]);
-                    }
+            foreach ($categoryIds as $categoryId) {
+                // Vérifier que la catégorie existe
+                if ($this->categoryExists($categoryId)) {
+                    $categoryStmt->execute([$categoryId, $tagId]);
                 }
             }
-            
-            $this->db->commit();
-            
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw $e;
         }
     }
     

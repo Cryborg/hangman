@@ -7,6 +7,7 @@
  */
 
 require_once __DIR__ . '/BaseAdminController.php';
+require_once __DIR__ . '/StringUtility.php';
 require_once __DIR__ . '/WordRepository.php';
 require_once __DIR__ . '/CategoryRepository.php';
 

@@ -81,14 +81,14 @@ class TimeAttackGameMode extends BaseGameMode {
         this.app.hideNextWordButton();
         
         // Afficher la carte Time Attack
-        const timeAttackCard = document.getElementById('timeAttackCard');
+        const timeAttackCard = window.domManager.getById('timeAttackCard');
         if (timeAttackCard) {
             timeAttackCard.classList.remove('hidden');
         }
         
         // Masquer les autres cartes
-        const progressCard = document.getElementById('progressCard');
-        const streakCard = document.getElementById('streakCard');
+        const progressCard = window.domManager.getById('progressCard');
+        const streakCard = window.domManager.getById('streakCard');
         
         if (progressCard) progressCard.classList.add('hidden');
         if (streakCard) streakCard.classList.add('hidden');
@@ -98,7 +98,7 @@ class TimeAttackGameMode extends BaseGameMode {
     }
     
     updateButtonsVisibility() {
-        const restartBtn = document.getElementById('restartGameBtn');
+        const restartBtn = window.domManager.getById('restartGameBtn');
         if (restartBtn) {
             restartBtn.style.display = 'inline-block';
         }
@@ -161,7 +161,7 @@ class TimeAttackGameMode extends BaseGameMode {
     
     updateDisplay() {
         // Mettre à jour le timer
-        const timerDisplay = document.getElementById('timerDisplay');
+        const timerDisplay = window.domManager.getById('timerDisplay');
         if (timerDisplay) {
             const minutes = Math.floor(this.timeRemaining / 60);
             const seconds = this.timeRemaining % 60;
@@ -169,13 +169,13 @@ class TimeAttackGameMode extends BaseGameMode {
         }
         
         // Mettre à jour le score
-        const scoreDisplay = document.getElementById('scoreDisplay');
+        const scoreDisplay = window.domManager.getById('scoreDisplay');
         if (scoreDisplay) {
             scoreDisplay.textContent = this.score;
         }
         
         // Mettre à jour le record
-        const highscoreDisplay = document.getElementById('currentHighscore');
+        const highscoreDisplay = window.domManager.getById('currentHighscore');
         if (highscoreDisplay) {
             const key = `timeattack_highscore_${this.selectedDuration}min`;
             const highscore = localStorage.getItem(key) || '0';

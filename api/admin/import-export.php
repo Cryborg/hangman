@@ -60,7 +60,7 @@ function handleExport($db) {
                 LEFT JOIN hangman_category_tag ct ON c.id = ct.category_id
                 LEFT JOIN hangman_tags t ON ct.tag_id = t.id
                 GROUP BY c.id
-                ORDER BY c.display_order ASC, c.name ASC
+                ORDER BY c.name ASC
             ");
             $categories = $stmt->fetchAll();
             
@@ -68,7 +68,6 @@ function handleExport($db) {
             foreach ($categories as &$category) {
                 // Conversion des types
                 $category['id'] = (int) $category['id'];
-                $category['display_order'] = (int) $category['display_order'];
                 
                 // Transformation des tags en array
                 $category['tags'] = $category['tags'] ? explode(',', $category['tags']) : [];
@@ -109,13 +108,12 @@ function handleExport($db) {
             // Export des tags
             $stmt = $db->query("
                 SELECT * FROM hangman_tags
-                ORDER BY display_order ASC, name ASC
+                ORDER BY name ASC
             ");
             $tags = $stmt->fetchAll();
             
             foreach ($tags as &$tag) {
                 $tag['id'] = (int) $tag['id'];
-                $tag['display_order'] = (int) $tag['display_order'];
                 unset($tag['created_at'], $tag['updated_at']);
             }
             
@@ -227,19 +225,17 @@ function handleImport($db) {
             foreach ($data['tags'] as $tagData) {
                 try {
                     $stmt = $db->prepare("
-                        INSERT INTO hangman_tags (name, slug, color, display_order) 
-                        VALUES (?, ?, ?, ?)
+                        INSERT INTO hangman_tags (name, slug, color) 
+                        VALUES (?, ?, ?)
                         ON DUPLICATE KEY UPDATE 
                         name = VALUES(name),
-                        color = VALUES(color),
-                        display_order = VALUES(display_order)
+                        color = VALUES(color)
                     ");
                     
                     $stmt->execute([
                         $tagData['name'] ?? '',
                         $tagData['slug'] ?? generateSlug($tagData['name'] ?? ''),
-                        $tagData['color'] ?? '#3498db',
-                        $tagData['display_order'] ?? 0
+                        $tagData['color'] ?? '#3498db'
                     ]);
                     
                     $importStats['tags_imported']++;
@@ -253,15 +249,14 @@ function handleImport($db) {
         foreach ($allTags as $tagName) {
             try {
                 $stmt = $db->prepare("
-                    INSERT IGNORE INTO hangman_tags (name, slug, color, display_order) 
-                    VALUES (?, ?, ?, ?)
+                    INSERT IGNORE INTO hangman_tags (name, slug, color) 
+                    VALUES (?, ?, ?)
                 ");
                 
                 $stmt->execute([
                     $tagName,
                     generateSlug($tagName),
-                    '#f39c12', // Couleur par défaut
-                    0
+                    '#f39c12' // Couleur par défaut
                 ]);
                 
                 if ($db->lastInsertId()) {
@@ -277,12 +272,11 @@ function handleImport($db) {
             try {
                 // Insérer/mettre à jour la catégorie
                 $stmt = $db->prepare("
-                    INSERT INTO hangman_categories (name, slug, icon, display_order) 
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO hangman_categories (name, slug, icon) 
+                    VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
                     name = VALUES(name),
-                    icon = VALUES(icon),
-                    display_order = VALUES(display_order)
+                    icon = VALUES(icon)
                 ");
                 
                 $categorySlug = $categoryData['slug'] ?? generateSlug($categoryData['name'] ?? '');
@@ -290,8 +284,7 @@ function handleImport($db) {
                 $stmt->execute([
                     $categoryData['name'] ?? '',
                     $categorySlug,
-                    $categoryData['icon'] ?? '📁',
-                    $categoryData['display_order'] ?? 0
+                    $categoryData['icon'] ?? '📁'
                 ]);
                 
                 $categoryId = $db->lastInsertId() ?: $db->query("SELECT id FROM hangman_categories WHERE slug = '$categorySlug'")->fetchColumn();
