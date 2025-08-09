@@ -206,6 +206,9 @@ abstract class BaseAdminController {
                 ['message' => ucfirst($this->resourceName) . ' deleted successfully']
             );
             
+        } catch (InvalidArgumentException $e) {
+            $this->db->rollBack();
+            $this->response->badRequest($e->getMessage());
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
