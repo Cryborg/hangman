@@ -204,7 +204,12 @@ class CategoryManager {
                 
                 <div class="form-group">
                     <label for="categoryIcon">Icône</label>
-                    <input type="text" id="categoryIcon" name="icon" placeholder="📁" class="form-input">
+                    <div class="input-with-button">
+                        <input type="text" id="categoryIcon" name="icon" placeholder="📁" class="form-input">
+                        <button type="button" class="btn btn-secondary btn-icon" onclick="categoryManager.openIconSelector('categoryIcon')" title="Choisir une icône">
+                            🎨
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -283,7 +288,12 @@ class CategoryManager {
                 
                 <div class="form-group">
                     <label for="editCategoryIcon">Icône</label>
-                    <input type="text" id="editCategoryIcon" name="icon" value="${category.icon || ''}" class="form-input">
+                    <div class="input-with-button">
+                        <input type="text" id="editCategoryIcon" name="icon" value="${category.icon || ''}" class="form-input">
+                        <button type="button" class="btn btn-secondary btn-icon" onclick="categoryManager.openIconSelector('editCategoryIcon')" title="Choisir une icône">
+                            🎨
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -345,6 +355,31 @@ class CategoryManager {
         } catch (error) {
             // Erreur déjà gérée dans updateCategory
         }
+    }
+    
+    /**
+     * Ouvre le sélecteur d'icônes pour un input donné
+     */
+    openIconSelector(inputId) {
+        const inputElement = document.getElementById(inputId);
+        if (!inputElement) {
+            console.error('Input element not found:', inputId);
+            return;
+        }
+        
+        // Vérifier que le sélecteur d'icônes est disponible
+        if (!window.iconSelector) {
+            this.uiManager.showToast('Erreur', 'Sélecteur d\'icônes non disponible', 'error');
+            return;
+        }
+        
+        // Ouvrir le sélecteur avec l'icône actuelle
+        const currentIcon = inputElement.value || '📁';
+        window.iconSelector.open((selectedIcon) => {
+            inputElement.value = selectedIcon;
+            // Déclencher l'événement change pour la détection des changements
+            inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        }, currentIcon, inputElement);
     }
 
     // =================

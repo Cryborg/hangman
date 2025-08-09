@@ -368,18 +368,20 @@ class IconSelector {
     }
 }
 
-// CSS pour le sélecteur d'icônes
+// CSS pour le sélecteur d'icônes avec variables du thème admin
 const iconSelectorCSS = `
 .icon-selector-modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .icon-selector-overlay {
@@ -388,19 +390,21 @@ const iconSelectorCSS = `
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .icon-selector-container {
     position: relative;
-    background: var(--admin-bg-white);
-    border-radius: var(--admin-radius-lg);
-    width: 90vw;
+    background: var(--bg-modal);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    width: 100%;
     max-width: 600px;
-    max-height: 80vh;
+    max-height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
-    box-shadow: var(--admin-shadow-hover);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    margin: auto;
 }
 
 .icon-selector-header {
@@ -408,12 +412,13 @@ const iconSelectorCSS = `
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem;
-    border-bottom: 1px solid var(--admin-border-light);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .icon-selector-header h3 {
     margin: 0;
-    color: var(--admin-text-primary);
+    color: var(--text-primary);
+    font-size: 1.25rem;
 }
 
 .icon-selector-close {
@@ -422,52 +427,84 @@ const iconSelectorCSS = `
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
-    color: var(--admin-text-secondary);
+    color: var(--text-secondary);
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+}
+
+.icon-selector-close:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .icon-selector-search {
     padding: 1rem;
-    border-bottom: 1px solid var(--admin-border-light);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .icon-selector-search input {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid var(--admin-border-light);
-    border-radius: var(--admin-radius);
+    background: var(--bg-input);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
     font-size: 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.icon-selector-search input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
 }
 
 .icon-selector-categories {
     display: flex;
     gap: 0.5rem;
     padding: 1rem;
-    border-bottom: 1px solid var(--admin-border-light);
+    border-bottom: 1px solid var(--border-light);
     overflow-x: auto;
+    min-height: auto;
+    flex-wrap: nowrap;
 }
 
 .icon-category-tab {
-    background: none;
-    border: 2px solid var(--admin-border-light);
+    background: transparent;
+    border: 2px solid var(--border-primary);
     padding: 0.5rem 1rem;
-    border-radius: var(--admin-radius);
+    border-radius: var(--radius);
     cursor: pointer;
     white-space: nowrap;
     font-size: 0.9rem;
-    color: var(--admin-text-secondary);
+    color: var(--text-secondary);
     transition: all 0.3s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: fit-content;
+    font-family: inherit;
 }
 
 .icon-category-tab.active {
-    background: var(--admin-primary);
-    border-color: var(--admin-primary);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
     color: white;
+}
+
+.icon-category-tab:hover:not(.active) {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
 }
 
 .icon-selector-content {
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+    background: var(--bg-secondary);
+    min-height: 0; /* Important pour le flex */
 }
 
 .icon-category-grid {
@@ -481,9 +518,9 @@ const iconSelectorCSS = `
 }
 
 .icon-item {
-    background: none;
-    border: 2px solid var(--admin-border-light);
-    border-radius: var(--admin-radius);
+    background: var(--bg-card);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius);
     padding: 1rem;
     font-size: 1.5rem;
     cursor: pointer;
@@ -495,28 +532,34 @@ const iconSelectorCSS = `
 }
 
 .icon-item:hover {
-    background: var(--admin-bg-light);
-    border-color: var(--admin-primary);
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
 }
 
 .icon-item.selected {
-    background: var(--admin-primary);
-    border-color: var(--admin-primary);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
 }
 
 .icon-selector-footer {
     display: flex;
     gap: 1rem;
     padding: 1.5rem;
-    border-top: 1px solid var(--admin-border-light);
+    border-top: 1px solid var(--border-light);
     justify-content: flex-end;
+    background: var(--bg-card);
 }
 
 .no-results {
     text-align: center;
-    color: var(--admin-text-secondary);
+    color: var(--text-secondary);
     padding: 2rem;
+    font-style: italic;
 }
 
 @media (max-width: 768px) {
@@ -532,6 +575,15 @@ const iconSelectorCSS = `
     .icon-item {
         padding: 0.75rem;
         font-size: 1.2rem;
+    }
+    
+    .icon-selector-categories {
+        padding: 0.75rem;
+    }
+    
+    .icon-category-tab {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
     }
 }
 `;
