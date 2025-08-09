@@ -117,8 +117,10 @@
     }
     
     /* Cacher certaines colonnes des tableaux en mobile */
-    .hide-mobile {
-        display: none;
+    @media (max-width: 768px) {
+        .hide-mobile {
+            display: none;
+        }
     }
     
     /* Optimisations tableaux pour mobile */
