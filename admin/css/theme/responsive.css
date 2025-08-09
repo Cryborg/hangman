@@ -1,6 +1,10 @@
 /* ===== ADMIN THEME - RESPONSIVE ===== */
 
 @media (max-width: 768px) {
+    /* Utilitaire pour cacher du contenu sur mobile */
+    .hide-mobile {
+        display: none !important;
+    }
     /* Utilisation de vw pour une meilleure adaptation */
     html, body {
         overflow-x: hidden;
