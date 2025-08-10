@@ -13,12 +13,67 @@
     margin-right: auto;
 }
 
+/* ===== MOT CLIQUABLE POUR AFFICHER LE CLAVIER ===== */
+
+/* Rendre le mot cliquable quand le clavier est caché sur desktop */
+@media (min-width: 1025px) {
+    body:not(.force-virtual-keyboard) .word-display {
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s ease;
+    }
+    
+    body:not(.force-virtual-keyboard) .word-display:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Indicateur visuel discret */
+    body:not(.force-virtual-keyboard) .word-display::after {
+        content: '⌨️';
+        position: absolute;
+        bottom: -25px;
+        right: 10px;
+        font-size: 0.8em;
+        opacity: 0.3;
+        transition: opacity 0.3s ease;
+    }
+    
+    body:not(.force-virtual-keyboard) .word-display:hover::after {
+        opacity: 0.7;
+    }
+}
+
+/* Classe pour afficher temporairement le clavier */
+.keyboard.keyboard-temporary-show {
+    display: flex !important;
+    animation: keyboardSlideIn 0.3s ease-out;
+}
+
 /* ===== AFFICHAGE RESPONSIVE CSS PURE ===== */
 
-/* DESKTOP : Masquage forcé (>1024px) */
+/* Classe pour forcer l'affichage du clavier (écrans de voiture, kiosques, etc.) */
+.force-virtual-keyboard .keyboard {
+    display: flex !important;
+}
+
+.force-virtual-keyboard .keyboard:empty {
+    display: none !important;
+}
+
+/* DESKTOP : Masquage par défaut (>1024px) */
 @media (min-width: 1025px) {
     .keyboard {
+        display: none;
+    }
+    
+    /* Sauf si forcé OU temporairement affiché */
+    body:not(.force-virtual-keyboard) .keyboard:not(.keyboard-temporary-show) {
         display: none !important;
+    }
+    
+    /* Forcer l'affichage du clavier temporaire sur desktop */
+    .keyboard.keyboard-temporary-show {
+        display: flex !important;
     }
 }
 

@@ -41,8 +41,7 @@ class FullscreenManager {
             return;
         }
         
-        // Event listeners
-        this.button.addEventListener('click', this.handleToggle.bind(this));
+        // Event listeners gérés par app.js pour éviter les doublons
         
         // Écouter les changements de plein écran
         document.addEventListener('fullscreenchange', this.handleFullscreenChange.bind(this));
@@ -67,13 +66,21 @@ class FullscreenManager {
     /**
      * Gère le clic sur le bouton
      */
-    handleToggle(e) {
+    async handleToggle(e) {
         e.preventDefault();
         
+        // Vérifier que l'API est toujours supportée
+        if (!this.isSupported) {
+            console.warn('🖼️ API Fullscreen non supportée');
+            return;
+        }
+        
+        // Important : ne pas utiliser de setTimeout ou autres délais
+        // car cela casserait le "user gesture" requis par l'API
         if (this.isInFullscreen()) {
-            this.exitFullscreen();
+            await this.exitFullscreen();
         } else {
-            this.enterFullscreen();
+            await this.enterFullscreen();
         }
     }
     
@@ -103,44 +110,65 @@ class FullscreenManager {
     /**
      * Passer en plein écran
      */
-    enterFullscreen() {
+    async enterFullscreen() {
         const element = document.documentElement;
         
         try {
+            let fullscreenPromise = null;
+            
             if (element.requestFullscreen) {
-                element.requestFullscreen();
+                fullscreenPromise = element.requestFullscreen();
             } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
+                fullscreenPromise = element.webkitRequestFullscreen();
             } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
+                fullscreenPromise = element.mozRequestFullScreen();
             } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
+                fullscreenPromise = element.msRequestFullscreen();
+            }
+            
+            // Attendre la résolution de la Promise si elle existe
+            if (fullscreenPromise && typeof fullscreenPromise.then === 'function') {
+                await fullscreenPromise;
             }
             
         } catch (error) {
-            console.error('🖼️ Erreur lors du passage en plein écran:', error);
-            this.showToast('Impossible de passer en plein écran', 'error');
+            // Erreurs courantes et leurs solutions
+            if (error.name === 'NotAllowedError') {
+                console.warn('🖼️ Plein écran bloqué par l\'utilisateur ou les permissions');
+            } else if (error.name === 'TypeError' && error.message.includes('user gesture')) {
+                console.warn('🖼️ Plein écran nécessite un geste utilisateur direct');
+            } else {
+                console.warn('🖼️ Erreur lors du passage en plein écran:', error.name, error.message);
+            }
+            // Pas de toast d'erreur car c'est souvent attendu (permissions, etc.)
         }
     }
     
     /**
      * Sortir du plein écran
      */
-    exitFullscreen() {
+    async exitFullscreen() {
         try {
+            let exitPromise = null;
+            
             if (document.exitFullscreen) {
-                document.exitFullscreen();
+                exitPromise = document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
+                exitPromise = document.webkitExitFullscreen();
             } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
+                exitPromise = document.mozCancelFullScreen();
             } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
+                exitPromise = document.msExitFullscreen();
+            }
+            
+            // Attendre la résolution de la Promise si elle existe
+            if (exitPromise && typeof exitPromise.then === 'function') {
+                await exitPromise;
             }
             
         } catch (error) {
-            console.error('🖼️ Erreur lors de la sortie du plein écran:', error);
-            this.showToast('Impossible de sortir du plein écran', 'error');
+            console.warn('🖼️ Erreur lors de la sortie du plein écran:', error.name, error.message);
+            // Pas de toast d'erreur car l'échec de sortie est rare
         }
     }
     

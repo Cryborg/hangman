@@ -179,7 +179,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="categoriesTableBody">
                                 <!-- Les catégories seront chargées ici -->
                             </tbody>
                         </table>
@@ -242,7 +242,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="wordsTableBody">
                                 <!-- Les mots seront chargés ici -->
                             </tbody>
                         </table>
@@ -274,7 +274,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tagsTableBody">
                             <!-- Les tags seront chargés ici -->
                         </tbody>
                     </table>
@@ -331,10 +331,14 @@
         </div>
     </div>
     
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+    
     <!-- Scripts modulaires -->
     <script src="admin/js/DOMManager.js"></script>
     <script src="admin/js/ApiClient.js"></script>
     <script src="admin/js/UIManager.js"></script>
+    <script src="admin/js/BaseManager.js"></script>
     <script src="admin/js/CategoryManager.js"></script>
     <script src="admin/js/WordManager.js"></script>
     <script src="admin/js/TagManager.js"></script>

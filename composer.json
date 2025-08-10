@@ -26,12 +26,12 @@
         }
     },
     "scripts": {
-        "test": "phpunit tests/ --display-warnings --colors=always",
-        "test-auth": "phpunit tests/AuthenticationTest.php --display-warnings --colors=always",
-        "test-categories": "phpunit tests/CategoriesApiTest.php --display-warnings --colors=always", 
-        "test-words": "phpunit tests/WordsApiTest.php --display-warnings --colors=always",
-        "test-tags": "phpunit tests/TagsApiTest.php --display-warnings --colors=always",
-        "test-category-words": "phpunit tests/CategoryWordsApiTest.php --display-warnings --colors=always"
+        "test": "php run-tests-safe.php",
+        "test-auth": "php tests/setup-test-db.php && phpunit tests/AuthenticationTest.php --configuration phpunit.xml",
+        "test-categories": "php tests/setup-test-db.php && phpunit tests/CategoriesApiTest.php --configuration phpunit.xml", 
+        "test-words": "php tests/setup-test-db.php && phpunit tests/WordsApiTest.php --configuration phpunit.xml",
+        "test-tags": "php tests/setup-test-db.php && phpunit tests/TagsApiTest.php --configuration phpunit.xml",
+        "test-category-words": "php tests/setup-test-db.php && phpunit tests/CategoryWordsApiTest.php --configuration phpunit.xml"
     },
     "config": {
         "preferred-install": "dist",

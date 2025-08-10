@@ -10,8 +10,11 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="API_BASE_URL" value="http://localhost:8090"/>
+        <!-- API_BASE_URL sera détecté automatiquement par le bootstrap -->
         <env name="ADMIN_USERNAME" value="je_suis_admin"/>
         <env name="ADMIN_PASSWORD" value="liamambre1013"/>
     </php>
+    <extensions>
+        <extension class="PHPUnit\Runner\Extension\ProcessIsolation"/>
+    </extensions>
 </phpunit>

@@ -50,7 +50,7 @@ class PenduGameEngine {
         this.wrongLettersDisplay = domManager.getById('wrongLetters');
         this.progressDisplay = domManager.getById('wordsProgress');
         this.keyboard = domManager.getById('keyboard');
-        this.restartGameBtn = domManager.getById('restartGameBtn');
+        // Bouton restart maintenant dans le header
         this.categoryDisplay = domManager.getById('categoryName');
         this.streakDisplay = domManager.getById('streakDisplay');
         

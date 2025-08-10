@@ -159,12 +159,8 @@ class StandardMode extends BaseGameModeWithSave {
             timeAttackCard.classList.add('hidden');
         }
         
-        // Afficher les éléments du mode standard
-        const progressCard = window.domManager.getById('progressCard');
-        const streakCard = window.domManager.getById('streakCard');
-        
-        if (progressCard) progressCard.classList.remove('hidden');
-        if (streakCard) streakCard.classList.remove('hidden');
+        // Les stats sont maintenant dans le header unifié
+        // Plus besoin de progressCard et streakCard séparés
         
     }
     

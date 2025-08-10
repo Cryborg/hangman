@@ -437,6 +437,31 @@
                     </div>
                 </div>
                 
+                <!-- Section Clavier -->
+                <div class="settings-section">
+                    <h3>⌨️ Clavier virtuel</h3>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h4>🎹 Forcer le clavier virtuel</h4>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="forceVirtualKeyboard">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="setting-description">
+                                Affiche toujours le clavier virtuel, même sur grand écran. Utile pour les écrans tactiles de voiture ou les kiosques.
+                            </p>
+                            <div id="keyboardDebugInfo" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; font-size: 0.9em;">
+                                <!-- Info de debug -->
+                            </div>
+                            <button class="btn btn-small" id="showKeyboardDebugBtn" style="margin-top: 10px;">
+                                🔍 Infos de détection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Section Catégories -->
                 <div class="settings-section">
                     <h3>📂 Catégories de mots</h3>
@@ -463,6 +488,7 @@
     <script src="js/level-manager.js"></script>
     <script src="js/word-utils.js"></script>
     <script src="js/api-client.js"></script>
+    <script src="js/keyboard-detector.js"></script>
     <script src="js/virtual-keyboard.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/stats.js"></script>

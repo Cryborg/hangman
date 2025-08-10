@@ -1,159 +1,59 @@
-# Tests API - Suite de Tests Exhaustifs
+# Tests PHPUnit - Documentation
 
-Cette suite de tests valide toutes les fonctionnalités CRUD de l'API après le refactoring SOLID/DRY.
+## ⚠️ IMPORTANT : Base de données isolée
 
-## 🧪 Tests Inclus
+Les tests utilisent maintenant une **base de données de test séparée** (`hangman_test_db`) pour éviter de polluer les données de développement.
 
-### 1. **AuthenticationTest**
-- ✅ Connexion avec identifiants valides/invalides
-- ✅ Gestion des champs manquants (username, password)
-- ✅ Accès aux endpoints protégés avec/sans authentification
-- ✅ Déconnexion et invalidation de session
-- ✅ Vérification du statut d'authentification
+## 🚀 Lancer les tests
 
-### 2. **CategoriesApiTest** 
-- ✅ **GET** : Récupération de toutes les catégories et par ID
-- ✅ **POST** : Création avec validation complète
-  - Catégorie valide avec tous les champs
-  - Validation des champs requis (nom manquant)
-  - Gestion des slugs en doublon
-  - Génération automatique de slug
-  - JSON invalide
-- ✅ **PUT** : Modification avec validation
-- ✅ **DELETE** : Suppression avec vérifications
-- ✅ Gestion des erreurs 404 pour ressources inexistantes
-
-### 3. **WordsApiTest**
-- ✅ **GET** : Récupération avec pagination
-- ✅ **POST** : Création avec validation complète
-  - Mot valide avec catégorie
-  - Validation des champs requis (mot, category_id)
-  - Doublons dans la même catégorie
-  - Difficultés invalides
-  - Nettoyage automatique (majuscules, trim)
-- ✅ **PUT** : Modification des mots
-- ✅ **DELETE** : Suppression avec vérifications
-- ✅ Gestion des relations avec les catégories
-
-### 4. **TagsApiTest**
-- ✅ **GET** : Récupération complète avec compteurs
-- ✅ **POST** : Création avec validation
-  - Tags valides avec couleurs hexadécimales
-  - Génération automatique de slug
-  - Couleurs par défaut et validation
-  - Gestion des doublons (nom/slug)
-  - Associations avec catégories
-- ✅ **PUT** : Modification complète
-- ✅ **DELETE** : Suppression avec cleanup
-- ✅ Validation des couleurs et ordres d'affichage
-
-### 5. **CategoryWordsApiTest**
-- ✅ **GET** : Récupération des mots par catégorie
-  - Structure complète (catégorie, mots, pagination, stats)
-  - Pagination avec paramètres
-  - Recherche par terme
-  - Filtrage par difficulté
-- ✅ **POST** : Ajout de mots à une catégorie spécifique
-- ✅ **PUT** : Modification dans le contexte catégorie
-- ✅ **DELETE** : Suppression avec vérification
-- ✅ Statistiques temps réel par catégorie
-
-## 🚀 Exécution des Tests
-
-### Prérequis
-1. **Docker démarré** : `./start.sh`
-2. **API accessible** : http://localhost:8090
-3. **PHPUnit installé** : `composer require --dev phpunit/phpunit`
-
-### Commandes
-
+### Méthode recommandée (avec environnement isolé)
 ```bash
-# Tous les tests
-php run-tests.php
-
-# Test spécifique
-php run-tests.php AuthenticationTest
-php run-tests.php CategoriesApiTest
-php run-tests.php WordsApiTest
-php run-tests.php TagsApiTest
-php run-tests.php CategoryWordsApiTest
-
-# Avec PHPUnit directement
-./vendor/bin/phpunit tests/ --verbose --colors=always
+docker-compose exec web php run-tests-safe.php
 ```
 
-## 📊 Couverture des Tests
+### Méthode manuelle
+```bash
+# 1. Setup de la base de test
+docker-compose exec web php tests/setup-test-db.php
 
-### Scénarios Testés
-
-| Endpoint | GET | POST | PUT | DELETE | Edge Cases |
-|----------|-----|------|-----|--------|------------|
-| **categories** | ✅ | ✅ | ✅ | ✅ | 12 scénarios |
-| **words** | ✅ | ✅ | ✅ | ✅ | 14 scénarios |
-| **tags** | ✅ | ✅ | ✅ | ✅ | 15 scénarios |
-| **category-words** | ✅ | ✅ | ✅ | ✅ | 11 scénarios |
-| **auth** | ✅ | ✅ | - | - | 7 scénarios |
-
-### Types d'Erreurs Testées
-- ✅ **400** : Validation échouée, JSON invalide, champs manquants
-- ✅ **401** : Non authentifié, session expirée
-- ✅ **404** : Ressource non trouvée
-- ✅ **409** : Conflits (doublons, contraintes)
-- ✅ **200/201** : Succès avec structures valides
-
-### Cas Limites
-- ✅ Champs vides, nulls, formats invalides
-- ✅ IDs inexistants, très grands (99999)
-- ✅ Doublons et contraintes d'unicité
-- ✅ Relations entre entités (mots ↔ catégories, tags ↔ catégories)
-- ✅ Pagination, recherche, filtrage
-- ✅ Nettoyage automatique des données
-- ✅ Sessions et authentification persistante
-
-## 🎯 Validation SOLID/DRY
-
-Ces tests valident que le refactoring respecte les principes :
-
-- **SOLID** : Chaque contrôleur a une responsabilité unique
-- **DRY** : Réponses uniformes via ResponseManager
-- **KISS** : API simple et cohérente
-- **Consistency** : Même structure de réponse partout
-- **Error Handling** : Gestion d'erreur centralisée
-
-## 🔧 Configuration
-
-Les tests utilisent les identifiants du fichier `.env` :
-- Username: `je_suis_admin`
-- Password: `liamambre1013`
-- URL: `http://localhost:8090`
-
-## 📝 Exemple de Sortie
-
-```
-🔍 Vérification de l'API...
-✅ API accessible
-
-🧪 Exécution de tous les tests API...
-
-PHPUnit 10.0.0 by Sebastian Bergmann and contributors.
-
-AuthenticationTest
- ✓ Login with valid credentials
- ✓ Login with invalid credentials
- ✓ Access protected endpoint without auth
- ✓ Access protected endpoint with auth
- ...
-
-Time: 00:02.543, Memory: 8.00 MB
-
-OK (59 tests, 248 assertions)
-
-✅ Tous les tests sont passés avec succès!
+# 2. Lancer PHPUnit
+docker-compose exec web ./vendor/bin/phpunit
 ```
 
-## 🚨 Troubleshooting
+## 📋 Configuration
 
-**API non accessible** : Vérifier Docker avec `./start.sh`
-**Tests qui échouent** : Vérifier les identifiants dans `.env`  
-**PHPUnit manquant** : `composer require --dev phpunit/phpunit`
-**Erreurs de session** : Redémarrer Docker pour reset des sessions
+### Fichiers importants
+- `.env.test` : Configuration de l'environnement de test
+- `tests/bootstrap.php` : Bootstrap qui charge `.env.test`
+- `tests/setup-test-db.php` : Script de nettoyage/création des données de test
+- `run-tests-safe.php` : Script complet pour lancer les tests proprement
+
+### Variables d'environnement de test
+- `DB_DATABASE=hangman_test_db` : Base de données séparée
+- `ADMIN_USERNAME=test_admin` : Credentials de test
+- `ADMIN_PASSWORD=test_password` : Credentials de test
+- `APP_ENV=testing` : Mode test
+- `CACHE_ENABLED=false` : Pas de cache en test
+
+## 🎯 Bonnes pratiques
+
+1. **Toujours utiliser `run-tests-safe.php`** : il nettoie automatiquement avant et après
+2. **Ne jamais lancer les tests en production** : ils utilisent leur propre base
+3. **Vérifier `.env.test`** : s'assurer qu'il pointe vers la bonne base
+4. **Vendor en production** : utiliser `composer install --no-dev`
+
+## 🔧 Résolution de problèmes
+
+### "Table doesn't exist"
+```bash
+# Recréer la base de test
+docker-compose exec mysql mysql -u root -phangman_root_password -e "DROP DATABASE IF EXISTS hangman_test_db;"
+docker-compose exec mysql mysql -u root -phangman_root_password -e "CREATE DATABASE hangman_test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+docker-compose exec mysql mysql -u hangman_user -phangman_password hangman_test_db < database/schema.sql
+```
+
+### "Access denied"
+Vérifier que les variables d'environnement dans `.env.test` correspondent à celles de Docker Compose.
+
+### Tests qui échouent
+Vérifier que l'API tourne sur `http://localhost:8090` et que l'admin est accessible avec les credentials de test.

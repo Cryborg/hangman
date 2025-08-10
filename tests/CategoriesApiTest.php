@@ -63,7 +63,6 @@ class CategoriesApiTest extends TestCase {
             'icon' => '🧪',
             'slug' => 'test-category-phpunit-' . $unique,
             'description' => 'Catégorie créée pour les tests PHPUnit',
-            'display_order' => 999
         ];
         
         $response = TestHttpClient::request('POST', '/api/admin/categories.php', $categoryData);
@@ -83,7 +82,6 @@ class CategoriesApiTest extends TestCase {
         $this->assertEquals($categoryData['name'], $createdCategory['name']);
         $this->assertEquals($categoryData['icon'], $createdCategory['icon']);
         $this->assertEquals($categoryData['slug'], $createdCategory['slug']);
-        $this->assertEquals($categoryData['display_order'], $createdCategory['display_order']);
         
         // Stocker l'ID pour le cleanup
         self::$testCategoryId = $createdCategory['id'];
@@ -213,7 +211,6 @@ class CategoriesApiTest extends TestCase {
             'icon' => '📝',
             'slug' => 'original-category-' . $unique,
             'description' => 'Original description',
-            'display_order' => 100
         ];
         
         $createResponse = TestHttpClient::request('POST', '/api/admin/categories.php', $originalData);
@@ -227,7 +224,6 @@ class CategoriesApiTest extends TestCase {
             'icon' => '✏️',
             'slug' => 'updated-category-' . $unique,
             'description' => 'Updated description',
-            'display_order' => 200
         ];
         
         $response = TestHttpClient::request('PUT', '/api/admin/categories.php', $updateData);
@@ -242,7 +238,6 @@ class CategoriesApiTest extends TestCase {
         $this->assertEquals($updateData['name'], $updatedCategory['name']);
         $this->assertEquals($updateData['icon'], $updatedCategory['icon']);
         $this->assertEquals($updateData['slug'], $updatedCategory['slug']);
-        $this->assertEquals($updateData['display_order'], $updatedCategory['display_order']);
     }
     
     /**

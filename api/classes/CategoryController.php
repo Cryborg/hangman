@@ -66,7 +66,7 @@ class CategoryController extends BaseAdminController {
         // Vérifier qu'il n'y a pas de mots dans cette catégorie
         if ($this->repository->hasWords($id)) {
             $wordsCount = $this->repository->getWordsCount($id);
-            throw new InvalidArgumentException("Cannot delete: this category contains {$wordsCount} word(s)");
+            throw new InvalidArgumentException("elle contient {$wordsCount} mot(s)");
         }
         
         return $this->repository->delete($id);

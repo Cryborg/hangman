@@ -4,6 +4,23 @@
  * Configure l'environnement de test
  */
 
+// IMPORTANT : Charger l'environnement de test AVANT toute initialisation
+$testEnvFile = __DIR__ . '/../.env.test';
+if (file_exists($testEnvFile)) {
+    $lines = file($testEnvFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0 || trim($line) === '') {
+            continue; // Ignorer les commentaires et lignes vides
+        }
+        
+        [$key, $value] = explode('=', $line, 2);
+        if (!array_key_exists($key, $_ENV)) {
+            $_ENV[$key] = $value;
+            putenv("$key=$value");
+        }
+    }
+}
+
 // Configuration de l'environnement de test
 define('TEST_MODE', true);
 

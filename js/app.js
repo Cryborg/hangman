@@ -77,6 +77,25 @@ class PenduApp {
         this.difficultyManager = window.difficultyManager;
         this.levelManager = window.levelManager;
         
+        // Initialiser le détecteur de clavier
+        this.keyboardDetector = new KeyboardDetector();
+        window.keyboardDetector = this.keyboardDetector; // Global pour debug
+        
+        // Appliquer la classe si le clavier virtuel doit être forcé
+        if (this.keyboardDetector.shouldShowVirtualKeyboard()) {
+            document.body.classList.add('force-virtual-keyboard');
+            console.log('🎹 Clavier virtuel activé pour cet appareil');
+        }
+        
+        // Écouter les changements de paramètres
+        window.addEventListener('keyboardSettingChanged', (e) => {
+            if (e.detail.forceKeyboard) {
+                document.body.classList.add('force-virtual-keyboard');
+            } else {
+                document.body.classList.remove('force-virtual-keyboard');
+            }
+        });
+        
         // Charger les paramètres sauvegardés
         this.difficultyManager.load();
         this.difficultyManager.setupEventListeners();
@@ -91,15 +110,44 @@ class PenduApp {
         // Menu hamburger
         this.domManager.addEventListener('hamburgerMenu', 'click', () => this.toggleMenu());
         
-        // Boutons du header
+        // Option forcer clavier virtuel
+        const forceKeyboardCheckbox = this.domManager.getById('forceVirtualKeyboard');
+        if (forceKeyboardCheckbox) {
+            // Initialiser avec la valeur sauvegardée
+            forceKeyboardCheckbox.checked = this.keyboardDetector.forceVirtualKeyboard;
+            
+            // Écouter les changements
+            forceKeyboardCheckbox.addEventListener('change', (e) => {
+                this.keyboardDetector.forceKeyboard(e.target.checked);
+            });
+        }
+        
+        // Bouton debug clavier
+        this.domManager.addEventListener('showKeyboardDebugBtn', 'click', () => {
+            const debugInfo = this.domManager.getById('keyboardDebugInfo');
+            if (debugInfo) {
+                const info = this.keyboardDetector.getDebugInfo();
+                debugInfo.innerHTML = `
+                    <strong>Informations de détection :</strong><br>
+                    📱 Écran : ${info.screenSize}<br>
+                    🖼️ Fenêtre : ${info.windowSize}<br>
+                    👆 Tactile : ${info.hasTouchScreen ? 'Oui' : 'Non'}<br>
+                    🚗 Système embarqué : ${info.isCarSystem ? 'Oui' : 'Non'}<br>
+                    ⌨️ Clavier virtuel : ${info.shouldShow ? 'Recommandé' : 'Pas nécessaire'}<br>
+                    🔧 Forcé : ${info.forceKeyboard ? 'Oui' : 'Non'}
+                `;
+                debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+        
         // Boutons du header
         this.domManager.addEventListener('restartGameHeaderBtn', 'click', () => {
             this.showRestartConfirmation();
         });
         
-        this.domManager.addEventListener('fullscreenHeaderBtn', 'click', () => {
+        this.domManager.addEventListener('fullscreenHeaderBtn', 'click', (e) => {
             if (this.fullscreenManager) {
-                this.fullscreenManager.handleToggle({ preventDefault: () => {} });
+                this.fullscreenManager.handleToggle(e);
             }
         });
         
@@ -123,15 +171,7 @@ class PenduApp {
             });
         });
         
-        // Bouton "Recommencer" spécial
-        const restartGameLink = this.domManager.getById('restartGameLink');
-        if (restartGameLink) {
-            restartGameLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showRestartConfirmation();
-                this.closeMenu();
-            });
-        }
+        // Les liens de recommencer sont gérés via les boutons du header
         
         // Boutons du menu principal
         this.domManager.addEventListener('startGameBtn', 'click', () => {
@@ -146,12 +186,7 @@ class PenduApp {
         // Déjà géré ci-dessus
         
         // Boutons de retour au menu
-        const backToMenuBtn = this.domManager.getById('backToMenuBtn');
         const backToMenuFromStatsBtn = this.domManager.getById('backToMenuFromStatsBtn');
-        
-        if (backToMenuBtn) {
-            backToMenuBtn.addEventListener('click', () => this.showView('menu'));
-        }
         
         if (backToMenuFromStatsBtn) {
             backToMenuFromStatsBtn.addEventListener('click', () => this.showView('menu'));
@@ -162,14 +197,7 @@ class PenduApp {
             backToMenuFromChangelogBtn.addEventListener('click', () => this.showView('menu'));
         }
         
-        // Boutons "Passer" (desktop et mobile)        
-        if (this.nextWordBtn) {
-            this.nextWordBtn.addEventListener('click', () => this.handleNextWord());
-        }
-        
-        if (this.nextWordBtnMobile) {
-            this.nextWordBtnMobile.addEventListener('click', () => this.handleNextWord());
-        }
+        // Les boutons "Passer" sont maintenant gérés dans le header
         
         // Fermer le menu en cliquant à l'extérieur
         document.addEventListener('click', (e) => {
@@ -212,6 +240,57 @@ class PenduApp {
         // Initialiser le gestionnaire de plein écran
         if (typeof FullscreenManager !== 'undefined') {
             this.fullscreenManager = new FullscreenManager();
+        }
+        
+        // Initialiser le clic sur le mot pour afficher le clavier
+        this.initializeWordClickKeyboard();
+    }
+    
+    initializeWordClickKeyboard() {
+        const wordDisplay = this.domManager.getById('wordDisplay');
+        if (!wordDisplay) return;
+        
+        wordDisplay.addEventListener('click', () => {
+            // Ne rien faire si on est sur mobile/tablette ou si le clavier est forcé
+            if (window.innerWidth <= 1024 || document.body.classList.contains('force-virtual-keyboard')) {
+                return;
+            }
+            
+            const keyboard = this.domManager.getById('keyboard');
+            if (!keyboard) return;
+            
+            // Toggle le clavier temporaire
+            if (keyboard.classList.contains('keyboard-temporary-show')) {
+                keyboard.classList.remove('keyboard-temporary-show');
+            } else {
+                // S'assurer que le clavier a du contenu
+                if (keyboard.innerHTML.trim() === '') {
+                    // Créer le clavier s'il n'existe pas
+                    if (this.uiModule) {
+                        this.uiModule.createVirtualKeyboard();
+                    }
+                }
+                
+                keyboard.classList.add('keyboard-temporary-show');
+                
+                // Cacher automatiquement après une lettre tapée
+                const keyboardCloseHandler = (e) => {
+                    if (e.target && e.target.matches('.keyboard button')) {
+                        setTimeout(() => {
+                            keyboard.classList.remove('keyboard-temporary-show');
+                            keyboard.removeEventListener('click', keyboardCloseHandler);
+                        }, 500);
+                    }
+                };
+                
+                // Ajouter l'event listener pour gérer les clics sur le clavier
+                keyboard.addEventListener('click', keyboardCloseHandler);
+            }
+        });
+        
+        // Ajouter un tooltip au survol (seulement sur desktop)
+        if (window.innerWidth > 1024 && !document.body.classList.contains('force-virtual-keyboard')) {
+            wordDisplay.title = "Cliquez pour afficher le clavier virtuel";
         }
     }
     
@@ -373,19 +452,11 @@ class PenduApp {
     showNextWordButton() {
         // Afficher le bouton du header
         this.domManager.setVisible('nextWordHeaderBtn', true);
-        
-        // Masquer les anciens boutons dans la zone de jeu (sécurité)
-        this.domManager.setVisible('nextWordSection', false);
-        this.domManager.setVisible('nextWordSectionMobile', false);
     }
     
     hideNextWordButton() {
         // Masquer le bouton du header
         this.domManager.setVisible('nextWordHeaderBtn', false);
-        
-        // Masquer aussi les anciens boutons par sécurité
-        this.domManager.setVisible('nextWordSection', false);
-        this.domManager.setVisible('nextWordSectionMobile', false);
     }
     
     // Méthodes utilitaires pour les modules

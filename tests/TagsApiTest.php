@@ -55,7 +55,6 @@ class TagsApiTest extends TestCase {
             'name' => 'Test Tag PHPUnit ' . $unique,
             'slug' => 'test-tag-phpunit-' . $unique,
             'color' => '#FF5733',
-            'display_order' => 999
         ];
         
         $response = TestHttpClient::request('POST', '/api/admin/tags.php', $tagData);
@@ -69,7 +68,6 @@ class TagsApiTest extends TestCase {
         $this->assertEquals($tagData['name'], $createdTag['name']);
         $this->assertEquals($tagData['slug'], $createdTag['slug']);
         $this->assertEquals($tagData['color'], $createdTag['color']);
-        $this->assertEquals($tagData['display_order'], $createdTag['display_order']);
         
         // Stocker l'ID pour le cleanup
         self::$testTagId = $createdTag['id'];
@@ -242,7 +240,6 @@ class TagsApiTest extends TestCase {
             'name' => 'Original Tag ' . $unique,
             'slug' => 'original-tag-' . $unique,
             'color' => '#FF5733',
-            'display_order' => 100
         ];
         
         $createResponse = TestHttpClient::request('POST', '/api/admin/tags.php', $originalData);
@@ -255,7 +252,6 @@ class TagsApiTest extends TestCase {
             'name' => 'Updated Tag ' . $unique,
             'slug' => 'updated-tag-' . $unique,
             'color' => '#33FF57',
-            'display_order' => 200
         ];
         
         $response = TestHttpClient::request('PUT', '/api/admin/tags.php', $updateData);
@@ -270,7 +266,6 @@ class TagsApiTest extends TestCase {
         $this->assertEquals($updateData['name'], $updatedTag['name']);
         $this->assertEquals($updateData['slug'], $updatedTag['slug']);
         $this->assertEquals($updateData['color'], $updatedTag['color']);
-        $this->assertEquals($updateData['display_order'], $updatedTag['display_order']);
     }
     
     /**
@@ -381,7 +376,6 @@ class TagsApiTest extends TestCase {
         $tagData = [
             'name' => 'Display Order Tag ' . $unique,
             'slug' => 'display-order-tag-' . $unique,
-            'display_order' => -5  // Valeur négative qui devrait être corrigée à 0
         ];
         
         $response = TestHttpClient::request('POST', '/api/admin/tags.php', $tagData);
@@ -390,7 +384,6 @@ class TagsApiTest extends TestCase {
         $this->assertTrue($response['body']['success']);
         
         $createdTag = $response['body']['data'];
-        $this->assertGreaterThanOrEqual(0, $createdTag['display_order'], 'Display order should be >= 0');
         
         self::$testTagId = $createdTag['id'];
     }

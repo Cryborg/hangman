@@ -15,8 +15,7 @@
 @import url('./theme/responsive.css');
 @import url('./theme/utilities.css');
 
-/* Responsive - Media queries modulaires */
-@import url('./admin-responsive-new.css');
+/* Responsive - Media queries modulaires (déjà inclus via theme/responsive.css) */
 
 /* 
  * L'ordre d'importation est important :
