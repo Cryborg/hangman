@@ -560,7 +560,7 @@ class WordManager extends BaseManager {
      */
     async refreshAfterBulkCreation() {
         // Recharger les données dans AdminApp pour synchronisation globale
-        await window.adminApp.loadData();
+        await window.adminApp.loadInitialData();
         
         if (this.currentCategory) {
             this.showCategoryWords(this.currentCategory.id);
