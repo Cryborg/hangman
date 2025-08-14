@@ -86,8 +86,12 @@ class UIManager {
 
     setupToastStyles() {
         const existing = this.domManager.getById('toast-styles', true); // Supprime le warning
-        if (existing) return;
+        if (existing) {
+            console.log('Toast styles already exist');
+            return;
+        }
         
+        console.log('Creating toast styles');
         const styles = document.createElement('style');
         styles.id = 'toast-styles';
         styles.textContent = `
@@ -103,9 +107,9 @@ class UIManager {
             }
             
             .admin-toast {
-                background: var(--bg-modal);
-                border-radius: var(--radius-md);
-                border-left: 4px solid var(--primary-color);
+                background: var(--bg-modal, #2a2a2a);
+                border-radius: var(--radius-md, 8px);
+                border-left: 4px solid var(--primary-color, #f39c12);
                 backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                 transform: translateX(100%);
@@ -113,15 +117,16 @@ class UIManager {
                 pointer-events: auto;
                 min-width: 300px;
                 max-width: 400px;
+                color: var(--text-primary, #e8eaed);
             }
             
             .admin-toast.show {
                 transform: translateX(0);
             }
             
-            .admin-toast.toast-success { border-left-color: var(--success-color); }
-            .admin-toast.toast-error { border-left-color: var(--error-color); }
-            .admin-toast.toast-warning { border-left-color: var(--warning-color); }
+            .admin-toast.toast-success { border-left-color: var(--success-color, #2ed573); }
+            .admin-toast.toast-error { border-left-color: var(--error-color, #ff6b6b); }
+            .admin-toast.toast-warning { border-left-color: var(--warning-color, #ff6b35); }
             
             .toast-content {
                 display: flex;
@@ -168,6 +173,7 @@ class UIManager {
             }
         `;
         document.head.appendChild(styles);
+        console.log('Toast styles added to head');
     }
 
     // =================
