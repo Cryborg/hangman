@@ -497,7 +497,7 @@ class WordManager extends BaseManager {
         for (const word of words) {
             try {
                 await this.apiClient.createWord({
-                    text: word,
+                    word: word,
                     category_id: config.categoryId,
                     difficulty: config.difficulty
                 });
