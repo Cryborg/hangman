@@ -522,11 +522,19 @@ class WordManager extends BaseManager {
         const message = this.buildBulkResultMessage(results);
         const toastType = results.success ? 'success' : 'error';
         
+        console.log('About to show toast:', {
+            title: results.success ? 'Succès' : 'Erreur',
+            message: message,
+            type: toastType
+        });
+        
         this.uiManager.showToast(
             results.success ? 'Succès' : 'Erreur',
             message,
             toastType
         );
+        
+        console.log('Toast showToast called');
         
         // Afficher les erreurs détaillées si nécessaire
         if (results.errors.length > 0 && results.errors.length <= 5) {

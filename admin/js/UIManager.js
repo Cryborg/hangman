@@ -18,6 +18,8 @@ class UIManager {
     // =================
     
     showToast(title, message = '', type = 'info', duration = 4000) {
+        console.log('UIManager.showToast called with:', { title, message, type, duration });
+        
         const toastId = `toast-${this.toastCounter++}`;
         const toastContainer = this.getOrCreateToastContainer();
         
