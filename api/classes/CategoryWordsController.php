@@ -169,8 +169,8 @@ class CategoryWordsController extends BaseAdminController {
             throw new InvalidArgumentException('Category not found');
         }
         
-        // Nettoyer le mot
-        $data['word'] = StringUtility::cleanWord($data['word']);
+        // Nettoyer et valider le mot (DRY: méthode centralisée)
+        $data = $this->sanitizeWordData($data);
         
         // Vérifier l'unicité dans la catégorie
         if ($this->wordRepository->existsInCategory($data['word'], $categoryId)) {
@@ -181,9 +181,9 @@ class CategoryWordsController extends BaseAdminController {
     }
     
     protected function update(int $id, array $data): bool {
-        // Nettoyer le mot si fourni
+        // Nettoyer le mot si fourni (DRY: méthode centralisée)
         if (isset($data['word'])) {
-            $data['word'] = StringUtility::cleanWord($data['word']);
+            $data = $this->sanitizeWordData($data);
             
             // Récupérer le mot actuel pour obtenir la catégorie si pas fournie
             $currentWord = $this->wordRepository->findById($id);
@@ -396,5 +396,17 @@ class CategoryWordsController extends BaseAdminController {
             'words' => $words,
             'total' => (int) $total
         ];
+    }
+    
+    /**
+     * Nettoie et valide les données d'un mot (DRY: centralisation du nettoyage)
+     * @param array $data Les données du mot
+     * @return array Les données nettoyées
+     */
+    private function sanitizeWordData(array $data): array {
+        if (isset($data['word'])) {
+            $data['word'] = StringUtility::cleanWord($data['word']);
+        }
+        return $data;
     }
 }

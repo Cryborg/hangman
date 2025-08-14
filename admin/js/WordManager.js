@@ -362,19 +362,12 @@ class WordManager extends BaseManager {
                 throw new Error('Mot original non trouvé');
             }
             
-            // Debug : afficher les données avant envoi
-            console.log('Données du formulaire:', formData);
-            console.log('Mot original:', originalWord);
-            console.log('EntityId:', entityId);
-            
             // Vérifier si quelque chose a vraiment changé
             const hasChanged = (
                 formData.word !== originalWord.word ||
                 formData.difficulty !== originalWord.difficulty ||
                 formData.active !== originalWord.active
             );
-            
-            console.log('Changement détecté:', hasChanged);
             
             if (!hasChanged) {
                 this.uiManager.showToast('Info', 'Aucune modification détectée', 'info');
@@ -443,13 +436,38 @@ class WordManager extends BaseManager {
         }
     }
 
+    /**
+     * Point d'entrée pour la création en masse de mots (KISS: méthode simple et claire)
+     */
     async createBulkWords(formData) {
-        const wordsText = formData.words.trim();
-        const difficulty = formData.difficulty || 'medium';
-        const categoryId = formData.category_id;
+        const words = this.parseWordsFromInput(formData.words);
+        const config = this.prepareBulkConfig(formData, words);
         
-        // Parser les mots depuis le textarea
-        const words = wordsText
+        this.uiManager.showLoading(true, config.loadingMessage);
+        
+        try {
+            const results = await this.processBulkCreation(words, config);
+            this.displayBulkResults(results);
+            
+            if (results.successCount > 0) {
+                await this.refreshAfterBulkCreation();
+            }
+            
+            return results;
+        } finally {
+            this.uiManager.showLoading(false);
+        }
+    }
+    
+    /**
+     * Parse et nettoie les mots depuis l'input (KISS: une seule responsabilité)
+     */
+    parseWordsFromInput(inputText) {
+        if (!inputText || !inputText.trim()) {
+            throw new Error('Aucun mot fourni');
+        }
+        
+        const words = inputText
             .split('\n')
             .map(word => word.trim().toUpperCase())
             .filter(word => word.length > 0);
@@ -457,71 +475,101 @@ class WordManager extends BaseManager {
         if (words.length === 0) {
             throw new Error('Aucun mot valide trouvé');
         }
-
-        this.uiManager.showLoading(true, `Ajout de ${words.length} mot${words.length > 1 ? 's' : ''}...`);
-
-        try {
-            let successCount = 0;
-            let errorCount = 0;
-            const errors = [];
-
-            // Traiter chaque mot individuellement
-            for (const word of words) {
-                try {
-                    await this.apiClient.createWord({
-                        text: word,
-                        category_id: categoryId,
-                        difficulty: difficulty
-                    });
-                    successCount++;
-                } catch (error) {
-                    errorCount++;
-                    errors.push(`${word}: ${error.message}`);
-                }
+        
+        return words;
+    }
+    
+    /**
+     * Prépare la configuration pour l'ajout en masse (DRY: centralise la config)
+     */
+    prepareBulkConfig(formData, words) {
+        return {
+            difficulty: formData.difficulty || 'medium',
+            categoryId: formData.category_id,
+            loadingMessage: `Ajout de ${words.length} mot${words.length > 1 ? 's' : ''}...`
+        };
+    }
+    
+    /**
+     * Traite la création de chaque mot (KISS: logique de création isolée)
+     */
+    async processBulkCreation(words, config) {
+        const results = {
+            successCount: 0,
+            errorCount: 0,
+            errors: [],
+            success: false
+        };
+        
+        for (const word of words) {
+            try {
+                await this.apiClient.createWord({
+                    text: word,
+                    category_id: config.categoryId,
+                    difficulty: config.difficulty
+                });
+                results.successCount++;
+            } catch (error) {
+                results.errorCount++;
+                results.errors.push(`${word}: ${error.message}`);
             }
-
-            this.uiManager.showLoading(false);
-
-            // Construire le message de résultat
-            let message = '';
-            if (successCount > 0) {
-                message = `${successCount} mot${successCount > 1 ? 's' : ''} ajouté${successCount > 1 ? 's' : ''} avec succès`;
-                if (errorCount > 0) {
-                    message += `, ${errorCount} erreur${errorCount > 1 ? 's' : ''}`;
-                }
-            } else {
-                message = 'Aucun mot n\'a pu être ajouté';
-            }
-
-            // Afficher le toast approprié
-            if (successCount > 0) {
-                this.uiManager.showToast('Succès', message, 'success');
-            } else {
-                this.uiManager.showToast('Erreur', message, 'error');
-            }
-
-            // Afficher les erreurs détaillées si il y en a (mais pas trop)
-            if (errors.length > 0 && errors.length <= 5) {
-                setTimeout(() => {
-                    this.uiManager.showToast('Détail des erreurs', errors.join('\n'), 'warning', 8000);
-                }, 1000);
-            }
-
-            // Recharger les données si des ajouts ont réussi
-            if (successCount > 0) {
-                await this.loadEntities();
-                
-                // Si on est dans une vue catégorie, recharger cette vue
-                if (this.currentCategory) {
-                    this.showCategoryWords(this.currentCategory.id);
-                }
-            }
-
-            return { success: successCount > 0, successCount, errorCount };
-
-        } catch (error) {
-            this.uiManager.showLoading(false);
-            throw error;
+        }
+        
+        results.success = results.successCount > 0;
+        return results;
+    }
+    
+    /**
+     * Affiche les résultats de l'ajout en masse (KISS: affichage séparé)
+     */
+    displayBulkResults(results) {
+        const message = this.buildBulkResultMessage(results);
+        const toastType = results.success ? 'success' : 'error';
+        
+        this.uiManager.showToast(
+            results.success ? 'Succès' : 'Erreur',
+            message,
+            toastType
+        );
+        
+        // Afficher les erreurs détaillées si nécessaire
+        if (results.errors.length > 0 && results.errors.length <= 5) {
+            setTimeout(() => {
+                this.uiManager.showToast(
+                    'Détail des erreurs',
+                    results.errors.join('\n'),
+                    'warning',
+                    8000
+                );
+            }, 1000);
+        }
+    }
+    
+    /**
+     * Construit le message de résultat (DRY: logique de message centralisée)
+     */
+    buildBulkResultMessage(results) {
+        if (results.successCount === 0) {
+            return 'Aucun mot n\'a pu être ajouté';
+        }
+        
+        let message = `${results.successCount} mot${results.successCount > 1 ? 's' : ''} ajouté${results.successCount > 1 ? 's' : ''}`;
+        
+        if (results.errorCount > 0) {
+            message += `, ${results.errorCount} erreur${results.errorCount > 1 ? 's' : ''}`;
+        }
+        
+        return message;
+    }
+    
+    /**
+     * Rafraîchit les données après l'ajout en masse (KISS: refresh isolé)
+     */
+    async refreshAfterBulkCreation() {
+        await this.loadEntities();
+        
+        if (this.currentCategory) {
+            this.showCategoryWords(this.currentCategory.id);
         }
     }
 

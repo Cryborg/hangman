@@ -172,7 +172,7 @@ class WordRepository {
         ");
         
         $stmt->execute([
-            StringUtility::cleanWord($wordData['word']),
+            $wordData['word'], // Déjà nettoyé par le controller (DRY)
             $wordData['category_id'],
             $wordData['difficulty'] ?? 'medium',
             $wordData['active'] ?? 1
@@ -191,16 +191,11 @@ class WordRepository {
         
         foreach ($allowedFields as $field) {
             if (isset($updateData[$field])) {
-                if ($field === 'word') {
-                    $updates[] = "word = ?";
-                    $params[] = StringUtility::cleanWord($updateData[$field]);
+                $updates[] = "{$field} = ?";
+                if ($field === 'active') {
+                    $params[] = $updateData[$field] ? 1 : 0;
                 } else {
-                    $updates[] = "{$field} = ?";
-                    if ($field === 'active') {
-                        $params[] = $updateData[$field] ? 1 : 0;
-                    } else {
-                        $params[] = $updateData[$field];
-                    }
+                    $params[] = $updateData[$field]; // Déjà nettoyé par le controller (DRY)
                 }
             }
         }
