@@ -8,8 +8,11 @@ class WordManager extends BaseManager {
         this.currentWords = [];
         this.currentPage = 1;
         this.wordsPerPage = 50;
-        this.currentSearch = '';
-        this.currentDifficulty = 'all';
+        
+        // Managers spécialisés (SOLID: séparation des responsabilités)
+        this.filterManager = new WordFilterManager(domManager);
+        this.batchManager = new BatchSelectionManager(domManager, apiClient, uiManager);
+        
         this.setupEventListeners();
     }
 
@@ -225,7 +228,7 @@ class WordManager extends BaseManager {
     }
 
     /**
-     * Méthodes spécifiques à WordManager (simplifiées pour l'instant)
+     * Méthodes spécifiques à WordManager (délégation aux managers spécialisés)
      */
     setupEventListeners() {
         super.initializeEventListeners();
@@ -243,14 +246,8 @@ class WordManager extends BaseManager {
             });
         }
         
-        // Filtres de difficulté
-        this.setupFilterListeners();
-        
-        // Sélection multiple
-        this.setupBatchListeners();
-        
-        // Recherche
-        this.setupSearchListeners();
+        // Initialiser les managers spécialisés (SOLID)
+        this.initializeSpecializedManagers();
     }
 
     showCategoriesView() {
@@ -279,11 +276,10 @@ class WordManager extends BaseManager {
         // Mettre à jour l'affichage
         this.updateCategoryHeader();
         this.renderTable();
-        this.updateFilterCounts();
         
-        // Réinitialiser et reconfigurer les event listeners des filtres
-        this.resetFilterListeners();
-        this.setupFilterListeners();
+        // Déléguer aux managers spécialisés (SOLID)
+        this.filterManager.updateFilterCounts(this.entities);
+        this.initializeSpecializedManagers();
     }
 
     updateCategoryHeader() {
@@ -574,201 +570,46 @@ class WordManager extends BaseManager {
     }
 
     /**
-     * Réinitialiser les listeners des filtres
+     * Initialise les managers spécialisés (SOLID: séparation des responsabilités)
      */
-    resetFilterListeners() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.dataset.listenerAttached = '';
-        });
+    initializeSpecializedManagers() {
+        // Initialiser le gestionnaire de filtres
+        this.filterManager.initialize(
+            (search) => this.handleSearchChange(search),
+            (difficulty) => this.handleFilterChange(difficulty)
+        );
+        
+        // Initialiser le gestionnaire de sélection batch
+        this.batchManager.initialize(
+            (updatedWords) => this.handleBatchUpdate(updatedWords)
+        );
     }
-
+    
     /**
-     * Configuration des filtres de difficulté
+     * Callbacks pour les managers spécialisés
      */
-    setupFilterListeners() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        
-        filterBtns.forEach(btn => {
-            // Éviter les doublons d'event listeners
-            const existingListener = btn.dataset.listenerAttached;
-            if (!existingListener) {
-                btn.addEventListener('click', (e) => {
-                    // Toujours utiliser le bouton, même si on clique sur un enfant (span)
-                    const button = e.currentTarget;
-                    const difficulty = button.dataset.difficulty;
-                    console.log('Filter button clicked:', difficulty);
-                    this.filterByDifficulty(difficulty);
-                });
-                btn.dataset.listenerAttached = 'true';
-            }
-        });
-    }
-
-    filterByDifficulty(difficulty) {
-        console.log('Setting difficulty filter to:', difficulty);
-        this.currentDifficulty = difficulty;
-        
-        // Mettre à jour les boutons de filtre
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            const isActive = btn.dataset.difficulty === difficulty;
-            btn.classList.toggle('active', isActive);
-        });
-        
+    handleSearchChange(search) {
         this.applyFilters();
     }
-
-
-    updateFilterCounts() {
-        if (!this.currentCategory) return;
-        
-        const allWords = window.adminApp?.adminData?.words || [];
-        const categoryWords = allWords.filter(word => word.category_id == this.currentCategory.id);
-        
-        // Les données en base utilisent AUSSI easy/medium/hard, donc pas besoin de mapping ici
-        const counts = {
-            all: categoryWords.length,
-            easy: categoryWords.filter(w => w.difficulty === 'easy').length,
-            medium: categoryWords.filter(w => w.difficulty === 'medium').length,
-            hard: categoryWords.filter(w => w.difficulty === 'hard').length
-        };
-        
-        console.log('Filter counts:', counts, 'Sample words:', categoryWords.slice(0, 3).map(w => ({id: w.id, word: w.word, difficulty: w.difficulty})));
-        
-        // Mettre à jour les compteurs dans les boutons via DOMManager
-        this.domManager.setText('allWordsCount', `(${counts.all})`);
-        this.domManager.setText('easyWordsCount', `(${counts.easy})`);
-        this.domManager.setText('mediumWordsCount', `(${counts.medium})`);
-        this.domManager.setText('hardWordsCount', `(${counts.hard})`);
+    
+    handleFilterChange(difficulty) {
+        this.applyFilters();
     }
-
-    /**
-     * Configuration de la sélection multiple
-     */
-    setupBatchListeners() {
-        // Sélectionner tout
-        this.domManager.addEventListener('selectAllWords', 'change', (e) => {
-            this.selectAllWords(e.target.checked);
-        });
-
-        // Appliquer les changements en batch
-        this.domManager.addEventListener('applyBatchChangesBtn', 'click', () => {
-            this.applyBatchChanges();
-        });
-
-        // Annuler la sélection
-        this.domManager.addEventListener('cancelBatchSelectionBtn', 'click', () => {
-            this.cancelBatchSelection();
-        });
-    }
-
-    selectAllWords(checked) {
-        const checkboxes = document.querySelectorAll('.word-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = checked;
-        });
-        this.updateBatchInterface();
-    }
-
-    updateBatchInterface() {
-        const selectedCheckboxes = document.querySelectorAll('.word-checkbox:checked');
-        const count = selectedCheckboxes.length;
-        
-        const batchActions = document.getElementById('batchActions');
-        const selectedCountEl = document.getElementById('selectedCount');
-        
-        if (count > 0) {
-            batchActions.style.display = 'flex';
-            selectedCountEl.textContent = count;
-        } else {
-            batchActions.style.display = 'none';
-        }
-        
-        // Mettre à jour le checkbox "Sélectionner tout"
-        const selectAllCheckbox = document.getElementById('selectAllWords');
-        const totalCheckboxes = document.querySelectorAll('.word-checkbox');
-        
-        if (selectAllCheckbox && totalCheckboxes.length > 0) {
-            selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes.length;
-            selectAllCheckbox.checked = count === totalCheckboxes.length;
-        }
-    }
-
-    async applyBatchChanges() {
-        const selectedCheckboxes = document.querySelectorAll('.word-checkbox:checked');
-        const wordIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
-        const newDifficulty = document.getElementById('batchDifficultySelect').value;
-        
-        if (!newDifficulty) {
-            this.uiManager.showToast('Erreur', 'Veuillez sélectionner une difficulté', 'error');
-            return;
-        }
-        
-        if (wordIds.length === 0) {
-            this.uiManager.showToast('Erreur', 'Aucun mot sélectionné', 'error');
-            return;
-        }
-        
-        try {
-            // Utiliser le nouvel endpoint batch pour une seule requête
-            const result = await this.apiClient.batchUpdateWords(wordIds, {
-                difficulty: newDifficulty
-            });
-            
-            if (!result.success) {
-                throw new Error(result.message);
+    
+    handleBatchUpdate(updatedWords) {
+        // Mettre à jour les entités locales
+        for (const updatedWord of updatedWords) {
+            const entityIndex = this.entities.findIndex(entity => entity.id === updatedWord.id);
+            if (entityIndex !== -1) {
+                this.entities[entityIndex] = { ...this.entities[entityIndex], ...updatedWord };
+                this.updateTableRow(updatedWord.id, this.entities[entityIndex]);
             }
-            
-            this.uiManager.showToast('Succès', `${result.data.updated_count} mot(s) mis à jour avec succès`, 'success');
-            
-            // Utiliser les mots retournés par l'API pour mettre à jour l'affichage
-            if (result.data && result.data.words) {
-                for (const updatedWord of result.data.words) {
-                    // Mettre à jour dans la liste locale
-                    const entityIndex = this.entities.findIndex(entity => entity.id === updatedWord.id);
-                    if (entityIndex !== -1) {
-                        // Conserver les données existantes et merger avec les nouvelles
-                        this.entities[entityIndex] = { ...this.entities[entityIndex], ...updatedWord };
-                        
-                        // Mettre à jour la ligne dans le tableau
-                        this.updateTableRow(updatedWord.id, this.entities[entityIndex]);
-                    }
-                }
-            }
-            
-            // Mettre à jour les compteurs des filtres
-            this.updateFilterCounts();
-            
-            this.cancelBatchSelection();
-            
-        } catch (error) {
-            this.uiManager.showToast('Erreur', `Erreur lors de la mise à jour: ${error.message}`, 'error');
         }
+        
+        // Mettre à jour les compteurs
+        this.filterManager.updateFilterCounts(this.entities);
     }
 
-    cancelBatchSelection() {
-        // Décocher toutes les checkboxes
-        const checkboxes = document.querySelectorAll('.word-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        // Masquer l'interface de batch
-        const batchActions = document.getElementById('batchActions');
-        batchActions.style.display = 'none';
-        
-        // Réinitialiser le sélect
-        const batchDifficultySelect = document.getElementById('batchDifficultySelect');
-        batchDifficultySelect.value = '';
-        
-        // Mettre à jour le checkbox "Sélectionner tout"
-        const selectAllCheckbox = document.getElementById('selectAllWords');
-        if (selectAllCheckbox) {
-            selectAllCheckbox.checked = false;
-            selectAllCheckbox.indeterminate = false;
-        }
-    }
 
     /**
      * Override renderTable pour ajouter les event listeners sur les checkboxes
@@ -776,93 +617,25 @@ class WordManager extends BaseManager {
     renderTable() {
         this.renderWordsTable();
         
-        // Ajouter les event listeners sur les nouvelles checkboxes
+        // Déléguer au BatchSelectionManager pour les checkboxes
         setTimeout(() => {
-            const checkboxes = document.querySelectorAll('.word-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    this.updateBatchInterface();
-                });
-            });
+            this.batchManager.attachCheckboxListeners();
         }, 0);
     }
 
-    /**
-     * Configuration de la recherche
-     */
-    setupSearchListeners() {
-        // Recherche de mots
-        const searchInput = this.domManager.getById('wordsSearchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', this.debounce((e) => {
-                this.searchWords(e.target.value);
-            }, 300));
-        }
-
-        // Clear search
-        const clearSearchBtn = this.domManager.getById('clearSearchBtn');
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', () => {
-                this.clearSearch();
-            });
-        }
-    }
-
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    searchWords(query) {
-        this.currentSearch = query.toLowerCase();
-        this.applyFilters();
-    }
-
-    clearSearch() {
-        const searchInput = this.domManager.getById('wordsSearchInput');
-        if (searchInput) {
-            searchInput.value = '';
-            this.searchWords('');
-        }
-    }
 
     /**
-     * Override applyFilters pour inclure la recherche
+     * Override applyFilters - délégué au FilterManager (SOLID)
      */
     applyFilters() {
         if (!this.currentCategory) return;
         
         const allWords = window.adminApp?.adminData?.words || [];
-        let filteredWords = allWords.filter(word => word.category_id == this.currentCategory.id);
+        const categoryWords = allWords.filter(word => word.category_id == this.currentCategory.id);
         
-        // Appliquer le filtre de difficulté (pas de mapping nécessaire, même format)
-        if (this.currentDifficulty && this.currentDifficulty !== 'all') {
-            filteredWords = filteredWords.filter(word => word.difficulty === this.currentDifficulty);
-        }
-        
-        // Appliquer la recherche
-        if (this.currentSearch && this.currentSearch.trim() !== '') {
-            filteredWords = filteredWords.filter(word => 
-                word.word.toLowerCase().includes(this.currentSearch.trim())
-            );
-        }
-        
-        console.log('Applied filters:', {
-            currentDifficulty: this.currentDifficulty,
-            currentSearch: this.currentSearch,
-            originalCount: allWords.filter(word => word.category_id == this.currentCategory.id).length,
-            filteredCount: filteredWords.length
-        });
-        
-        this.entities = filteredWords;
+        // Déléguer le filtrage au FilterManager (SOLID: Single Responsibility)
+        this.entities = this.filterManager.applyFilters(categoryWords);
         this.renderTable();
-        this.updateFilterCounts();
+        this.filterManager.updateFilterCounts(categoryWords);
     }
 }
