@@ -94,7 +94,7 @@ class TagManager extends BaseManager {
         if (this.entities.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="text-center">
+                    <td colspan="2" class="text-center">
                         <em>Aucun tag trouvé</em>
                     </td>
                 </tr>
@@ -106,21 +106,17 @@ class TagManager extends BaseManager {
     }
 
     createTagRow(tag) {
-        const usageCount = this.getTagUsageCount(tag.id);
         const colorBadge = `<span class="color-badge" style="background-color: ${tag.color || '#f39c12'}"></span>`;
         
         return `
             <tr data-id="${tag.id}">
-                <td>${colorBadge}</td>
-                <td><strong>${this.uiManager.escapeHtml(tag.name)}</strong></td>
-                <td class="hide-mobile">${this.uiManager.escapeHtml(tag.description || '')}</td>
-                <td>${usageCount} catégorie${usageCount !== 1 ? 's' : ''}</td>
+                <td>${colorBadge} <strong>${this.uiManager.escapeHtml(tag.name)}</strong></td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-primary" onclick="tagManager.showEditModal(${tag.id})" title="Modifier">
-                        ✏️
+                        ✎
                     </button>
                     <button class="btn btn-sm btn-danger" onclick="tagManager.deleteEntity(${tag.id})" title="Supprimer">
-                        🗑️
+                        ✕
                     </button>
                 </td>
             </tr>

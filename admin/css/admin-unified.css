@@ -243,6 +243,23 @@
     margin-top: var(--spacing-lg);
 }
 
+/* Styles pour la cellule de catégorie fusionnée */
+.category-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.category-icon {
+    font-size: 1.2em;
+    min-width: 1.5em;
+    text-align: center;
+}
+
+.category-name {
+    font-weight: 500;
+}
+
 /* Import/Export section */
 .import-export-section {
     background: var(--bg-secondary);
@@ -408,6 +425,27 @@
     .admin-table .action-buttons .btn {
         width: 100%;
     }
+    
+    /* Interface batch responsive sur mobile */
+    .batch-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+    }
+    
+    .batch-controls {
+        margin-left: 0;
+        justify-content: space-between;
+    }
+    
+    .batch-controls .form-select {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .batch-info {
+        text-align: center;
+    }
 }
 
 /* Tablet adjustments */
@@ -419,6 +457,156 @@
     .analysis-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* Icônes des boutons d'action en noir - remplacement par des symboles Unicode simples */
+.action-buttons .btn {
+    font-family: 'Arial', sans-serif;
+    color: #000;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Interface de sélection multiple */
+.select-column {
+    width: 40px;
+    text-align: center;
+}
+
+.batch-actions {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    color: white;
+    border-radius: var(--radius-md);
+    padding: 8px var(--spacing-lg);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    font-size: var(--font-sm);
+    box-shadow: 0 2px 8px rgba(46, 213, 115, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.batch-actions::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.batch-info {
+    color: white;
+    font-weight: 600;
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.batch-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.batch-controls .form-select {
+    min-width: 140px;
+    font-size: var(--font-sm);
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    height: 32px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.batch-controls .btn {
+    font-size: var(--font-sm);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    height: 32px;
+    line-height: 1;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.batch-controls .btn-primary {
+    background: white;
+    color: var(--success-color);
+    border: 1px solid white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.batch-controls .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.batch-controls .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.batch-controls .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Mots inactifs */
+.inactive-word {
+    opacity: 0.6;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.inactive-badge {
+    background: var(--warning-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+/* Checkbox labels */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
 }
 
 /* ============================================

@@ -139,6 +139,16 @@ class ApiClient {
         });
     }
 
+    async batchUpdateWords(wordIds, updates) {
+        return this.request(`${this.adminBaseUrl}/category-words.php`, {
+            method: 'PATCH',
+            body: JSON.stringify({ 
+                ids: wordIds, 
+                updates: updates 
+            })
+        });
+    }
+
     async deleteWord(wordId) {
         return this.request(`${this.adminBaseUrl}/category-words.php?id=${wordId}`, {
             method: 'DELETE'

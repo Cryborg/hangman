@@ -37,6 +37,9 @@ abstract class BaseAdminController {
                 case 'PUT':
                     $this->handlePut();
                     break;
+                case 'PATCH':
+                    $this->handlePatch();
+                    break;
                 case 'DELETE':
                     $this->handleDelete();
                     break;
@@ -213,6 +216,13 @@ abstract class BaseAdminController {
             $this->db->rollBack();
             throw $e;
         }
+    }
+    
+    /**
+     * PATCH - Mises à jour batch (optionnel - à implémenter dans les classes filles)
+     */
+    protected function handlePatch(): void {
+        $this->response->methodNotAllowed('PATCH not implemented for this resource');
     }
     
     // ===== MÉTHODES UTILITAIRES =====

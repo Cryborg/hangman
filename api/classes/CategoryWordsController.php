@@ -82,6 +82,74 @@ class CategoryWordsController extends BaseAdminController {
         }
     }
     
+    /**
+     * PATCH - Mise à jour batch des mots
+     */
+    protected function handlePatch(): void {
+        $validation = Validator::validateJsonInput();
+        if (!empty($validation['errors'])) {
+            $this->response->badRequest('Invalid JSON input', $validation['errors']);
+            return;
+        }
+        
+        $inputData = $validation['data'];
+        
+        // Valider la structure des données batch
+        if (!isset($inputData['ids']) || !is_array($inputData['ids']) || empty($inputData['ids'])) {
+            $this->response->badRequest('Field "ids" is required and must be a non-empty array');
+            return;
+        }
+        
+        if (!isset($inputData['updates']) || !is_array($inputData['updates'])) {
+            $this->response->badRequest('Field "updates" is required and must be an object');
+            return;
+        }
+        
+        $ids = array_map('intval', $inputData['ids']);
+        $updates = $inputData['updates'];
+        
+        // Valider les mises à jour
+        $validation = $this->validateForUpdate($updates);
+        if (!empty($validation['errors'])) {
+            $this->response->badRequest('Validation failed', $validation['errors']);
+            return;
+        }
+        
+        try {
+            $this->db->beginTransaction();
+            
+            $updatedWords = [];
+            foreach ($ids as $id) {
+                // Vérifier que le mot existe
+                $word = $this->findById($id);
+                if (!$word) {
+                    throw new InvalidArgumentException("Word with ID $id not found");
+                }
+                
+                // Appliquer les mises à jour
+                if ($this->update($id, $validation['data'])) {
+                    $updatedWords[] = $this->transformForResponse($this->findById($id));
+                }
+            }
+            
+            $this->db->commit();
+            
+            $this->response->success([
+                'updated_count' => count($updatedWords),
+                'words' => $updatedWords
+            ], [
+                'message' => count($updatedWords) . ' word(s) updated successfully'
+            ]);
+            
+        } catch (InvalidArgumentException $e) {
+            $this->db->rollBack();
+            $this->response->badRequest($e->getMessage());
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+    
     // ===== IMPLÉMENTATION DES MÉTHODES ABSTRAITES =====
     
     protected function findById(int $id): ?array {
@@ -117,11 +185,18 @@ class CategoryWordsController extends BaseAdminController {
         if (isset($data['word'])) {
             $data['word'] = StringUtility::cleanWord($data['word']);
             
-            // Vérifier l'unicité dans la catégorie si catégorie fournie
-            if (isset($data['category_id'])) {
-                if ($this->wordRepository->existsInCategory($data['word'], $data['category_id'], $id)) {
-                    throw new InvalidArgumentException('Word already exists in this category');
-                }
+            // Récupérer le mot actuel pour obtenir la catégorie si pas fournie
+            $currentWord = $this->wordRepository->findById($id);
+            if (!$currentWord) {
+                throw new InvalidArgumentException('Word not found');
+            }
+            
+            // Utiliser la catégorie fournie ou celle du mot actuel
+            $categoryId = $data['category_id'] ?? $currentWord['category_id'];
+            
+            // Vérifier l'unicité dans la catégorie
+            if ($this->wordRepository->existsInCategory($data['word'], $categoryId, $id)) {
+                throw new InvalidArgumentException('Word already exists in this category');
             }
         }
         
@@ -229,6 +304,7 @@ class CategoryWordsController extends BaseAdminController {
         return [
             'id' => (int) $word['id'],
             'word' => $word['word'],
+            'category_id' => (int) $word['category_id'],
             'difficulty' => $word['difficulty'] ?? 'medium',
             'active' => (bool) ($word['active'] ?? true),
             'created_at' => $word['created_at'] ?? null,

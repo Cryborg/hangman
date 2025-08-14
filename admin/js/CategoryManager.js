@@ -184,13 +184,17 @@ class CategoryManager extends BaseManager {
     }
 
     createCategoryRow(category) {
-        const wordsCount = category.words ? category.words.length : 0;
+        const wordsCount = category.total_words || 0;
         const tags = this.formatCategoryTags(category);
         
         return `
             <tr data-id="${category.id}">
-                <td class="icon-column">${category.icon || '📁'}</td>
-                <td>${this.uiManager.escapeHtml(category.name)}</td>
+                <td>
+                    <div class="category-cell">
+                        <span class="category-icon">${category.icon || '📁'}</span>
+                        <span class="category-name">${this.uiManager.escapeHtml(category.name)}</span>
+                    </div>
+                </td>
                 <td class="hide-mobile">${tags}</td>
                 <td>
                     <button class="btn btn-sm btn-info" onclick="categoryManager.showCategoryDetail(${category.id})">
@@ -199,10 +203,10 @@ class CategoryManager extends BaseManager {
                 </td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-primary" onclick="categoryManager.showEditModal(${category.id})" title="Modifier">
-                        ✏️
+                        ✎
                     </button>
                     <button class="btn btn-sm btn-danger" onclick="categoryManager.deleteEntity(${category.id})" title="Supprimer">
-                        🗑️
+                        ✕
                     </button>
                 </td>
             </tr>

@@ -41,7 +41,9 @@ class BaseManager {
     }
 
     showEditModal(entityId) {
-        const entity = this.entities.find(e => e.id === entityId);
+        // S'assurer que entityId est un number pour la comparaison
+        const numericId = parseInt(entityId, 10);
+        const entity = this.entities.find(e => e.id === numericId);
         if (!entity) {
             this.uiManager.showToast('Erreur', 'Entité non trouvée', 'error');
             return;
@@ -144,6 +146,9 @@ class BaseManager {
         const formId = `edit${config.formPrefix}Form`;
         const formData = this.uiManager.getFormData(formId);
         
+        // S'assurer que entityId est un number
+        const numericEntityId = parseInt(entityId, 10);
+        
         if (!formData) {
             this.uiManager.showToast('Erreur', 'Formulaire non trouvé', 'error');
             return;
@@ -159,7 +164,7 @@ class BaseManager {
         }
 
         try {
-            await this.updateEntity(entityId, formData);
+            await this.updateEntity(numericEntityId, formData);
             this.closeEditModal();
         } catch (error) {
             console.error(`Erreur mise à jour ${config.name}:`, error);

@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     
     <!-- CSS modulaire admin refactorisé -->
-    <link rel="stylesheet" href="admin/css/admin.css?v=1.1.0">
+    <link rel="stylesheet" href="admin/css/admin.css?v=1.1.5">
 </head>
 <body class="admin-body">
     <!-- Page de connexion -->
@@ -176,6 +176,8 @@
                             <thead>
                                 <tr>
                                     <th>Catégorie</th>
+                                    <th class="hide-mobile">Tags</th>
+                                    <th>Mots</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -194,12 +196,12 @@
                             ← Retour aux catégories
                         </button>
                         <div class="category-info">
-                            <span class="category-icon" id="categoryIcon">📁</span>
-                            <h3 id="categoryName">Nom de la catégorie</h3>
+                            <span class="category-icon" id="categoryDetailIcon">📁</span>
+                            <h3 id="categoryDetailName">Nom de la catégorie</h3>
                             <button class="btn btn-secondary btn-icon" id="editCategoryBtn" title="Modifier la catégorie">
-                                ✏️
+                                ✎
                             </button>
-                            <span class="category-stats" id="categoryStats">0 mots</span>
+                            <span class="category-stats" id="categoryWordsCount">0 mots</span>
                         </div>
                         <div class="category-actions">
                         </div>
@@ -216,6 +218,7 @@
                                 <span class="btn-text hide-mobile">Nouveau mot</span>
                             </button>
                         </div>
+                        
                         <div class="filter-buttons">
                             <button class="filter-btn active" data-difficulty="all">
                                 Tous <span class="filter-count" id="allWordsCount">(0)</span>
@@ -232,11 +235,31 @@
                         </div>
                     </div>
                     
+                    <!-- Actions en batch -->
+                    <div class="batch-actions" id="batchActions" style="display: none;">
+                        <div class="batch-info">
+                            ✓ <span id="selectedCount">0</span> sélectionné(s)
+                        </div>
+                        <div class="batch-controls">
+                            <select id="batchDifficultySelect" class="form-select">
+                                <option value="">Nouvelle difficulté</option>
+                                <option value="easy">Facile</option>
+                                <option value="medium">Moyen</option>
+                                <option value="hard">Difficile</option>
+                            </select>
+                            <button class="btn btn-primary" id="applyBatchChangesBtn">Appliquer</button>
+                            <button class="btn btn-secondary" id="cancelBatchSelectionBtn">×</button>
+                        </div>
+                    </div>
+                    
                     <!-- Table des mots -->
                     <div class="admin-table-container">
                         <table class="admin-table" id="categoryWordsTable">
                             <thead>
                                 <tr>
+                                    <th class="select-column">
+                                        <input type="checkbox" id="selectAllWords" title="Sélectionner tous">
+                                    </th>
                                     <th>Mot</th>
                                     <th>Difficulté</th>
                                     <th>Actions</th>
