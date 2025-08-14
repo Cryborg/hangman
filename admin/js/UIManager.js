@@ -45,9 +45,13 @@ class UIManager {
         `;
 
         toastContainer.appendChild(toast);
+        console.log('Toast appended to container:', toast);
 
         // Animation d'entrée
-        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.add('show');
+            console.log('Toast show class added');
+        }, 10);
 
         // Auto-suppression
         if (duration > 0) {
@@ -67,11 +71,15 @@ class UIManager {
 
     getOrCreateToastContainer() {
         let container = this.domManager.getById('toast-container');
+        console.log('Toast container found:', container);
+        
         if (!container) {
+            console.log('Creating new toast container');
             container = document.createElement('div');
             container.id = 'toast-container';
             container.className = 'toast-container';
             document.body.appendChild(container);
+            console.log('New container appended to body');
         }
         return container;
     }
