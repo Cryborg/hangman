@@ -41,15 +41,19 @@ class BatchSelectionManager {
     }
     
     /**
-     * Attache les listeners aux checkboxes après un rendu
+     * Attache les listeners aux checkboxes après un rendu (DRY: utilise EventListenerManager)
      */
     attachCheckboxListeners() {
         const checkboxes = document.querySelectorAll('.word-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', (e) => {
+        
+        EventListenerManager.attachOnceToCollection(
+            checkboxes,
+            'change',
+            (e) => {
                 this.toggleSelection(parseInt(e.target.value), e.target.checked);
-            });
-        });
+            },
+            'checkboxListenerAttached'
+        );
     }
     
     /**

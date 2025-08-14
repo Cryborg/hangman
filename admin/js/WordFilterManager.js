@@ -44,20 +44,20 @@ class WordFilterManager {
     }
     
     /**
-     * Configure les listeners de filtres
+     * Configure les listeners de filtres (DRY: utilise EventListenerManager)
      */
     setupFilterListeners() {
         const filterBtns = document.querySelectorAll('.filter-btn');
         
-        filterBtns.forEach(btn => {
-            if (!btn.dataset.filterListenerAttached) {
-                btn.addEventListener('click', (e) => {
-                    const difficulty = e.currentTarget.dataset.difficulty;
-                    this.setDifficultyFilter(difficulty);
-                });
-                btn.dataset.filterListenerAttached = 'true';
-            }
-        });
+        EventListenerManager.attachOnceToCollection(
+            filterBtns,
+            'click',
+            (e) => {
+                const difficulty = e.currentTarget.dataset.difficulty;
+                this.setDifficultyFilter(difficulty);
+            },
+            'filterListenerAttached'
+        );
     }
     
     /**

@@ -73,58 +73,15 @@ class AdminDOMManager {
      * Initialise les éléments les plus couramment utilisés de l'admin
      */
     initializeCommonElements() {
-        // Pages principales
+        // Éléments critiques (login et navigation de base)
         this.loginPage = this.getById('loginPage');
         this.adminPage = this.getById('adminPage');
-
-        // Formulaire de login
         this.loginForm = this.getById('loginForm');
-        this.username = this.getById('username');
-        this.password = this.getById('password');
-        this.loginBtn = this.getById('loginBtn');
-        this.loginError = this.getById('loginError');
-
-        // Navigation
-        this.logoutBtn = this.getById('logoutBtn');
-
-        // Sections
-        this.dashboard = this.getById('dashboard');
-        this.categories = this.getById('categories');
-        this.tags = this.getById('tags');
-        this.data = this.getById('data');
-
-        // Tables
-        this.categoriesTable = this.getById('categoriesTable');
-        this.categoryWordsTable = this.getById('categoryWordsTable');
-        this.tagsTable = this.getById('tagsTable');
-
-        // Boutons d'ajout
-        this.addCategoryBtn = this.getById('addCategoryBtn');
-        this.addWordToCategoryBtn = this.getById('addWordToCategoryBtn');
-        this.addTagBtn = this.getById('addTagBtn');
-
-        // Statistiques dashboard
-        this.totalWords = this.getById('totalWords');
-        this.totalCategories = this.getById('totalCategories');
-        this.accentWordsCount = this.getById('accentWordsCount');
-        this.numberWordsCount = this.getById('numberWordsCount');
-        this.totalTags = this.getById('totalTags');
-
-        // Import/Export
-        this.importFile = this.getById('importFile');
-        this.importBtn = this.getById('importBtn');
-        this.processImportBtn = this.getById('processImportBtn');
-        this.importPreview = this.getById('importPreview');
-        this.exportAllBtn = this.getById('exportAllBtn');
-        this.exportCategoriesOnlyBtn = this.getById('exportCategoriesOnlyBtn');
-
-        // Autres éléments
         this.loadingOverlay = this.getById('loadingOverlay');
         this.adminModals = this.getById('adminModals');
-
-        // Recherche et filtres
-        this.wordsSearchInput = this.getById('wordsSearchInput');
-        this.clearSearchBtn = this.getById('clearSearchBtn');
+        
+        // Les autres éléments seront chargés à la demande via getById()
+        // ce qui évite les warnings lors de l'initialisation
     }
 
     /**

@@ -5,9 +5,6 @@ class WordManager extends BaseManager {
     constructor(apiClient, uiManager, domManager) {
         super(apiClient, uiManager, domManager);
         this.currentCategory = null;
-        this.currentWords = [];
-        this.currentPage = 1;
-        this.wordsPerPage = 50;
         
         // Managers spécialisés (SOLID: séparation des responsabilités)
         this.filterManager = new WordFilterManager(domManager);
