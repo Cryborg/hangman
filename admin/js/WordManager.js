@@ -503,7 +503,6 @@ class WordManager extends BaseManager {
                 });
                 results.successCount++;
             } catch (error) {
-                console.log(`Error for word "${word}":`, error.message);
                 results.errorCount++;
                 results.errors.push(`${word}: ${error.message}`);
             }
@@ -517,24 +516,14 @@ class WordManager extends BaseManager {
      * Affiche les résultats de l'ajout en masse (KISS: affichage séparé)
      */
     displayBulkResults(results) {
-        console.log('displayBulkResults called with:', results);
-        
         const message = this.buildBulkResultMessage(results);
         const toastType = results.success ? 'success' : 'error';
-        
-        console.log('About to show toast:', {
-            title: results.success ? 'Succès' : 'Erreur',
-            message: message,
-            type: toastType
-        });
         
         this.uiManager.showToast(
             results.success ? 'Succès' : 'Erreur',
             message,
             toastType
         );
-        
-        console.log('Toast showToast called');
         
         // Afficher les erreurs détaillées si nécessaire
         if (results.errors.length > 0 && results.errors.length <= 5) {

@@ -18,8 +18,6 @@ class UIManager {
     // =================
     
     showToast(title, message = '', type = 'info', duration = 4000) {
-        console.log('UIManager.showToast called with:', { title, message, type, duration });
-        
         const toastId = `toast-${this.toastCounter++}`;
         const toastContainer = this.getOrCreateToastContainer();
         
@@ -45,12 +43,10 @@ class UIManager {
         `;
 
         toastContainer.appendChild(toast);
-        console.log('Toast appended to container:', toast);
 
         // Animation d'entrée
         setTimeout(() => {
             toast.classList.add('show');
-            console.log('Toast show class added');
         }, 10);
 
         // Auto-suppression
@@ -71,57 +67,55 @@ class UIManager {
 
     getOrCreateToastContainer() {
         let container = this.domManager.getById('toast-container');
-        console.log('Toast container found:', container);
         
         if (!container) {
-            console.log('Creating new toast container');
             container = document.createElement('div');
             container.id = 'toast-container';
             container.className = 'toast-container';
             document.body.appendChild(container);
-            console.log('New container appended to body');
         }
         return container;
     }
 
     setupToastStyles() {
         const existing = this.domManager.getById('toast-styles', true); // Supprime le warning
-        if (existing) {
-            console.log('Toast styles already exist');
-            return;
-        }
+        if (existing) return;
         
-        console.log('Creating toast styles');
         const styles = document.createElement('style');
         styles.id = 'toast-styles';
         styles.textContent = `
             .toast-container {
-                position: fixed;
-                top: 1rem;
-                right: 1rem;
-                z-index: 10000;
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                pointer-events: none;
+                position: fixed !important;
+                top: 1rem !important;
+                right: 1rem !important;
+                z-index: 999999 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                pointer-events: none !important;
+                width: auto !important;
+                height: auto !important;
             }
             
             .admin-toast {
-                background: var(--bg-modal, #2a2a2a);
-                border-radius: var(--radius-md, 8px);
-                border-left: 4px solid var(--primary-color, #f39c12);
-                backdrop-filter: blur(10px);
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                pointer-events: auto;
-                min-width: 300px;
-                max-width: 400px;
-                color: var(--text-primary, #e8eaed);
+                background: var(--bg-modal, #2a2a2a) !important;
+                border-radius: var(--radius-md, 8px) !important;
+                border-left: 4px solid var(--primary-color, #f39c12) !important;
+                backdrop-filter: blur(10px) !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+                transform: translateX(100%) !important;
+                transition: transform 0.3s ease !important;
+                pointer-events: auto !important;
+                min-width: 300px !important;
+                max-width: 400px !important;
+                color: var(--text-primary, #e8eaed) !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
             
             .admin-toast.show {
-                transform: translateX(0);
+                transform: translateX(0) !important;
             }
             
             .admin-toast.toast-success { border-left-color: var(--success-color, #2ed573); }
@@ -173,7 +167,6 @@ class UIManager {
             }
         `;
         document.head.appendChild(styles);
-        console.log('Toast styles added to head');
     }
 
     // =================
