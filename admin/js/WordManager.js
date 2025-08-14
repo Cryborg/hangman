@@ -559,7 +559,8 @@ class WordManager extends BaseManager {
      * Rafraîchit les données après l'ajout en masse (KISS: refresh isolé)
      */
     async refreshAfterBulkCreation() {
-        await this.loadEntities();
+        // Recharger les données dans AdminApp pour synchronisation globale
+        await window.adminApp.loadData();
         
         if (this.currentCategory) {
             this.showCategoryWords(this.currentCategory.id);
