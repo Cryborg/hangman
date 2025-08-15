@@ -86,43 +86,43 @@ class UIManager {
         styles.textContent = `
             .toast-container {
                 position: fixed !important;
-                top: 1rem !important;
-                right: 1rem !important;
+                top: 20px !important;
+                right: 20px !important;
+                left: auto !important;
+                bottom: auto !important;
                 z-index: 999999 !important;
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 0.5rem !important;
                 pointer-events: none !important;
-                width: auto !important;
-                height: auto !important;
+                width: 400px !important;
+                max-width: calc(100vw - 40px) !important;
             }
             
             .admin-toast {
-                background: red !important;
-                border-radius: var(--radius-md, 8px) !important;
-                border: 4px solid yellow !important;
-                backdrop-filter: none !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.9) !important;
-                transform: translateX(100%) !important;
+                background: var(--bg-modal, #2a2a2a) !important;
+                border-radius: 8px !important;
+                border-left: 4px solid var(--primary-color, #f39c12) !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+                transform: translateX(120%) !important;
                 transition: transform 0.3s ease !important;
                 pointer-events: auto !important;
-                min-width: 300px !important;
-                max-width: 400px !important;
-                color: white !important;
+                width: 100% !important;
+                color: #ffffff !important;
                 display: block !important;
                 visibility: visible !important;
-                opacity: 1 !important;
-                font-size: 20px !important;
-                padding: 20px !important;
+                opacity: 0 !important;
+                position: relative !important;
             }
             
             .admin-toast.show {
                 transform: translateX(0) !important;
+                opacity: 1 !important;
             }
             
-            .admin-toast.toast-success { border-left-color: var(--success-color, #2ed573); }
-            .admin-toast.toast-error { border-left-color: var(--error-color, #ff6b6b); }
-            .admin-toast.toast-warning { border-left-color: var(--warning-color, #ff6b35); }
+            .admin-toast.toast-success { border-left-color: #2ed573 !important; }
+            .admin-toast.toast-error { border-left-color: #ff6b6b !important; }
+            .admin-toast.toast-warning { border-left-color: #ff9800 !important; }
             
             .toast-content {
                 display: flex;
