@@ -647,4 +647,50 @@ class WordManager extends BaseManager {
         this.renderTable();
         this.filterManager.updateFilterCounts(categoryWords);
     }
+
+    /**
+     * Override deleteEntity pour éviter de recharger toute la liste
+     */
+    async deleteEntity(id) {
+        const config = this.getEntityConfig();
+        
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer ce ${config.displayName.toLowerCase()} ?`)) {
+            return;
+        }
+
+        try {
+            const result = await this.apiClient[`delete${config.apiPrefix}`](id);
+            if (result.success) {
+                this.uiManager.showToast(
+                    'Succès', 
+                    `${config.displayName} supprimé(e) avec succès`, 
+                    'success'
+                );
+                
+                // Supprimer juste la ligne du DOM
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                if (row) {
+                    row.remove();
+                }
+                
+                // Mettre à jour les entités locales
+                const numericId = parseInt(id, 10);
+                this.entities = this.entities.filter(entity => entity.id !== numericId);
+                
+                // Mettre à jour les compteurs de filtres
+                this.filterManager.updateFilterCounts(this.entities);
+                
+                return true;
+            } else {
+                throw new Error(result.message || `Impossible de supprimer ${config.displayName.toLowerCase()}`);
+            }
+        } catch (error) {
+            this.uiManager.showToast(
+                'Erreur', 
+                `Impossible de supprimer ${config.displayName.toLowerCase()}: ${error.message}`, 
+                'error'
+            );
+            throw error;
+        }
+    }
 }
