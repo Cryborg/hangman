@@ -98,20 +98,22 @@ class UIManager {
             }
             
             .admin-toast {
-                background: var(--bg-modal, #2a2a2a) !important;
+                background: red !important;
                 border-radius: var(--radius-md, 8px) !important;
-                border-left: 4px solid var(--primary-color, #f39c12) !important;
-                backdrop-filter: blur(10px) !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+                border: 4px solid yellow !important;
+                backdrop-filter: none !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.9) !important;
                 transform: translateX(100%) !important;
                 transition: transform 0.3s ease !important;
                 pointer-events: auto !important;
                 min-width: 300px !important;
                 max-width: 400px !important;
-                color: var(--text-primary, #e8eaed) !important;
+                color: white !important;
                 display: block !important;
                 visibility: visible !important;
                 opacity: 1 !important;
+                font-size: 20px !important;
+                padding: 20px !important;
             }
             
             .admin-toast.show {
