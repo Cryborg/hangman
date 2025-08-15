@@ -250,9 +250,11 @@ class WordManager extends BaseManager {
     showCategoriesView() {
         const categoriesListView = this.domManager.getById('categoriesListView');
         const categoryDetailView = this.domManager.getById('categoryDetailView');
+        const backBtn = this.domManager.getById('backToCategoriesBtn');
         
         if (categoriesListView) categoriesListView.classList.add('active');
         if (categoryDetailView) categoryDetailView.classList.remove('active');
+        if (backBtn) backBtn.style.display = 'none';
     }
 
     showCategoryWords(categoryId) {
@@ -271,9 +273,11 @@ class WordManager extends BaseManager {
         // Afficher la vue détail
         const categoriesListView = this.domManager.getById('categoriesListView');
         const categoryDetailView = this.domManager.getById('categoryDetailView');
+        const backBtn = this.domManager.getById('backToCategoriesBtn');
         
         if (categoriesListView) categoriesListView.classList.remove('active');
         if (categoryDetailView) categoryDetailView.classList.add('active');
+        if (backBtn) backBtn.style.display = 'inline-block';
         
         // Mettre à jour l'affichage
         this.updateCategoryHeader();

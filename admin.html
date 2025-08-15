@@ -156,6 +156,9 @@
             <!-- Section Catégories -->
             <section id="categories" class="admin-section">
                 <div class="section-header">
+                    <button class="btn btn-secondary" id="backToCategoriesBtn" style="display: none;">
+                        ← Retour aux catégories
+                    </button>
                     <button class="btn btn-primary" id="addCategoryBtn">
                         ➕ Nouvelle catégorie
                     </button>
@@ -199,9 +202,6 @@
                     <!-- Recherche et filtres -->
                     <div class="words-filters">
                         <div class="search-box">
-                            <button class="btn btn-secondary" id="backToCategoriesBtn">
-                                ← Retour aux catégories
-                            </button>
                             <input type="text" id="wordsSearchInput" placeholder="Rechercher un mot..." class="form-input">
                             <button class="btn btn-secondary" id="clearSearchBtn">✖️</button>
                             <button class="btn btn-primary" id="addWordToCategoryBtn">
