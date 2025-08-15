@@ -113,25 +113,7 @@
         font-size: var(--font-sm);
     }
     
-    /* Toast adjustments */
-    .toast-container {
-        top: 0.5rem;
-        right: 0.5rem;
-        left: 0.5rem;
-    }
-    
-    .admin-toast {
-        min-width: auto;
-        max-width: none;
-    }
-    
-    .toast-content {
-        padding: var(--spacing-sm);
-    }
-    
-    .toast-message strong {
-        font-size: var(--font-base);
-    }
+    /* Toast adjustments - Moved to toast.css */
 }
 
 /* ===== VERY SMALL SCREENS (< 320px) ===== */
