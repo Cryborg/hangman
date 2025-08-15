@@ -596,5 +596,6 @@ const style = document.createElement('style');
 style.textContent = iconSelectorCSS;
 document.head.appendChild(style);
 
-// Instance globale
+// Exposer la classe et créer une instance globale
+window.IconSelector = IconSelector;
 window.iconSelector = new IconSelector();
