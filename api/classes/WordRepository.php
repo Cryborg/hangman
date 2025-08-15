@@ -306,22 +306,37 @@ class WordRepository {
         $errors = [];
         
         try {
-            $stmt = $this->db->prepare("
+            $insertStmt = $this->db->prepare("
                 INSERT INTO hangman_words (
-                    word, category_id, difficulty
-                ) VALUES (?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                difficulty = VALUES(difficulty)
+                    word, category_id, difficulty, active
+                ) VALUES (?, ?, ?, ?)
             ");
             
             foreach ($words as $wordData) {
                 try {
                     $wordText = is_string($wordData) ? $wordData : ($wordData['word'] ?? '');
+                    $difficulty = is_array($wordData) ? ($wordData['difficulty'] ?? 'medium') : 'medium';
+                    $active = is_array($wordData) ? ($wordData['active'] ?? true) : true;
                     
-                    $stmt->execute([
-                        StringUtility::cleanWord($wordText),
+                    // Nettoyer le mot
+                    $cleanWord = StringUtility::cleanWord($wordText);
+                    
+                    if (empty($cleanWord)) {
+                        $errors[] = "Mot vide ignoré";
+                        continue;
+                    }
+                    
+                    // Vérifier si le mot existe déjà dans cette catégorie
+                    if ($this->existsInCategory($cleanWord, $categoryId)) {
+                        $errors[] = "Mot '{$cleanWord}' existe déjà dans cette catégorie";
+                        continue;
+                    }
+                    
+                    $insertStmt->execute([
+                        $cleanWord,
                         $categoryId,
-                        is_array($wordData) ? ($wordData['difficulty'] ?? 'medium') : 'medium'
+                        $difficulty,
+                        $active ? 1 : 0
                     ]);
                     
                     $imported++;
@@ -339,7 +354,7 @@ class WordRepository {
             
         } catch (Exception $e) {
             $this->db->rollBack();
-            throw $e;
+            throw new Exception("Erreur lors de l'import en masse: " . $e->getMessage());
         }
     }
 }

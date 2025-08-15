@@ -151,6 +151,7 @@ class ImportExportService {
         $categoryId = $this->categoryRepo->create($categoryInfo);
         
         $wordsImported = 0;
+        $wordErrors = [];
         
         // Supprimer les anciens mots si mode replace
         if ($mode === 'replace') {
@@ -161,6 +162,7 @@ class ImportExportService {
         if (isset($categoryData['words']) && is_array($categoryData['words'])) {
             $result = $this->wordRepo->bulkImport($categoryId, $categoryData['words']);
             $wordsImported = $result['imported'];
+            $wordErrors = $result['errors'] ?? [];
         }
         
         // Associer les tags à la catégorie
@@ -169,7 +171,10 @@ class ImportExportService {
             $this->categoryRepo->associateTags($categoryId, $tagIds);
         }
         
-        return ['words_imported' => $wordsImported];
+        return [
+            'words_imported' => $wordsImported,
+            'word_errors' => $wordErrors
+        ];
     }
     
     /**

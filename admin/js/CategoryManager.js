@@ -340,7 +340,7 @@ class CategoryManager extends BaseManager {
             
             const mode = replaceCheckbox?.checked ? 'replace' : 'append';
             
-            const result = await this.apiClient.importData({ mode, data });
+            const result = await this.apiClient.importData(data, mode);
             
             if (result.success) {
                 this.uiManager.showToast('Succès', result.message || 'Import réussi', 'success');
