@@ -270,14 +270,23 @@ function handleImport($db) {
         // Import des catégories
         foreach ($data['categories'] as $categoryData) {
             try {
-                // Insérer/mettre à jour la catégorie
-                $stmt = $db->prepare("
-                    INSERT INTO hangman_categories (name, slug, icon) 
-                    VALUES (?, ?, ?)
-                    ON DUPLICATE KEY UPDATE 
-                    name = VALUES(name),
-                    icon = VALUES(icon)
-                ");
+                // Insérer/mettre à jour la catégorie selon le mode
+                if ($mode === 'merge') {
+                    // En mode merge, créer seulement si n'existe pas
+                    $stmt = $db->prepare("
+                        INSERT IGNORE INTO hangman_categories (name, slug, icon) 
+                        VALUES (?, ?, ?)
+                    ");
+                } else {
+                    // Mode replace ou autre : mettre à jour si existe
+                    $stmt = $db->prepare("
+                        INSERT INTO hangman_categories (name, slug, icon) 
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE 
+                        name = VALUES(name),
+                        icon = VALUES(icon)
+                    ");
+                }
                 
                 $categorySlug = $categoryData['slug'] ?? generateSlug($categoryData['name'] ?? '');
                 
@@ -303,13 +312,24 @@ function handleImport($db) {
                             // Support pour les mots en string simple ou en objet
                             $wordText = is_string($wordData) ? $wordData : ($wordData['word'] ?? '');
                             
-                            $stmt = $db->prepare("
-                                INSERT INTO hangman_words (
-                                    word, category_id, difficulty, active
-                                ) VALUES (?, ?, ?, ?)
-                                ON DUPLICATE KEY UPDATE 
-                                difficulty = VALUES(difficulty)
-                            ");
+                            // En mode merge, utiliser INSERT IGNORE pour éviter les doublons
+                            if ($mode === 'merge') {
+                                $stmt = $db->prepare("
+                                    INSERT IGNORE INTO hangman_words (
+                                        word, category_id, difficulty, active
+                                    ) VALUES (?, ?, ?, ?)
+                                ");
+                            } else {
+                                // Mode replace ou autre : remplacer si existe
+                                $stmt = $db->prepare("
+                                    INSERT INTO hangman_words (
+                                        word, category_id, difficulty, active
+                                    ) VALUES (?, ?, ?, ?)
+                                    ON DUPLICATE KEY UPDATE 
+                                    difficulty = VALUES(difficulty),
+                                    active = VALUES(active)
+                                ");
+                            }
                             
                             $stmt->execute([
                                 $wordText,
@@ -366,9 +386,11 @@ function handleImport($db) {
             'import_date' => date('c')
         ];
         
-        // Message de succès plus informatif
+        // Message de succès plus informatif avec le mode
+        $modeLabel = $mode === 'merge' ? 'Import incrémental' : 'Import complet';
         $message = sprintf(
-            'Import terminé: %d catégorie(s), %d mot(s), %d tag(s)',
+            '%s terminé: %d catégorie(s), %d mot(s), %d tag(s)',
+            $modeLabel,
             $importStats['categories_imported'],
             $importStats['words_imported'],
             $importStats['tags_imported']
@@ -378,8 +400,10 @@ function handleImport($db) {
             $result['warnings'] = 'Certaines données n\'ont pas pu être importées (' . count($importStats['errors']) . ' erreur(s))';
         }
         
-        // Si aucun mot importé mais des catégories oui, c'est suspect
-        if ($importStats['categories_imported'] > 0 && $importStats['words_imported'] === 0) {
+        // Si aucun mot importé mais des catégories oui, c'est suspect (sauf en mode merge où c'est normal)
+        if ($importStats['categories_imported'] > 0 && $importStats['words_imported'] === 0 && $mode === 'merge') {
+            $result['info'] = 'Mode incrémental : Aucun nouveau mot ajouté (tous existent déjà)';
+        } elseif ($importStats['categories_imported'] > 0 && $importStats['words_imported'] === 0) {
             $result['warnings'] = 'Les catégories ont été importées mais aucun mot n\'a été ajouté (possibles doublons)';
         }
         

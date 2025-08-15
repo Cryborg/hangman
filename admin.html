@@ -88,29 +88,20 @@
                 <!-- Stats principales -->
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
+                        <div class="card-icon">📂</div>
+                        <div class="card-content">
+                            <h3 id="totalCategories">-</h3>
+                            <p>Catégories</p>
+                            <small>Thématiques disponibles</small>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
                         <div class="card-icon">📝</div>
                         <div class="card-content">
                             <h3 id="totalWords">-</h3>
                             <p>Mots Total</p>
-                            <small>Dans <span id="totalCategories">-</span> catégories</small>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-icon">✨</div>
-                        <div class="card-content">
-                            <h3 id="accentWordsCount">-</h3>
-                            <p>Avec Accents</p>
-                            <small id="accentPercentage">-</small>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-icon">🔢</div>
-                        <div class="card-content">
-                            <h3 id="numberWordsCount">-</h3>
-                            <p>Avec Chiffres</p>
-                            <small id="numberPercentage">-</small>
+                            <small>Tous types confondus</small>
                         </div>
                     </div>
                     
@@ -193,16 +184,12 @@
                 <div id="categoryDetailView" class="category-detail-view">
                     <!-- Header de la catégorie -->
                     <div class="category-detail-header">
-                        <button class="btn btn-secondary" id="backToCategoriesBtn">
-                            ← Retour aux catégories
-                        </button>
                         <div class="category-info">
                             <span class="category-icon" id="categoryDetailIcon">📁</span>
                             <h3 id="categoryDetailName">Nom de la catégorie</h3>
                             <button class="btn btn-secondary btn-icon" id="editCategoryBtn" title="Modifier la catégorie">
                                 ✎
                             </button>
-                            <span class="category-stats" id="categoryWordsCount">0 mots</span>
                         </div>
                         <div class="category-actions">
                         </div>
@@ -212,6 +199,9 @@
                     <!-- Recherche et filtres -->
                     <div class="words-filters">
                         <div class="search-box">
+                            <button class="btn btn-secondary" id="backToCategoriesBtn">
+                                ← Retour aux catégories
+                            </button>
                             <input type="text" id="wordsSearchInput" placeholder="Rechercher un mot..." class="form-input">
                             <button class="btn btn-secondary" id="clearSearchBtn">✖️</button>
                             <button class="btn btn-primary" id="addWordToCategoryBtn">
@@ -328,6 +318,24 @@
                     <div class="data-card">
                         <h3>📥 Import</h3>
                         <p>Importer des données depuis un fichier JSON</p>
+                        
+                        <!-- Mode d'import -->
+                        <div class="import-mode-selection">
+                            <h4>Mode d'import :</h4>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="importMode" value="replace" checked>
+                                    <span class="radio-custom"></span>
+                                    <strong>Complet</strong> - Vide la base et remplace tout par les nouvelles données
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="importMode" value="merge">
+                                    <span class="radio-custom"></span>
+                                    <strong>Incrémental</strong> - Ajoute les nouveaux mots sans supprimer l'existant
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div class="data-actions">
                             <input type="file" id="importFile" accept=".json" style="display: none;">
                             <button class="btn btn-primary" id="importBtn">

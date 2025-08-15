@@ -236,46 +236,19 @@ class AdminApp {
     }
 
     analyzeWords(words) {
-        const frenchAccentsPattern = /[ÀÁÂÄÇÉÈÊËÏÎÔÖÙÚÛÜÿ]/i;
-        
         let analysis = {
-            accents: 0,
-            numbers: 0,
-            corrupted: 0,
-            plain: 0,
             difficulties: { easy: 0, medium: 0, hard: 0 },
             issues: []
         };
 
         words.forEach(word => {
-            // Analyse des caractères (détection dynamique)
-            const wordText = word.word || '';
-            if (frenchAccentsPattern.test(wordText)) {
-                analysis.accents++;
-            } else if (/[0-9]/.test(wordText)) {
-                analysis.numbers++;
-            } else if (/[^A-ZÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ0-9\s-']/i.test(wordText)) {
-                analysis.corrupted++;
-            } else {
-                analysis.plain++;
-            }
-            
             // Analyse de la difficulté
             if (word.difficulty && analysis.difficulties[word.difficulty] !== undefined) {
                 analysis.difficulties[word.difficulty]++;
             }
-            
         });
 
-        // Détecter les problèmes
-        if (analysis.corrupted > 0) {
-            analysis.issues.push({
-                icon: '⚠️',
-                text: `Mots avec caractères corrompus détectés`,
-                count: analysis.corrupted
-            });
-        }
-
+        // Détecter les problèmes de difficulté
         if (analysis.difficulties.easy === 0 || analysis.difficulties.medium === 0 || analysis.difficulties.hard === 0) {
             analysis.issues.push({
                 icon: '⚖️',
@@ -290,17 +263,8 @@ class AdminApp {
     updateMainStats(stats, analysis) {
         const total = stats.active_words || 0;
         
+        document.getElementById('totalCategories').textContent = (stats.active_categories || 0).toLocaleString('fr-FR');
         document.getElementById('totalWords').textContent = total.toLocaleString('fr-FR');
-        document.getElementById('totalCategories').textContent = stats.active_categories || '-';
-        
-        document.getElementById('accentWordsCount').textContent = analysis.accents;
-        document.getElementById('accentPercentage').textContent = 
-            total > 0 ? `${Math.round((analysis.accents / total) * 100)}%` : '0%';
-            
-        document.getElementById('numberWordsCount').textContent = analysis.numbers;
-        document.getElementById('numberPercentage').textContent = 
-            total > 0 ? `${Math.round((analysis.numbers / total) * 100)}%` : '0%';
-            
         document.getElementById('totalTags').textContent = stats.active_tags || '-';
         document.getElementById('tagsPercentage').textContent = 
             stats.active_categories > 0 ? `${Math.round((stats.active_tags / stats.active_categories) * 100) / 10} par cat.` : '-';
@@ -452,13 +416,16 @@ class AdminApp {
                     <strong>📅</strong> Exporté le : ${this.uiManager.formatDate(data.export_date)}
                 </div>
             ` : ''}
-            <div class="preview-warning">
+            <div class="preview-warning" id="importWarning">
                 <strong>⚠️</strong> L'import remplacera toutes les données existantes
             </div>
         `;
         
         preview.style.display = 'block';
         this.importData = data;
+        
+        // Écouter les changements de mode d'import
+        this.setupImportModeListener();
     }
 
     async processImport() {
@@ -467,9 +434,15 @@ class AdminApp {
             return;
         }
 
+        // Récupérer le mode d'import sélectionné
+        const selectedMode = document.querySelector('input[name="importMode"]:checked');
+        const importMode = selectedMode ? selectedMode.value : 'replace';
+        
+        const modeLabel = importMode === 'merge' ? 'Incrémental' : 'Complet';
+
         try {
-            this.uiManager.showLoading(true, 'Import en cours...');
-            const result = await this.apiClient.importData(this.importData, 'replace');
+            this.uiManager.showLoading(true, `Import en cours (${modeLabel})...`);
+            const result = await this.apiClient.importData(this.importData, importMode);
             
             if (result.success) {
                 this.uiManager.showToast('Succès', 'Import terminé avec succès', 'success');
@@ -542,6 +515,38 @@ class AdminApp {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+    }
+    
+    setupImportModeListener() {
+        const importModeRadios = document.querySelectorAll('input[name="importMode"]');
+        const warningElement = document.getElementById('importWarning');
+        
+        if (!warningElement) return;
+        
+        const updateWarningMessage = () => {
+            const selectedMode = document.querySelector('input[name="importMode"]:checked');
+            const mode = selectedMode ? selectedMode.value : 'replace';
+            
+            if (mode === 'merge') {
+                warningElement.innerHTML = `
+                    <strong>✅</strong> Mode incrémental : Les nouvelles données seront ajoutées sans supprimer l'existant
+                `;
+                warningElement.className = 'preview-info'; // Changer la classe pour un style différent
+            } else {
+                warningElement.innerHTML = `
+                    <strong>⚠️</strong> Mode complet : L'import remplacera toutes les données existantes
+                `;
+                warningElement.className = 'preview-warning';
+            }
+        };
+        
+        // Écouter les changements sur les radio buttons
+        importModeRadios.forEach(radio => {
+            radio.addEventListener('change', updateWarningMessage);
+        });
+        
+        // Initialiser le message
+        updateWarningMessage();
     }
 }
 

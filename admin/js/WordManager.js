@@ -259,6 +259,11 @@ class WordManager extends BaseManager {
         this.currentCategory = window.adminApp?.adminData?.categories?.find(c => c.id === categoryId);
         if (!this.currentCategory) return;
 
+        // Naviguer vers l'onglet Catégories & Mots
+        if (window.adminApp?.uiManager) {
+            window.adminApp.uiManager.showSection('categories');
+        }
+
         // Filtrer les mots pour cette catégorie
         const allWords = window.adminApp?.adminData?.words || [];
         this.entities = allWords.filter(word => word.category_id == categoryId);
@@ -284,11 +289,9 @@ class WordManager extends BaseManager {
         
         const categoryIcon = this.domManager.getById('categoryDetailIcon');
         const categoryName = this.domManager.getById('categoryDetailName');
-        const categoryWordsCount = this.domManager.getById('categoryWordsCount');
         
         if (categoryIcon) categoryIcon.textContent = this.currentCategory.icon || '📁';
         if (categoryName) categoryName.textContent = this.currentCategory.name;
-        if (categoryWordsCount) categoryWordsCount.textContent = this.entities.length;
     }
 
     /**
