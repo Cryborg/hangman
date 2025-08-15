@@ -86,7 +86,7 @@ function handleExport($db) {
                     foreach ($words as &$word) {
                         $word['id'] = (int) $word['id'];
                         $word['category_id'] = (int) $word['category_id'];
-                        $word['length'] = (int) $word['length'];
+                        $word['active'] = (bool) ($word['active'] ?? true);
                     }
                     
                     $category['words'] = $words;
@@ -302,11 +302,10 @@ function handleImport($db) {
                         try {
                             // Support pour les mots en string simple ou en objet
                             $wordText = is_string($wordData) ? $wordData : ($wordData['word'] ?? '');
-                            $length = mb_strlen($wordText, 'UTF-8');
                             
                             $stmt = $db->prepare("
                                 INSERT INTO hangman_words (
-                                    word, category_id, difficulty, length
+                                    word, category_id, difficulty, active
                                 ) VALUES (?, ?, ?, ?)
                                 ON DUPLICATE KEY UPDATE 
                                 difficulty = VALUES(difficulty)
@@ -316,7 +315,7 @@ function handleImport($db) {
                                 $wordText,
                                 $categoryId,
                                 is_array($wordData) ? ($wordData['difficulty'] ?? 'medium') : 'medium',
-                                $length
+                                is_array($wordData) ? ($wordData['active'] ?? 1) : 1
                             ]);
                             
                             // DEBUG: Vérifier si l'insertion a réussi
