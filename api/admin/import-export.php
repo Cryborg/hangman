@@ -296,6 +296,8 @@ function handleImport($db) {
                 
                 // Import des mots de la catégorie
                 if (isset($categoryData['words']) && is_array($categoryData['words'])) {
+                    // DEBUG: Log pour vérifier que les mots arrivent
+                    error_log("Import: Catégorie '{$categoryData['name']}' a " . count($categoryData['words']) . " mots");
                     foreach ($categoryData['words'] as $wordData) {
                         try {
                             // Support pour les mots en string simple ou en objet
@@ -317,7 +319,13 @@ function handleImport($db) {
                                 $length
                             ]);
                             
-                            $importStats['words_imported']++;
+                            // DEBUG: Vérifier si l'insertion a réussi
+                            if ($stmt->rowCount() > 0) {
+                                $importStats['words_imported']++;
+                                error_log("Import: Mot '$wordText' inséré avec succès");
+                            } else {
+                                error_log("Import: Mot '$wordText' pas inséré (possiblement doublon)");
+                            }
                         } catch (Exception $e) {
                             $importStats['errors'][] = "Mot '{$wordText}': " . $e->getMessage();
                         }
@@ -359,12 +367,25 @@ function handleImport($db) {
             'import_date' => date('c')
         ];
         
+        // Message de succès plus informatif
+        $message = sprintf(
+            'Import terminé: %d catégorie(s), %d mot(s), %d tag(s)',
+            $importStats['categories_imported'],
+            $importStats['words_imported'],
+            $importStats['tags_imported']
+        );
+        
         if (!empty($importStats['errors'])) {
-            $result['warnings'] = 'Certaines données n\'ont pas pu être importées';
+            $result['warnings'] = 'Certaines données n\'ont pas pu être importées (' . count($importStats['errors']) . ' erreur(s))';
+        }
+        
+        // Si aucun mot importé mais des catégories oui, c'est suspect
+        if ($importStats['categories_imported'] > 0 && $importStats['words_imported'] === 0) {
+            $result['warnings'] = 'Les catégories ont été importées mais aucun mot n\'a été ajouté (possibles doublons)';
         }
         
         sendSuccessResponse($result, [
-            'message' => 'Import terminé avec succès'
+            'message' => $message
         ]);
         
     } catch (Exception $e) {
