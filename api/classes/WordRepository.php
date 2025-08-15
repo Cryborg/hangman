@@ -144,9 +144,11 @@ class WordRepository {
     
     /**
      * Vérifie si un mot existe dans une catégorie
+     * Permet la mise à jour d'un mot pour corriger les accents
      */
     public function existsInCategory(string $word, int $categoryId, ?int $excludeId = null): bool {
-        $sql = "SELECT id FROM hangman_words WHERE word = ? AND category_id = ?";
+        // D'abord vérifier s'il existe un mot identique (avec accents)
+        $sql = "SELECT id, word FROM hangman_words WHERE word = ? AND category_id = ?";
         $params = [$word, $categoryId];
         
         if ($excludeId) {
@@ -156,8 +158,38 @@ class WordRepository {
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
+        $exactMatch = $stmt->fetch();
         
-        return $stmt->fetch() !== false;
+        // Si on trouve une correspondance exacte (même mot avec mêmes accents), c'est un doublon
+        if ($exactMatch) {
+            return true;
+        }
+        
+        // Maintenant vérifier s'il existe un mot similaire sans tenir compte des accents
+        // Utiliser COLLATE utf8mb4_general_ci qui ignore les accents
+        $sql = "SELECT id, word FROM hangman_words 
+                WHERE word COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci 
+                AND category_id = ?";
+        $params = [$word, $categoryId];
+        
+        if ($excludeId) {
+            $sql .= " AND id != ?";
+            $params[] = $excludeId;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $similarMatch = $stmt->fetch();
+        
+        // Si on est en mode update (excludeId fourni) et qu'on trouve le même mot sans accents
+        // on permet la mise à jour pour corriger les accents
+        if ($excludeId && $similarMatch) {
+            // C'est le même mot qu'on est en train de modifier, on permet
+            return false;
+        }
+        
+        // Si on trouve un mot similaire mais qu'on n'est pas en update, c'est un doublon
+        return $similarMatch !== false;
     }
     
     /**
