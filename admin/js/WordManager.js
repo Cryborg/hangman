@@ -355,20 +355,31 @@ class WordManager extends BaseManager {
                 throw new Error('Mot original non trouvé');
             }
             
-            // Vérifier si quelque chose a vraiment changé
-            const hasChanged = (
-                formData.word !== originalWord.word ||
-                formData.difficulty !== originalWord.difficulty ||
-                formData.active !== originalWord.active
-            );
+            // Construire un objet avec seulement les champs modifiés
+            const changes = {};
             
-            if (!hasChanged) {
+            if (formData.word !== originalWord.word) {
+                changes.word = formData.word;
+            }
+            
+            if (formData.difficulty !== originalWord.difficulty) {
+                changes.difficulty = formData.difficulty;
+            }
+            
+            if (formData.active !== originalWord.active) {
+                changes.active = formData.active;
+            }
+            
+            // Toujours inclure category_id pour la cohérence
+            changes.category_id = formData.category_id;
+            
+            if (Object.keys(changes).length === 1) { // Seulement category_id
                 this.uiManager.showToast('Info', 'Aucune modification détectée', 'info');
                 this.closeEditModal();
                 return;
             }
             
-            await this.updateEntity(numericEntityId, formData);
+            await this.updateEntity(numericEntityId, changes);
             this.closeEditModal();
         } catch (error) {
             console.error(`Erreur mise à jour ${config.name}:`, error);
