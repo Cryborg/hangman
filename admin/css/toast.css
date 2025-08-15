@@ -1,0 +1,121 @@
+/* ===== TOAST SYSTEM CSS ===== */
+/* Styles dédiés au système de notifications toast */
+
+/* Container principal */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    left: auto; /* Override du left défini dans small-screens.css */
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    width: 400px;
+    max-width: calc(100vw - 40px);
+}
+
+/* Toast individuels */
+.admin-toast {
+    background: var(--bg-modal, #2a2a2a);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color, #f39c12);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    pointer-events: auto;
+    width: 100%;
+    color: var(--text-primary, #e8eaed);
+    overflow: hidden;
+    
+    /* Animation */
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* État visible */
+.admin-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Variantes de couleur */
+.admin-toast.toast-success {
+    border-left-color: var(--success-color, #2ed573);
+}
+
+.admin-toast.toast-error {
+    border-left-color: var(--error-color, #ff6b6b);
+}
+
+.admin-toast.toast-warning {
+    border-left-color: var(--warning-color, #ff9800);
+}
+
+.admin-toast.toast-info {
+    border-left-color: var(--info-color, #2196F3);
+}
+
+/* Contenu du toast */
+.toast-content {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 12px;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.toast-message {
+    flex: 1;
+    line-height: 1.5;
+}
+
+.toast-message strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary, #999);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary, #e8eaed);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    #toast-container {
+        top: 10px;
+        right: 10px;
+        width: calc(100vw - 20px);
+    }
+    
+    .admin-toast {
+        font-size: 0.9rem;
+    }
+    
+    .toast-content {
+        padding: 10px 12px;
+    }
+}

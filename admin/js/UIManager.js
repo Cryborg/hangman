@@ -10,7 +10,7 @@ class UIManager {
         }
         this.domManager = domManager;
         this.toastCounter = 0;
-        this.setupToastStyles();
+        // Plus besoin d'injecter les styles, ils sont dans toast.css
     }
 
     // =================
@@ -20,6 +20,11 @@ class UIManager {
     showToast(title, message = '', type = 'info', duration = 4000) {
         const toastId = `toast-${this.toastCounter++}`;
         const toastContainer = this.getOrCreateToastContainer();
+        
+        if (!toastContainer) {
+            console.error('Cannot show toast: container not found');
+            return null;
+        }
         
         const typeIcons = {
             success: '✅',
@@ -66,110 +71,17 @@ class UIManager {
     }
 
     getOrCreateToastContainer() {
-        let container = this.domManager.getById('toast-container');
+        // Utiliser directement getElementById pour éviter le cache du domManager
+        let container = document.getElementById('toast-container');
         
         if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            container.className = 'toast-container';
-            document.body.appendChild(container);
+            console.error('Toast container not found in HTML!');
+            // Ne pas créer dynamiquement, car il devrait exister dans le HTML
+            return null;
         }
         return container;
     }
 
-    setupToastStyles() {
-        const existing = this.domManager.getById('toast-styles', true); // Supprime le warning
-        if (existing) return;
-        
-        const styles = document.createElement('style');
-        styles.id = 'toast-styles';
-        styles.textContent = `
-            .toast-container {
-                position: fixed !important;
-                top: 20px !important;
-                right: 20px !important;
-                left: auto !important;
-                bottom: auto !important;
-                z-index: 999999 !important;
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 0.5rem !important;
-                pointer-events: none !important;
-                width: 400px !important;
-                max-width: calc(100vw - 40px) !important;
-            }
-            
-            .admin-toast {
-                background: var(--bg-modal, #2a2a2a) !important;
-                border-radius: 8px !important;
-                border-left: 4px solid var(--primary-color, #f39c12) !important;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-                transform: translateX(120%) !important;
-                transition: transform 0.3s ease !important;
-                pointer-events: auto !important;
-                width: 100% !important;
-                color: #ffffff !important;
-                display: block !important;
-                visibility: visible !important;
-                opacity: 0 !important;
-                position: relative !important;
-            }
-            
-            .admin-toast.show {
-                transform: translateX(0) !important;
-                opacity: 1 !important;
-            }
-            
-            .admin-toast.toast-success { border-left-color: #2ed573 !important; }
-            .admin-toast.toast-error { border-left-color: #ff6b6b !important; }
-            .admin-toast.toast-warning { border-left-color: #ff9800 !important; }
-            
-            .toast-content {
-                display: flex;
-                align-items: flex-start;
-                padding: 1rem;
-                gap: 0.75rem;
-            }
-            
-            .toast-icon {
-                font-size: 1.2rem;
-                flex-shrink: 0;
-            }
-            
-            .toast-message {
-                flex: 1;
-                color: var(--text-primary);
-                line-height: 1.4;
-            }
-            
-            .toast-message strong {
-                display: block;
-                margin-bottom: 0.25rem;
-            }
-            
-            .toast-close {
-                background: none;
-                border: none;
-                color: var(--text-secondary);
-                font-size: 1.5rem;
-                cursor: pointer;
-                padding: 0;
-                width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                transition: all 0.2s ease;
-            }
-            
-            .toast-close:hover {
-                background: var(--bg-primary);
-                color: var(--text-primary);
-            }
-        `;
-        document.head.appendChild(styles);
-    }
 
     // =================
     // LOADING SYSTEM
